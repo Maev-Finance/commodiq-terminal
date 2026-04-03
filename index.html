@@ -269,11 +269,36 @@ function drawVol(cv,series,color){
   var bw=Math.max(1,cw/series.length-0.5);ctx.fillStyle=color+"40";
   for(var i=0;i<series.length;i++){var bh=(series[i].vol/mx)*ch;ctx.fillRect(pad.l+i*(cw/series.length),h-pad.b-bh,bw,bh);}
 }
-function drawMini(cv,series,color){
+function drawMini(cv,series,color,fcData){
   var ctx=cv.getContext("2d"),dpr=window.devicePixelRatio||1,w=cv.width/dpr,h=cv.height/dpr;
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);if(!series||series.length<2)return;
-  var pr=series.map(function(d){return d.price;}),mn=Math.min.apply(null,pr),mx=Math.max.apply(null,pr),rng=mx-mn||1;mn-=rng*0.05;mx+=rng*0.05;rng=mx-mn;var p=6;
-  var grad=ctx.createLinearGradient(0,p,0,h-p);grad.addColorStop(0,color+"40");grad.addColorStop(1,color+"05");ctx.fillStyle=grad;ctx.beginPath();ctx.moveTo(p,p+(1-(pr[0]-mn)/rng)*(h-2*p));for(var i=1;i<pr.length;i++)ctx.lineTo(p+i/(pr.length-1)*(w-2*p),p+(1-(pr[i]-mn)/rng)*(h-2*p));ctx.lineTo(w-p,h-p);ctx.lineTo(p,h-p);ctx.closePath();ctx.fill();ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(p,p+(1-(pr[0]-mn)/rng)*(h-2*p));for(var i=1;i<pr.length;i++)ctx.lineTo(p+i/(pr.length-1)*(w-2*p),p+(1-(pr[i]-mn)/rng)*(h-2*p));ctx.stroke();
+  var pr=series.map(function(d){return d.price;});
+  var mn=Math.min.apply(null,pr),mx=Math.max.apply(null,pr);
+  if(fcData&&fcData.length){for(var i=0;i<fcData.length;i++){mn=Math.min(mn,fcData[i].lower);mx=Math.max(mx,fcData[i].upper);}}
+  var rng=mx-mn||1;mn-=rng*0.05;mx+=rng*0.05;rng=mx-mn;
+  var p=4,cw=w-2*p,ch=h-2*p,total=series.length+(fcData?fcData.length:0);
+  function xP(i,t){return p+i/Math.max(1,t-1)*cw;}function yP(v){return p+(1-(v-mn)/rng)*ch;}
+  // Gradient fill — historical only
+  var grad=ctx.createLinearGradient(0,p,0,h-p);grad.addColorStop(0,color+"40");grad.addColorStop(1,color+"05");
+  ctx.fillStyle=grad;ctx.beginPath();ctx.moveTo(xP(0,total),yP(pr[0]));
+  for(var i=1;i<pr.length;i++)ctx.lineTo(xP(i,total),yP(pr[i]));
+  ctx.lineTo(xP(pr.length-1,total),h-p);ctx.lineTo(xP(0,total),h-p);ctx.closePath();ctx.fill();
+  // Historical price line
+  ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(xP(0,total),yP(pr[0]));
+  for(var i=1;i<pr.length;i++)ctx.lineTo(xP(i,total),yP(pr[i]));ctx.stroke();
+  // Forecast — cone + dotted midpoint line
+  if(fcData&&fcData.length){
+    var fs=series.length;
+    ctx.fillStyle="rgba(0,222,255,0.07)";ctx.beginPath();
+    ctx.moveTo(xP(fs,total),yP(fcData[0].upper));
+    for(var i=0;i<fcData.length;i++)ctx.lineTo(xP(fs+i,total),yP(fcData[i].upper));
+    for(var i=fcData.length-1;i>=0;i--)ctx.lineTo(xP(fs+i,total),yP(fcData[i].lower));
+    ctx.closePath();ctx.fill();
+    ctx.strokeStyle="#00deff";ctx.lineWidth=1;ctx.setLineDash([4,3]);ctx.beginPath();
+    ctx.moveTo(xP(fs-1,total),yP(pr[pr.length-1]));
+    for(var i=0;i<fcData.length;i++)ctx.lineTo(xP(fs+i,total),yP(fcData[i].price));
+    ctx.stroke();ctx.setLineDash([]);
+  }
 }
 
 function drawOverlay(canvas,seriesArr,colors,labels,opts){
@@ -369,7 +394,7 @@ function render(){
   // Main
   if(s.view==="MATRIX"){
     html+='<div class="main"><div class="matrix">';
-    COMS.forEach(function(c,i){var mk=s.metrics[i];html+='<div onclick="pick('+i+')" style="cursor:pointer"><div class="mini-hdr" style="color:'+c.cl+';border-color:'+c.cl+'"><span>'+c.sy+'</span><span style="color:var(--txt)">'+(mk?fmt(mk.latest,2):"\u2014")+'</span><span style="color:'+pcCl(mk?mk.wow:0)+'">'+(mk?fP(mk.wow):"\u2014")+'</span></div><div class="mini-chart"><canvas id="mini'+i+'"></canvas></div></div>';});
+    COMS.forEach(function(c,i){var mk=s.metrics[i],f4m=s.fc&&s.forecasts[i]&&s.forecasts[i][3];html+='<div onclick="pick('+i+')" style="cursor:pointer"><div class="mini-hdr" style="color:'+c.cl+';border-color:'+c.cl+'"><span>'+c.sy+'</span><span style="color:var(--txt)">'+(mk?fmt(mk.latest,2):"\u2014")+'</span><span style="color:'+pcCl(mk?mk.wow:0)+'">'+(mk?fP(mk.wow):"\u2014")+'</span>'+(f4m?'<span style="color:#00deff;font-size:8px;font-weight:600">\u2192'+fmt(f4m.price,0)+'</span>':'')+'</div><div class="mini-chart"><canvas id="mini'+i+'"></canvas></div></div>';});
     html+='</div></div>';
   } else if(s.view==="OVERLAY"){
     html+='<div class="main"><div class="chart-col"><div class="chart-title"><span style="color:var(--dim)">OVERLAY \u2014 % CHANGE FROM PERIOD START \u00b7 '+s.tr+'</span></div>';
@@ -551,7 +576,7 @@ function render(){
 
   document.getElementById("app").innerHTML=html;
   requestAnimationFrame(function(){requestAnimationFrame(function(){
-    if(s.view==="MATRIX"){COMS.forEach(function(c,i){var cv=document.getElementById("mini"+i);if(!cv)return;sizeCanvas(cv);var d=s.data[i].slice(-days);if(s.fc)d=d.concat(s.forecasts[i]||[]);drawMini(cv,d,c.cl);});}
+    if(s.view==="MATRIX"){COMS.forEach(function(c,i){var cv=document.getElementById("mini"+i);if(!cv)return;sizeCanvas(cv);var d=(s.data[i]||[]).slice(-days);var fc=s.fc?(s.forecasts[i]||null):null;drawMini(cv,d,c.cl,fc);});}
     else if(s.view==="OVERLAY"){var ov=document.getElementById("overlayChart");if(ov){sizeCanvas(ov);var ovSeries=COMS.map(function(c,i){return(s.data[i]||[]).slice(-days);});var ovCols=COMS.map(function(c){return c.cl;});var ovLbls=COMS.map(function(c){return c.sy;});drawOverlay(ov,ovSeries,ovCols,ovLbls,{});ov.onmousemove=function(ev){var r=ov.getBoundingClientRect();drawOverlay(ov,ovSeries,ovCols,ovLbls,{hoverX:ev.clientX-r.left});};ov.onmouseleave=function(){drawOverlay(ov,ovSeries,ovCols,ovLbls,{});};}}
     else{var cv=document.getElementById("mainChart");if(cv){sizeCanvas(cv);var series=(s.data[s.sel]||[]).slice(-days);drawChart(cv,series,COMS[s.sel].cl,{fcData:s.fc?s.forecasts[s.sel]:null});cv.onmousemove=function(ev){var r=cv.getBoundingClientRect();drawChart(cv,series,COMS[s.sel].cl,{fcData:s.fc?s.forecasts[s.sel]:null,hoverX:ev.clientX-r.left});};cv.onmouseleave=function(){drawChart(cv,series,COMS[s.sel].cl,{fcData:s.fc?s.forecasts[s.sel]:null});};}var vc=document.getElementById("volChart");if(vc){sizeCanvas(vc);drawVol(vc,(s.data[s.sel]||[]).slice(-days),COMS[s.sel].cl);}}
   });});
