@@ -117,27 +117,28 @@ tr:hover td{background:rgba(22,32,56,.4)}
 // ═══════════════════════════════════════════════════════════════
 
 var NEWS=[
-{t:"50CL Beef Trim Softens to $174.52/cwt; 23 Trades, 739K lbs on Apr 2",d:"Apr 2",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2452.pdf"},
+{t:"65CL Trim Drops to $230.65/cwt \u2014 Down 10.7% WoW; 28 Trades, 612K lbs Apr 3",d:"Apr 3",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
+{t:"90CL Trim Firms to $448.32/cwt; 51 Trades, 1.09M lbs \u2014 Tight Supply Lifts Premium",d:"Apr 3",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
+{t:"50CL Weekly Avg $175.75/cwt on 76 Trades, 1.9M lbs \u2014 Broad Demand Week of Apr 3",d:"Apr 3",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
+{t:"81CL Trim: Zero Trades Second Consecutive Week \u2014 Market Inactive Apr 3",d:"Apr 3",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
+{t:"Chicken Breast B/S 145.13\u00a2/lb March Avg; Up from 143.48\u00a2 as Supply Tightens",d:"Apr 3",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_3646.pdf"},
 {t:"Russet Norkotah Firms to $10.00/cwt; Storage Premiums Building into Spring",d:"Apr 1",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/fvdidnop.pdf"},
 {t:"Cattle Futures Surge $3+ on Strong Beef Cutout; Choice at $395.49",d:"Apr 1",s:"CME/USDA",u:"https://www.ams.usda.gov/mnreports/lsddcbs.pdf"},
-{t:"Chicken Breast B/S 143.48\u00a2/lb; Wide Range 130\u2013201\u00a2 Signals Contract Variation",d:"Feb 27",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_3646.pdf"},
 {t:"U.S. Cattle Inventory Hits 75-Year Low at 86.2M Head",d:"Mar 28",s:"USDA NASS",u:"https://www.fb.org/market-intel/smaller-cattle-herd-creates-market-volatility"},
-{t:"USDA ERS: Beef & Veal Prices to Rise 10.1% in 2026",d:"Mar 25",s:"USDA ERS",u:"https://www.ers.usda.gov/topics/animal-products/cattle-beef/market-outlook"},
-{t:"Fresh 90CL Trim $444/cwt \u2014 18 Trades, 637K lbs; Most Active Grade This Week",d:"Mar 27",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
-{t:"Green Beans $90-92/bu FL Handpicked at NY Terminal",d:"Mar 26",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/nx_fv020.pdf"},
-{t:"Fresh Vegetable Prices +2.8% MoM, +5.4% YoY in Feb",d:"Mar 25",s:"USDA ERS",u:"https://www.ers.usda.gov/data-products/food-price-outlook/summary-findings"},
-{t:"81CL Trim at $405/cwt on Light Test \u2014 Processing Beef Rpt",d:"Mar 21",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
 {t:"Weekly Cattle Slaughter 520K, Down 89K YoY",d:"Mar 28",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/lswnfss.pdf"},
+{t:"Green Beans $90-92/bu FL Handpicked at NY Terminal",d:"Mar 26",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/nx_fv020.pdf"},
+{t:"USDA ERS: Beef & Veal Prices to Rise 10.1% in 2026",d:"Mar 25",s:"USDA ERS",u:"https://www.ers.usda.gov/topics/animal-products/cattle-beef/market-outlook"},
+{t:"Fresh Vegetable Prices +2.8% MoM, +5.4% YoY in Feb",d:"Mar 25",s:"USDA ERS",u:"https://www.ers.usda.gov/data-products/food-price-outlook/summary-findings"},
 {t:"USDA: All Food +3.6% in 2026; Beef +10.1%",d:"Mar 25",s:"USDA ERS",u:"https://www.ers.usda.gov/data-products/food-price-outlook/summary-findings"},
 ];
 
 // ═══ 9 COMMODITIES (4 beef trims + 2 chicken + 1 offal gizzard + potato + green bean) ═══
 var COMS=[
-{k:"BT50",nm:"Beef Trim 50CL",un:"$/cwt",cl:"#ff4d6a",sy:"BT50",sr:"USDA AMS LM_XB403",hp:[174.52,168.5,3.8,8,2,42],rpt:"daily_cattle"},
-{k:"BT65",nm:"Beef Trim 65CL",un:"$/cwt",cl:"#ff6b81",sy:"BT65",sr:"USDA AMS LM_XB462",hp:[258.00,225.0,4.2,10,2,55],rpt:"weekly_trim"},
+{k:"BT50",nm:"Beef Trim 50CL",un:"$/cwt",cl:"#ff4d6a",sy:"BT50",sr:"USDA AMS LM_XB403",hp:[175.75,168.5,3.8,8,2,42],rpt:"daily_cattle"},
+{k:"BT65",nm:"Beef Trim 65CL",un:"$/cwt",cl:"#ff6b81",sy:"BT65",sr:"USDA AMS LM_XB462",hp:[230.65,225.0,4.2,10,2,55],rpt:"weekly_trim"},
 {k:"BT81",nm:"Beef Trim 81CL",un:"$/cwt",cl:"#e84363",sy:"BT81",sr:"USDA AMS LM_XB462",hp:[405.09,352.0,5.5,12,2,71],rpt:"weekly_trim"},
-{k:"BT90",nm:"Beef Trim 90CL",un:"$/cwt",cl:"#d63051",sy:"BT90",sr:"USDA AMS LM_XB462",hp:[444.10,388.0,6.0,14,2,89],rpt:"weekly_trim"},
-{k:"CB",nm:"Chicken Breast B/S",un:"\u00a2/lb",cl:"#00e6b4",sy:"CKBR",sr:"USDA AMS PY_KA210",hp:[143.48,128,2.8,5,4,137],rpt:"weekly_chicken"},
+{k:"BT90",nm:"Beef Trim 90CL",un:"$/cwt",cl:"#d63051",sy:"BT90",sr:"USDA AMS LM_XB462",hp:[448.32,388.0,6.0,14,2,89],rpt:"weekly_trim"},
+{k:"CB",nm:"Chicken Breast B/S",un:"\u00a2/lb",cl:"#00e6b4",sy:"CKBR",sr:"USDA AMS PY_KA210",hp:[145.13,128,2.8,5,4,137],rpt:"weekly_chicken"},
 {k:"CL",nm:"Chicken Liver",un:"\u00a2/lb",cl:"#ffb020",sy:"CKLV",sr:"USDA AMS Misc Poultry",hp:[30.5,27.2,1.2,2,6,271],rpt:"weekly_poultry"},
 {k:"CG",nm:"Chicken Gizzard",un:"\u00a2/lb",cl:"#c97dff",sy:"CKGZ",sr:"USDA AMS Misc Poultry",hp:[45.8,41.5,1.0,1.5,5,389],rpt:"weekly_poultry"},
 {k:"PT",nm:"Russet Potatoes #1",un:"$/cwt",cl:"#3b9eff",sy:"PTRS",sr:"USDA AMS / NASS",hp:[10.00,10.45,0.35,1.2,0,503],rpt:"daily_potato"},
