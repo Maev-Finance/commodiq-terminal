@@ -43,7 +43,7 @@ button.on{background:rgba(0,230,180,.12);color:var(--grn);border-color:rgba(0,23
 .ticker .td{color:var(--amb);font-weight:700;font-size:9.5px}.ticker .ts{color:var(--mut);font-size:9.5px}.ticker .tt{color:var(--txt);font-weight:500}.ticker .tl{color:var(--blu);font-size:9.5px}
 /* KPI */
 .kpi-strip{display:flex;gap:6px;padding:10px 22px 6px;overflow-x:auto}
-.kpi{background:var(--card);border:1px solid var(--bdr);border-radius:3px;padding:9px 13px;cursor:pointer;min-width:145px;position:relative;overflow:hidden;transition:all .15s;flex:0 0 auto}
+.kpi{background:var(--card);border:1px solid var(--bdr);border-radius:3px;padding:9px 13px 22px;cursor:pointer;min-width:145px;position:relative;overflow:hidden;transition:all .15s;flex:0 0 auto}
 .kpi:hover{border-color:var(--bdr2);background:var(--hover)}
 .kpi.sel{background:var(--hover)}.kpi .bar{position:absolute;top:0;left:0;right:0;height:2px}
 .kpi-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
@@ -105,6 +105,24 @@ tr:hover td{background:rgba(22,32,56,.4)}
 .help-key .hv{color:var(--dim);font-size:10px}
 .help-warn{color:#ff4d6a;font-size:10px;font-weight:600}
 .help-hbtn{font-size:12px;font-weight:700;padding:3px 10px;cursor:pointer;transition:all .1s}
+/* Market Intel Panel */
+.intel-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:498;background:rgba(4,8,16,.55);cursor:default}
+.intel-panel{position:fixed;left:50%;transform:translateX(-50%);top:175px;width:570px;max-width:calc(100vw - 24px);max-height:calc(100vh - 195px);background:var(--card);border:1px solid var(--bdr2);border-radius:4px;box-shadow:0 18px 52px rgba(0,0,0,.75);display:flex;flex-direction:column;overflow:hidden;z-index:499}
+.intel-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--bdr);flex-shrink:0}
+.intel-sym{font-size:13px;font-weight:800;letter-spacing:2px}
+.intel-nm{font-size:8.5px;color:var(--mut);letter-spacing:1.5px;margin-left:10px;font-weight:500}
+.intel-close{font-size:10px;font-weight:700;color:var(--dim);cursor:pointer;background:transparent;border:1px solid var(--bdr);border-radius:3px;padding:3px 11px;font-family:inherit;transition:all .1s;letter-spacing:.3px}
+.intel-close:hover{color:var(--txt);border-color:var(--bdr2)}
+.intel-body{padding:13px 16px 14px;overflow-y:auto}
+.intel-label{font-size:9px;color:var(--mut);letter-spacing:1.5px;font-weight:600;margin-bottom:10px}
+.intel-bullet{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(30,45,72,.28);font-size:11px;line-height:1.6}
+.intel-bullet:last-child{border-bottom:none}
+.intel-icon{font-size:11px;font-weight:700;min-width:16px;margin-top:2px}
+.intel-text{color:var(--txt);flex:1}
+.intel-meta{font-size:9px;color:var(--mut);letter-spacing:.7px;margin-top:10px;padding-top:8px;border-top:1px solid var(--bdr);line-height:1.6}
+.kpi-info{position:absolute;bottom:5px;right:7px;font-size:8.5px;color:var(--mut);background:transparent;border:1px solid var(--bdr);border-radius:2px;padding:1px 6px;cursor:pointer;transition:all .12s;font-family:inherit;font-weight:600;letter-spacing:.4px;line-height:1.5}
+.kpi-info:hover{color:var(--txt);border-color:var(--bdr2);background:rgba(30,45,72,.3)}
+.kpi-info.iac{color:var(--amb);border-color:rgba(255,176,32,.5);background:rgba(255,176,32,.1)}
 </style>
 </head>
 <body>
@@ -119,7 +137,7 @@ var NEWS=[
 {t:"90CL Trim Firms to $448.32/cwt; 51 Trades, 1.09M lbs \u2014 Tight Supply Lifts Premium",d:"Apr 3",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
 {t:"50CL Weekly Avg $175.75/cwt on 76 Trades, 1.9M lbs \u2014 Broad Demand Week of Apr 3",d:"Apr 3",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
 {t:"81CL Trim: Zero Trades Second Consecutive Week \u2014 Market Inactive Apr 3",d:"Apr 3",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
-{t:"Chicken Breast B/S 145.13\u00a2/lb March Avg; Up from 143.48\u00a2 as Supply Tightens",d:"Apr 3",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_3646.pdf"},
+{t:"Chicken Breast B/S 152.90\u00a2/lb Mar 2026 Monthly Avg (ams_3649); Up +5.4% from Feb 145.13\u00a2",d:"Apr 3",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_3649.pdf"},
 {t:"Russet Norkotah Firms to $10.00/cwt; Storage Premiums Building into Spring",d:"Apr 1",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/fvdidnop.pdf"},
 {t:"Cattle Futures Surge $3+ on Strong Beef Cutout; Choice at $395.49",d:"Apr 1",s:"CME/USDA",u:"https://www.ams.usda.gov/mnreports/lsddcbs.pdf"},
 {t:"U.S. Cattle Inventory Hits 75-Year Low at 86.2M Head",d:"Mar 28",s:"USDA NASS",u:"https://www.fb.org/market-intel/smaller-cattle-herd-creates-market-volatility"},
@@ -136,13 +154,12 @@ var COMS=[
 {k:"BT65",nm:"Beef Trim 65CL",un:"$/cwt",cl:"#ff6b81",sy:"BT65",sr:"USDA AMS ams_2462",hk:"BT65",rpt:"weekly_trim"},
 {k:"BT81",nm:"Beef Trim 81CL",un:"$/cwt",cl:"#e84363",sy:"BT81",sr:"USDA AMS ams_2462",hk:"BT81",rpt:"weekly_trim"},
 {k:"BT90",nm:"Beef Trim 90CL",un:"$/cwt",cl:"#d63051",sy:"BT90",sr:"USDA AMS ams_2462",hk:"BT90",rpt:"weekly_trim"},
-{k:"CB",nm:"Chicken Breast B/S",un:"\u00a2/lb",cl:"#00e6b4",sy:"CKBR",sr:"USDA AMS ams_3646",hk:"CB",rpt:"weekly_chicken"},
-{k:"CL",nm:"Chicken Liver",un:"\u00a2/lb",cl:"#ffb020",sy:"CKLV",sr:"USDA AMS ams_3645",hk:"CL",rpt:"weekly_poultry"},
-{k:"CG",nm:"Chicken Gizzard",un:"\u00a2/lb",cl:"#c97dff",sy:"CKGZ",sr:"USDA AMS ams_3645",hk:"CG",rpt:"weekly_poultry"},
+{k:"CB",nm:"Chicken Breast B/S",un:"\u00a2/lb",cl:"#00e6b4",sy:"CKBR",sr:"USDA AMS ams_3649",hk:"CB",rpt:"weekly_chicken"},
+{k:"CL",nm:"Chicken Liver",un:"\u00a2/lb",cl:"#ffb020",sy:"CKLV",sr:"USDA AMS ams_3649",hk:"CL",rpt:"weekly_poultry"},
+{k:"CG",nm:"Chicken Gizzard",un:"\u00a2/lb",cl:"#c97dff",sy:"CKGZ",sr:"USDA AMS ams_3649",hk:"CG",rpt:"weekly_poultry"},
 {k:"PT",nm:"Russet Potatoes #1",un:"$/cwt",cl:"#3b9eff",sy:"PTRS",sr:"USDA AMS fvdidnop",hk:"PT",rpt:"daily_potato"},
 {k:"GB",nm:"Snap Green Beans",un:"$/bu",cl:"#00deff",sy:"GNSB",sr:"USDA AMS NX_FV020",hk:"GB",rpt:"daily_veggie"},
 ];
-var KEYS=COMS.map(function(_,i){return i;});
 var TRS={"1M":30,"3M":90,"6M":180,"1Y":365,"ALL":730};
 
 // ═══ USDA REPORT SCHEDULE (all times ET) ═══
@@ -159,8 +176,8 @@ function getReportStatus(){
   var now=new Date();
   var etOffset=(now.getUTCMonth()>=3&&now.getUTCMonth()<=10)?-4:-5;// EDT Apr-Oct, EST Nov-Mar
   var utcH=now.getUTCHours();
-  var etH=utcH+etOffset;if(etH<0)etH+=24;
-  var dow=now.getUTCDay();// 0=Sun
+  var etH=utcH+etOffset;var dow=now.getUTCDay();// 0=Sun
+  if(etH<0){etH+=24;dow=(dow+6)%7;}
   var lastCheck=state.lastCheck||0;
   var results=[];var newCount=0;
   var seen={};// dedupe reports
@@ -194,7 +211,7 @@ function getReportStatus(){
   return{reports:results,newCount:newCount,next:nextStr};
 }
 
-var state={sel:0,tr:"6M",view:"SINGLE",fc:true,lbMode:false,data:{},metrics:{},forecasts:{},lastCheck:0,showPanel:false,showHelp:false};
+var state={sel:0,tr:"6M",view:"SINGLE",fc:true,lbMode:false,data:{},metrics:{},forecasts:{},lastCheck:0,showPanel:false,showHelp:false,intel:null};
 
 // ═══ ACTUAL USDA PRICE DATA — USDA AMS LM_XB460 (beef) & AMS_3649 (chicken), Jan 2020–Apr 2026 ═══
 // Beef: mpr.datamart.ams.usda.gov/ws/report/v1/xb/LM_XB460 — weekly Friday negotiated sales, $/cwt
@@ -495,46 +512,72 @@ var HIST={
   ],
   // ── CB: USDA AMS ams_3649 Monthly National Chicken Report — Breast B/S wtd avg ¢/lb
   CB:[
+    {date:"2022-08-31",price:160.09,vol:null},   // ams_3649 Aug 2022 (prev-month from Sep 2022 report)
+    {date:"2022-09-30",price:185.42,vol:null},   // ams_3649 Sep 2022 monthly avg (HPAI-driven peak)
+    {date:"2022-10-31",price:118.07,vol:null},   // ams_3649 Oct 2022 monthly avg
+    {date:"2022-11-30",price:98.16,vol:null},    // ams_3649 Nov 2022 (prev-month from Dec 2022 report)
+    {date:"2022-12-30",price:95.77,vol:null},    // ams_3649 Dec 2022 monthly avg
     {date:"2023-01-31",price:100.68,vol:null},   // ams_3649 Jan 2023 (prev-month from Feb report)
     {date:"2023-02-28",price:122.81,vol:null},   // ams_3649 Feb 2023 monthly avg
+    {date:"2023-03-31",price:136.57,vol:null},   // ams_3649 Mar 2023 monthly avg
     {date:"2023-05-31",price:137.00,vol:null},   // ams_3649 May 2023 (prev-month from Jul report)
     {date:"2023-06-30",price:130.47,vol:null},   // ams_3649 Jun 2023 monthly avg
-    {date:"2023-09-29",price:165.20,vol:null},   // ams_3649 Sep 2023 (prev-month from Nov report)
+    {date:"2023-09-29",price:165.20,vol:null},   // ams_3649 Sep 2023 (prev-month from Oct report)
     {date:"2023-10-27",price:145.09,vol:null},   // ams_3649 Oct 2023 monthly avg
     {date:"2024-12-27",price:147.81,vol:null},   // ams_3649 Dec 2024 (prev-month from Feb 2025 report)
     {date:"2025-01-31",price:147.91,vol:null},   // ams_3649 Jan 2025 monthly avg
-    {date:"2025-02-28",price:172.59,vol:null},   // ams_3649 / USDA ERS LDP-M-369 Feb 2025
+    {date:"2025-02-28",price:172.59,vol:null},   // ams_3649 Feb 2025 monthly avg
+    {date:"2025-03-28",price:223.45,vol:null},   // ams_3649 Mar 2025 monthly avg (HPAI supply impact)
+    {date:"2025-04-30",price:223.45,vol:null},   // ams_3649 Apr 2025 (prev-month from May 2025 report)
+    {date:"2025-05-31",price:276.54,vol:null},   // ams_3649 May 2025 (prev-month from Jun 2025 report)
+    {date:"2025-06-27",price:246.19,vol:null},   // ams_3649 Jun 2025 monthly avg
     {date:"2026-01-31",price:128.17,vol:null},   // ams_3649 Jan 2026 monthly avg
     {date:"2026-02-28",price:145.13,vol:null},   // ams_3649 Feb 2026 monthly avg
     {date:"2026-03-27",price:152.90,vol:null},   // ams_3649 Mar 2026 monthly avg
   ],
   // ── CL: USDA AMS ams_3649 Monthly National Chicken Report — Livers wtd avg ¢/lb
   CL:[
-    {date:"2022-09-30",price:63.85,vol:null},    // ams_3649 Sep 2022
-    {date:"2022-10-28",price:62.38,vol:null},    // ams_3649 Oct 2022
+    {date:"2022-09-30",price:63.85,vol:null},    // ams_3649 Sep 2022 monthly avg
+    {date:"2022-10-31",price:62.38,vol:null},    // ams_3649 Oct 2022 monthly avg
+    {date:"2022-11-30",price:61.81,vol:null},    // ams_3649 Nov 2022 (prev-month from Dec 2022 report)
+    {date:"2022-12-30",price:61.72,vol:null},    // ams_3649 Dec 2022 monthly avg
     {date:"2023-01-31",price:60.73,vol:null},    // ams_3649 Jan 2023 (prev-month from Feb report)
     {date:"2023-02-28",price:61.41,vol:null},    // ams_3649 Feb 2023 monthly avg
+    {date:"2023-03-31",price:62.82,vol:null},    // ams_3649 Mar 2023 monthly avg
     {date:"2023-05-31",price:62.27,vol:null},    // ams_3649 May 2023 (prev-month from Jul report)
     {date:"2023-06-30",price:62.26,vol:null},    // ams_3649 Jun 2023 monthly avg
-    {date:"2023-09-29",price:62.14,vol:null},    // ams_3649 Sep 2023 (prev-month from Nov report)
+    {date:"2023-09-29",price:62.14,vol:null},    // ams_3649 Sep 2023 (prev-month from Oct report)
     {date:"2023-10-27",price:62.30,vol:null},    // ams_3649 Oct 2023 monthly avg
     {date:"2024-12-27",price:65.01,vol:null},    // ams_3649 Dec 2024 (prev-month from Feb 2025 report)
     {date:"2025-01-31",price:65.07,vol:null},    // ams_3649 Jan 2025 monthly avg
+    {date:"2025-02-28",price:65.38,vol:null},    // ams_3649 Feb 2025 monthly avg
+    {date:"2025-03-28",price:66.07,vol:null},    // ams_3649 Mar 2025 monthly avg
+    {date:"2025-04-30",price:66.07,vol:null},    // ams_3649 Apr 2025 (prev-month from May 2025 report)
+    {date:"2025-05-31",price:70.65,vol:null},    // ams_3649 May 2025 (prev-month from Jun 2025 report)
+    {date:"2025-06-27",price:70.39,vol:null},    // ams_3649 Jun 2025 monthly avg
     {date:"2026-02-28",price:72.28,vol:null},    // ams_3649 Feb 2026 (prev-month from Apr 2026 report)
     {date:"2026-03-27",price:72.82,vol:null},    // ams_3649 Mar 2026 monthly avg
   ],
   // ── CG: USDA AMS ams_3649 Monthly National Chicken Report — Gizzards & Hearts wtd avg ¢/lb
   CG:[
-    {date:"2022-09-30",price:60.99,vol:null},    // ams_3649 Sep 2022
-    {date:"2022-10-28",price:54.78,vol:null},    // ams_3649 Oct 2022
+    {date:"2022-09-30",price:60.99,vol:null},    // ams_3649 Sep 2022 monthly avg
+    {date:"2022-10-31",price:54.78,vol:null},    // ams_3649 Oct 2022 monthly avg
+    {date:"2022-11-30",price:58.94,vol:null},    // ams_3649 Nov 2022 (prev-month from Dec 2022 report)
+    {date:"2022-12-30",price:66.01,vol:null},    // ams_3649 Dec 2022 monthly avg
     {date:"2023-01-31",price:64.77,vol:null},    // ams_3649 Jan 2023 (prev-month from Feb report)
     {date:"2023-02-28",price:66.24,vol:null},    // ams_3649 Feb 2023 monthly avg
+    {date:"2023-03-31",price:70.96,vol:null},    // ams_3649 Mar 2023 monthly avg
     {date:"2023-05-31",price:73.56,vol:null},    // ams_3649 May 2023 (prev-month from Jul report)
     {date:"2023-06-30",price:75.05,vol:null},    // ams_3649 Jun 2023 monthly avg
-    {date:"2023-09-29",price:74.67,vol:null},    // ams_3649 Sep 2023 (prev-month from Nov report)
+    {date:"2023-09-29",price:74.67,vol:null},    // ams_3649 Sep 2023 (prev-month from Oct report)
     {date:"2023-10-27",price:74.33,vol:null},    // ams_3649 Oct 2023 monthly avg
     {date:"2024-12-27",price:80.15,vol:null},    // ams_3649 Dec 2024 (prev-month from Feb 2025 report)
     {date:"2025-01-31",price:79.50,vol:null},    // ams_3649 Jan 2025 monthly avg
+    {date:"2025-02-28",price:79.47,vol:null},    // ams_3649 Feb 2025 monthly avg
+    {date:"2025-03-28",price:80.31,vol:null},    // ams_3649 Mar 2025 monthly avg
+    {date:"2025-04-30",price:80.31,vol:null},    // ams_3649 Apr 2025 (prev-month from May 2025 report)
+    {date:"2025-05-31",price:83.93,vol:null},    // ams_3649 May 2025 (prev-month from Jun 2025 report)
+    {date:"2025-06-27",price:84.40,vol:null},    // ams_3649 Jun 2025 monthly avg
     {date:"2026-02-28",price:89.98,vol:null},    // ams_3649 Feb 2026 (prev-month from Apr 2026 report)
     {date:"2026-03-27",price:86.23,vol:null},    // ams_3649 Mar 2026 monthly avg
   ],
@@ -622,6 +665,97 @@ function doFc(data){
     fc.push({date:d.toISOString().split("T")[0],price:+(p.toFixed(2)),upper:+((p+ci).toFixed(2)),lower:+(Math.max(0,p-ci).toFixed(2))});}
   return fc;
 }
+
+// ═══ MARKET INTEL — static qualitative context per commodity (sourced from USDA published data) ═══
+var INTEL_CONTEXT={
+  BT90:[
+    "USDA NASS Jan 2026: U.S. cattle inventory at 86.2M head \u2014 a 75-year low. Structural lean supply tightness expected to persist through 2026\u20132027 as herd rebuilding takes 3\u20135 years.",
+    "BT90 is the primary lean base for 90/10 and 93/7 blends. Demand from major QSR and further-processing accounts is largely inelastic year-round.",
+    "The Apr 2026 price of $448.32/cwt is the highest level recorded in this terminal\u2019s history (Jan 2020\u2013present). Prior peak was $434.05 in Sep 2025. Lean premium (BT90 minus BT50 spread) is approximately $272/cwt \u2014 historically extreme."
+  ],
+  BT81:[
+    "BT81 is the industry benchmark for 80/20 ground beef \u2014 the standard for retail packs and food service burger patties. It tracks the most common consumer grind.",
+    "Thin trading market: weeks with zero confirmed negotiated trades are normal for BT81. When inactive, use BT90 as a directional proxy for lean pricing.",
+    "BT81 data gaps in this terminal reflect actual weeks of no reported negotiated trade, not missing data. Use the MA-30 and MA-90 lines to smooth the sparse history."
+  ],
+  BT65:[
+    "65CL bridges fat trim (50CL) and lean trim (81/90CL). Primary use in sausage manufacturing, processed beef formulations, and blended ground beef programs.",
+    "COVID supply shock in May 2020 spiked BT65 to $195/cwt. The 2025\u20132026 price range of $172\u2013$273/cwt represents a new structural level well above that prior peak.",
+    "BT65 tracks loosely with ground beef processing volumes. Seasonal demand typically rises May\u2013August (summer grilling) and November\u2013December (holiday retail)."
+  ],
+  BT50:[
+    "50CL is the fat trim fraction. It moves partly inversely to lean trim when processors are fat-long. Very low prices can signal fat oversupply relative to rendering and processing demand.",
+    "BT50 serves fat target requirements in sausage, hot dogs, and pet food formulations. Domestic demand is also supported by rendering and export channels.",
+    "BT50/BT90 spread reflects the \u2018lean premium.\u2019 Current spread ~$272/cwt is historically elevated, confirming extreme lean supply constraint vs. adequate fat trim supply."
+  ],
+  CB:[
+    "Chicken breast pricing via USDA AMS_3649 is reported monthly. W% and D% changes are approximate because data points may be spaced weeks apart rather than daily.",
+    "Breast prices are seasonally weakest in Q4 (Oct\u2013Dec) as production peaks and foodservice demand softens. The 2022\u20132026 range tracked here: $95.77\u00a2 (Dec 2022) to $276.54\u00a2 (May 2025 HPAI peak). Mar 2026 at 152.90\u00a2 is in the middle of the historical range.",
+    "HPAI (avian flu) outbreaks are the primary upside supply risk. The 2025 HPAI cycle drove breast prices from ~148\u00a2 (Jan 2025) to 276\u00a2 (May 2025) \u2014 a +87% spike in four months \u2014 before retreating to 128\u00a2 by Jan 2026. Monitor USDA APHIS flock reports for early signals."
+  ],
+  CL:[
+    "Chicken livers are a processing by-product with stable, range-bound pricing and low volatility. Primary end markets: pet food manufacturing and specialty foodservice.",
+    "Export demand \u2014 mainly Sub-Saharan Africa and Southeast Asia \u2014 absorbs the majority of U.S. liver supply. Domestic foodservice use is a small fraction of total volume.",
+    "Liver pricing rarely moves more than 10\u201315% in a year absent a major HPAI event or export trade disruption. Very suitable for semi-annual fixed-price contract structures."
+  ],
+  CG:[
+    "Gizzard pricing is more volatile than liver due to concentrated Asian export demand (China, Vietnam, Philippines). Demand surges around major Asian festivals (Lunar New Year, Golden Week).",
+    "When CG prices spike independently of liver (CL), it typically signals an export container booking surge rather than a domestic supply or demand shift.",
+    "USDA AMS_3649 reports gizzards and hearts together under a single \u2018Gizzards and Hearts\u2019 weighted average line. The combined category trades as a single commodity in most domestic contracts."
+  ],
+  PT:[
+    "Idaho Russet Norkotah U.S. #1 is the standard food service russet potato. New crop arrives August\u2013September each year and typically resets prices lower from summer storage-season peaks.",
+    "Storage premiums build March\u2013June, reflecting shrinkage loss, handling, and financing costs from the prior fall\u2019s harvest. Spring prices are typically the seasonal peak before new crop arrival.",
+    "Apr 2026 price of $10.00/cwt is the new low in this terminal\u2019s tracked data (range: $10.00\u2013$19.76). Late-season softening typical; new crop expected August\u2013September."
+  ],
+  GB:[
+    "FL handpicked snap beans dominate the NY terminal market January\u2013June (Florida winter/spring production season). Prices typically drop sharply in July when domestic northern production ramps up.",
+    "Green bean pricing is among the most volatile in this terminal \u2014 seasonal swings of 200\u2013300% between production-season peaks and off-season troughs are expected and normal.",
+    "Current Mar 2026 price of $91/bu is near the ceiling for FL season pricing. A significant price decline \u2014 typically 50\u201370% \u2014 is expected by late June\u2013July as supply transitions to domestic summer growers."
+  ]
+};
+
+function countConsecutive(data){
+  if(!data||data.length<2)return{count:0,dir:0};
+  var n=data.length,dir=data[n-1].price>data[n-2].price?1:-1,count=1;
+  for(var i=n-2;i>0;i--){if(dir>0&&data[i].price>data[i-1].price)count++;else if(dir<0&&data[i].price<data[i-1].price)count++;else break;}
+  return{count:count,dir:dir};
+}
+
+function genIntel(idx){
+  var c=COMS[idx],data=state.data[idx],m=state.metrics[idx];
+  if(!m||!data||data.length<2)return[];
+  var bullets=[],latest=m.latest,lastD=data[data.length-1].date;
+  // Last data point date + source
+  bullets.push({type:"neutral",text:"Last USDA report: "+lastD+" \u00b7 Source: "+c.sr});
+  // 52W range position
+  var rng52=m.h52-m.l52,pct52=rng52>0?Math.round(((latest-m.l52)/rng52)*100):50;
+  if(pct52>=85)bullets.push({type:"warn",text:"52W Position: "+pct52+"% of annual range \u2014 near 52-week HIGH ("+fmt(m.h52,2)+" "+c.un+"). Elevated cost exposure at current levels."});
+  else if(pct52<=15)bullets.push({type:"good",text:"52W Position: "+pct52+"% of annual range \u2014 near 52-week LOW ("+fmt(m.l52,2)+" "+c.un+"). Potential favorable buying window."});
+  else bullets.push({type:"neutral",text:"52W Position: "+pct52+"% of range \u00b7 Low: "+fmt(m.l52,2)+" \u00b7 High: "+fmt(m.h52,2)+" "+c.un});
+  // Consecutive periods up/down
+  var cs=countConsecutive(data);
+  if(cs.count>=3){var csd=cs.dir>0?"rising":"falling",cst=cs.dir>0?"warn":"good";bullets.push({type:cst,text:"Consecutive trend: price "+csd+" for "+cs.count+" straight reporting periods \u2014 "+(cs.dir>0?"upward momentum building; watch for mean reversion":"downside momentum active; may present a buying opportunity")});}
+  else if(cs.count===2){bullets.push({type:"neutral",text:"Two consecutive periods "+(cs.dir>0?"up":"down")+" \u2014 early trend signal, not yet confirmed"});}
+  // MA alignment
+  var abA30=latest>m.a30,abA90=latest>m.a90;
+  if(abA30&&abA90)bullets.push({type:"warn",text:"MA Signal: above MA-30 ("+fmt(m.a30,2)+") and MA-90 ("+fmt(m.a90,2)+") "+c.un+" \u2014 uptrend confirmed across all moving average windows"});
+  else if(!abA30&&!abA90)bullets.push({type:"good",text:"MA Signal: below MA-30 ("+fmt(m.a30,2)+") and MA-90 ("+fmt(m.a90,2)+") "+c.un+" \u2014 downtrend confirmed across all moving average windows"});
+  else if(abA30&&!abA90)bullets.push({type:"neutral",text:"MA Signal: above MA-30 ("+fmt(m.a30,2)+") but below MA-90 ("+fmt(m.a90,2)+") "+c.un+" \u2014 short-term recovery within longer-term downtrend"});
+  else bullets.push({type:"neutral",text:"MA Signal: below MA-30 ("+fmt(m.a30,2)+") but above MA-90 ("+fmt(m.a90,2)+") "+c.un+" \u2014 near-term pullback within a longer uptrend"});
+  // YoY context
+  if(m.yoy!=null){var ys=m.yoy>=0?"+":"",yt=m.yoy>20?"warn":m.yoy<-20?"good":"neutral",yd=m.yoy>20?" \u2014 significant YoY cost inflation; review budget assumptions":m.yoy<-20?" \u2014 meaningful cost relief vs. prior year":m.yoy>0?" \u2014 modest year-over-year cost increase":" \u2014 modest year-over-year cost decline";bullets.push({type:yt,text:"Year-over-year: "+ys+m.yoy.toFixed(1)+"%"+yd});}
+  // Volatility
+  if(m.vol>0){var vt,vd;if(m.vol>45){vt="warn";vd="Very high ("+m.vol.toFixed(0)+"% ann.) \u2014 wide budget variance required; consider price risk management tools";}else if(m.vol>25){vt="warn";vd="High ("+m.vol.toFixed(0)+"% ann.) \u2014 monitor weekly; use cost-plus or indexed contract structures";}else if(m.vol>12){vt="neutral";vd="Moderate ("+m.vol.toFixed(0)+"% ann.) \u2014 normal commodity range; monthly review cadence adequate";}else{vt="good";vd="Low ("+m.vol.toFixed(0)+"% ann.) \u2014 stable market; suitable for semi-annual fixed-price contracts";}bullets.push({type:vt,text:"Volatility: "+vd});}
+  // Forecast signal
+  var fcd=state.forecasts[idx];
+  if(fcd&&fcd.length>=4){var f4=fcd[3],f12=fcd[fcd.length-1],fp4=((f4.price-latest)/latest)*100,fp12=((f12.price-latest)/latest)*100,ft=fp12>8?"warn":fp12<-8?"good":"neutral";bullets.push({type:ft,text:"Holt-Winters forecast \u2014 4W: "+fmt(f4.price,2)+" "+(fp4>=0?"+":"")+fp4.toFixed(1)+"% \u00b7 12W: "+fmt(f12.price,2)+" "+(fp12>=0?"+":"")+fp12.toFixed(1)+"% \u2014 "+(fp12>5?"upward trajectory; consider locking in pricing if possible":fp12<-5?"downward trajectory; wait-and-see may yield savings":"relatively flat near-term forecast")});}
+  // Static commodity context
+  var ctx=INTEL_CONTEXT[c.k];
+  if(ctx)ctx.forEach(function(txt){bullets.push({type:"info",text:txt});});
+  return bullets;
+}
+
 function fmt(v,d){return v!=null&&!isNaN(v)?v.toFixed(d!=null?d:2):"\u2014";}
 function fP(v){return v!=null&&!isNaN(v)?(v>=0?"+":"")+v.toFixed(2)+"%":"\u2014";}
 function pcCl(v){return v>0.1?"#00e6b4":v<-0.1?"#ff4d6a":"#7889a8";}
@@ -652,35 +786,6 @@ function drawChart(canvas,series,color,opts){
   var grad=ctx.createLinearGradient(0,pad.t,0,h-pad.b);grad.addColorStop(0,color+"33");grad.addColorStop(1,color+"03");ctx.fillStyle=grad;ctx.beginPath();ctx.moveTo(xP(0,total),yP(prices[0]));for(var i=1;i<prices.length;i++)ctx.lineTo(xP(i,total),yP(prices[i]));ctx.lineTo(xP(prices.length-1,total),h-pad.b);ctx.lineTo(xP(0,total),h-pad.b);ctx.closePath();ctx.fill();
   ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(xP(0,total),yP(prices[0]));for(var i=1;i<prices.length;i++)ctx.lineTo(xP(i,total),yP(prices[i]));ctx.stroke();
   if(opts.hoverX!=null){var idx=Math.round((opts.hoverX-pad.l)/cw*(total-1));if(idx>=0&&idx<series.length){var px=xP(idx,total),py=yP(series[idx].price);ctx.strokeStyle="#28406a";ctx.lineWidth=0.5;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(px,pad.t);ctx.lineTo(px,h-pad.b);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=color;ctx.beginPath();ctx.arc(px,py,3.5,0,Math.PI*2);ctx.fill();var tip=fmt(series[idx].price)+" \u00b7 "+series[idx].date;ctx.font="bold 11px 'IBM Plex Mono',monospace";var tw=ctx.measureText(tip).width,tp=7,tx=px+12,ty=py-22;if(tx+tw+tp*2>w-pad.r)tx=px-tw-tp*2-12;if(ty<pad.t)ty=pad.t+4;ctx.fillStyle="rgba(10,15,25,0.94)";ctx.strokeStyle="rgba(30,45,72,0.8)";ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(tx-tp,ty,tw+tp*2,18,2);ctx.fill();ctx.stroke();ctx.fillStyle="#edf2fa";ctx.textAlign="left";ctx.fillText(tip,tx,ty+13);}}
-}
-function drawVol(cv,series,color,hoverX){
-  var ctx=cv.getContext("2d"),dpr=window.devicePixelRatio||1,w=cv.width/dpr,h=cv.height/dpr;
-  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);if(!series||!series.length)return;
-  var pad={t:18,r:10,b:4,l:40},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
-  var mx=0;for(var i=0;i<series.length;i++)if(series[i].vol!=null&&series[i].vol>mx)mx=series[i].vol;
-  if(!mx)return;
-  var n=series.length,bw=Math.max(1,cw/n-0.5);
-  var hIdx=hoverX!=null?Math.min(n-1,Math.max(0,Math.round((hoverX-pad.l)/cw*(n-1)))):null;
-  for(var i=0;i<n;i++){
-    var bh=series[i].vol!=null?(series[i].vol/mx)*ch:0,bx=pad.l+i*(cw/n);
-    ctx.fillStyle=(i===hIdx)?color+"90":color+"40";
-    ctx.fillRect(bx,h-pad.b-bh,bw,bh);
-  }
-  if(hIdx!=null&&hIdx>=0&&hIdx<n){
-    var d=series[hIdx],bx=pad.l+hIdx*(cw/n)+bw/2;
-    // crosshair line
-    ctx.strokeStyle="#28406a";ctx.lineWidth=0.5;ctx.setLineDash([3,3]);
-    ctx.beginPath();ctx.moveTo(bx,pad.t);ctx.lineTo(bx,h-pad.b);ctx.stroke();ctx.setLineDash([]);
-    // tooltip
-    var volStr=d.vol.toLocaleString()+" lbs";
-    var dateStr=new Date(d.date).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
-    var label=dateStr+" \u00b7 "+volStr;
-    ctx.font="bold 11px 'IBM Plex Mono',monospace";
-    var tw=ctx.measureText(label).width,tp=6,tx=bx+8,ty=pad.t+2;
-    if(tx+tw+tp*2>w-4)tx=bx-tw-tp*2-8;
-    ctx.fillStyle="rgba(10,15,25,0.94)";ctx.strokeStyle="rgba(30,45,72,0.8)";ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(tx-tp,ty,tw+tp*2,16,2);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#edf2fa";ctx.textAlign="left";ctx.fillText(label,tx,ty+11);
-  }
 }
 function drawMini(cv,series,color,fcData){
   var ctx=cv.getContext("2d"),dpr=window.devicePixelRatio||1,w=cv.width/dpr,h=cv.height/dpr;
@@ -800,7 +905,9 @@ function render(){
     if(s.sel===i&&s.view==="SINGLE")html+='<div class="bar" style="background:'+c.cl+'"></div>';
     html+='<div class="kpi-top"><span class="kpi-sym" style="color:'+c.cl+'">'+c.sy+'</span><span class="kpi-unit">'+un+'</span></div>';
     html+='<div class="kpi-price">'+fmt(mk.latest*f,2)+'</div>';
-    html+='<div class="kpi-chg"><span style="color:'+pcCl(mk.daily)+'">'+fP(mk.daily)+'</span><span class="kpi-sep">\u2502</span><span style="color:'+pcCl(mk.wow)+'">W'+fP(mk.wow)+'</span><span class="kpi-trend" style="color:'+tCl(mk.trend)+'">'+mk.trend+'</span></div></div>';
+    html+='<div class="kpi-chg"><span style="color:'+pcCl(mk.daily)+'">'+fP(mk.daily)+'</span><span class="kpi-sep">\u2502</span><span style="color:'+pcCl(mk.wow)+'">W'+fP(mk.wow)+'</span><span class="kpi-trend" style="color:'+tCl(mk.trend)+'">'+mk.trend+'</span></div>';
+    html+='<button class="kpi-info'+(s.intel===i?' iac':'')+'" onclick="openIntel('+i+',event)">INTEL \u25b8</button>';
+    html+='</div>';
   });html+='</div>';
 
   // Controls
@@ -820,7 +927,7 @@ function render(){
     html+='<div class="main"><div class="chart-col"><div class="chart-title"><span style="color:var(--dim)">OVERLAY \u2014 % CHANGE FROM PERIOD START \u00b7 '+s.tr+'</span></div>';
     html+='<div class="chart-box" style="height:390px"><canvas id="overlayChart"></canvas></div></div>';
     html+='<div class="side"><div class="detail"><div class="det-sym" style="color:var(--dim)">ALL MKTS</div><div class="det-src">Sorted by WoW % change</div>';
-    var ovRows=COMS.map(function(c,i){return{c:c,mk:s.metrics[i]};}).filter(function(x){return x.mk;}).sort(function(a,b){return b.mk.wow-a.mk.wow;});
+    var ovRows=COMS.map(function(c,i){return{c:c,mk:s.metrics[i]};}).filter(function(x){return x.mk;}).sort(function(a,b){var aw=a.mk.wow!=null?a.mk.wow:-Infinity;var bw=b.mk.wow!=null?b.mk.wow:-Infinity;return bw-aw;});
     ovRows.forEach(function(x){html+='<div class="det-row"><span class="det-lbl" style="color:'+x.c.cl+'">'+x.c.sy+'</span><span class="det-val" style="color:'+pcCl(x.mk.wow)+'">'+fP(x.mk.wow)+'</span></div>';});
     html+='</div></div></div>';
   } else {
@@ -937,7 +1044,7 @@ function render(){
     html+='<div class="help-cols">';
     html+='<div>';
     html+='<div style="color:var(--grn);font-weight:700;font-size:10px;margin-bottom:5px">SINGLE VIEW</div>';
-    html+='<div class="help-note">Deep-dive on one commodity. Full price history chart with hover crosshair, volume bars below the chart, and a complete stats panel on the right showing all metrics plus forecast values. <b>Select a commodity</b> using the KPI cards at the top, or ↑↓ arrow keys.</div>';
+    html+='<div class="help-note">Deep-dive on one commodity. Full price history chart with hover crosshair and a complete stats panel on the right showing all metrics plus forecast values. <b>Select a commodity</b> using the KPI cards at the top, or ↑↓ arrow keys.</div>';
     html+='<div style="color:var(--cyn);font-weight:700;font-size:10px;margin:14px 0 5px">OVERLAY VIEW</div>';
     html+='<div class="help-note">All 9 commodities on one chart, normalized to <b>% change from the start of the selected time period</b>. Every line starts at 0% on the left edge. Lines above zero are up from period start; below zero are down.<br><br>Use OVERLAY to answer: <i>"Which commodity is rising fastest this quarter?"</i> or <i>"Is chicken tracking with beef this year?"</i> Switch time ranges (1M/3M/6M etc.) to change the comparison baseline.<br><br>The right panel shows all 9 sorted by WoW % change \u2014 a quick leaderboard.</div>';
     html+='</div>';
@@ -996,6 +1103,27 @@ function render(){
     html+='</div></div></div>'; // close help-body, help-box, help-overlay
   }
 
+  // ═══ MARKET INTEL PANEL ═══
+  if(s.intel!==null){
+    var ic=COMS[s.intel],im=s.metrics[s.intel],ibs=genIntel(s.intel);
+    html+='<div class="intel-overlay" onclick="closeIntel()"></div>';
+    html+='<div class="intel-panel" style="border-top:3px solid '+ic.cl+'">';
+    html+='<div class="intel-hdr"><div style="display:flex;align-items:baseline"><span class="intel-sym" style="color:'+ic.cl+'">'+ic.sy+'</span><span class="intel-nm">MARKET INTEL \u00b7 '+ic.nm.toUpperCase()+(s.lbMode?' \u00b7 NOTE: prices shown in native unit ('+ic.un+')':'')+'</span></div>';
+    html+='<button class="intel-close" onclick="closeIntel()">\u00d7 CLOSE</button></div>';
+    html+='<div class="intel-body">';
+    html+='<div class="intel-label">AUTO-GENERATED SIGNALS FROM USDA PRICE DATA'+(im?' \u00b7 CURRENT: '+fmt(im.latest,2)+' '+ic.un:'')+' \u00b7 PROCUREMENT CONTEXT BELOW</div>';
+    ibs.forEach(function(b){
+      var icon,col;
+      if(b.type==="warn"){icon="\u25b2";col="var(--amb)";}
+      else if(b.type==="good"){icon="\u25bc";col="var(--grn)";}
+      else if(b.type==="info"){icon="\u25cf";col="var(--blu)";}
+      else{icon="\u2192";col="var(--mut)";}
+      html+='<div class="intel-bullet"><span class="intel-icon" style="color:'+col+'">'+icon+'</span><span class="intel-text">'+b.text+'</span></div>';
+    });
+    html+='<div class="intel-meta">\u25b2 Elevated / cost risk \u00b7 \u25bc Declining / favorable \u00b7 \u25cf Market context \u00b7 \u2192 Informational \u00b7 All signals derived from USDA AMS published price data only \u00b7 Not a live feed \u00b7 Verify at USDA AMS before procurement decisions</div>';
+    html+='</div></div>';
+  }
+
   document.getElementById("app").innerHTML=html;
   requestAnimationFrame(function(){requestAnimationFrame(function(){
     if(s.view==="MATRIX"){COMS.forEach(function(c,i){var cv=document.getElementById("mini"+i);if(!cv)return;sizeCanvas(cv);var mf=s.lbMode?lbFactor(c):1;var d=lbSer(filterDays(s.data[i]||[],days),mf);var fc=s.fc?lbFc(s.forecasts[i]||null,mf):null;drawMini(cv,d,c.cl,fc);});}
@@ -1005,14 +1133,16 @@ function render(){
 }
 
 // ═══ ACTIONS ═══
-window.pick=function(i){state.sel=i;state.view="SINGLE";state.showPanel=false;render();};
+window.pick=function(i){state.sel=i;state.view="SINGLE";state.showPanel=false;state.intel=null;render();};
 window.setTR=function(r){state.tr=r;render();};
-window.setView=function(v){state.view=v;state.showPanel=false;render();};
+window.setView=function(v){state.view=v;state.showPanel=false;state.intel=null;render();};
 window.toggleFc=function(){state.fc=!state.fc;render();};
 window.togglePanel=function(){state.showPanel=!state.showPanel;render();};
 window.markChecked=function(ev){state.lastCheck=Date.now();};
-window.toggleHelp=function(){state.showHelp=!state.showHelp;render();};
+window.toggleHelp=function(){state.showHelp=!state.showHelp;if(state.showHelp)state.intel=null;render();};
 window.toggleLb=function(){state.lbMode=!state.lbMode;render();};
+window.openIntel=function(i,ev){ev.stopPropagation();state.intel=(state.intel===i)?null:i;render();};
+window.closeIntel=function(){state.intel=null;render();};
 
 document.addEventListener("keydown",function(ev){
   if(document.activeElement&&document.activeElement.tagName==="INPUT")return;
@@ -1024,7 +1154,7 @@ document.addEventListener("keydown",function(ev){
   if(ev.key==="m"){state.view="MATRIX";render();}
   if(ev.key==="s"){state.view="SINGLE";render();}
   if(ev.key==="l"){state.lbMode=!state.lbMode;render();}
-  if(ev.key==="Escape"){state.showPanel=false;state.showHelp=false;render();}
+  if(ev.key==="Escape"){state.showPanel=false;state.showHelp=false;state.intel=null;render();}
   if(ev.key==="?"){state.showHelp=!state.showHelp;render();}
 });
 document.addEventListener("click",function(ev){if(state.showPanel&&!ev.target.closest(".rbtn")&&!ev.target.closest(".rpanel")){state.showPanel=false;render();}});
