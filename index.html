@@ -171,6 +171,22 @@ var NEWS=[
 {t:"NOAA: El Ni\u00f1o Watch \u2014 82% Chance El Ni\u00f1o Emerges May\u2013Jul 2026; Currently Neutral, Strength Uncertain",d:"May 14",s:"NOAA CPC",u:"https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/enso_advisory/ensodisc.shtml"},
 {t:"U.S. Cattle Inventory Hits 75-Year Low at 86.2M Head \u2014 Structural Lean-Trim Tightness Persists",d:"Mar 28",s:"USDA NASS",u:"https://www.fb.org/market-intel/smaller-cattle-herd-creates-market-volatility"},
 ];
+// ── Always render news most-recent-first (ALL NEWS dropdown + ticker). Sorts the shared NEWS array once.
+// Date convention for sorting: "Mon DD" = day-specific (BASE_YEAR); "Mon YYYY" = month-only (sorts to start of month).
+// Stable: items on the same date keep their authored order. Bump BASE_YEAR when the dataset rolls into a new year.
+(function(){
+  var BASE_YEAR=2026,MON={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+  function newsTime(d){
+    var p=String(d||"").trim().split(/\s+/),mo=MON[p[0]];
+    if(mo==null)return 0;
+    var n=parseInt(p[1],10);
+    if(p[1]&&p[1].length===4&&!isNaN(n))return new Date(n,mo,1).getTime();   // "Jun 2026" (month-only)
+    return new Date(BASE_YEAR,mo,isNaN(n)?1:n).getTime();                    // "Jun 12" (day-specific)
+  }
+  NEWS=NEWS.map(function(n,i){return{n:n,i:i,t:newsTime(n.d)};})
+           .sort(function(a,b){return b.t-a.t||a.i-b.i;})
+           .map(function(x){return x.n;});
+})();
 
 // ═══ 9 COMMODITIES (4 beef trims + 2 chicken + 1 offal gizzard + potato + green bean) ═══
 var COMS=[
