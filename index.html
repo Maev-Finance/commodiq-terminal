@@ -6,23 +6,23 @@
 <title>CommodIQ Terminal — Maev Finance</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#06090f;--panel:#0d1524;--card:#131b2d;--card2:#172139;--hover:#1a2540;--bdr:#26334f;--bdr2:#3a5582;--txt:#edf2fa;--dim:#a5b3cf;--mut:#7886a3;--grn:#00e6b4;--red:#ff4d6a;--amb:#ffb020;--blu:#4da6ff;--cyn:#00deff;--mag:#c97dff;--news:#0a1222}
+:root{--bg:#000000;--panel:#0a0c12;--card:#0d1018;--card2:#12151f;--hover:#1b2233;--bdr:#2b3650;--bdr2:#46597f;--txt:#f5f8ff;--dim:#c4d0e8;--mut:#94a2bf;--grn:#00ffc2;--red:#ff5e7d;--amb:#ffc233;--blu:#5ab0ff;--cyn:#24e9ff;--mag:#d28bff;--news:#05070d}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'IBM Plex Mono','Courier New',monospace;font-size:12px;overflow-x:hidden;-webkit-font-smoothing:antialiased;letter-spacing:.01em}
-body{background-image:radial-gradient(ellipse at top,rgba(10,18,34,.6) 0%,var(--bg) 70%)}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'IBM Plex Mono','Courier New',monospace;font-size:13px;overflow-x:hidden;-webkit-font-smoothing:antialiased;letter-spacing:.01em}
+body{background-image:radial-gradient(ellipse at top,rgba(16,28,58,.5) 0%,var(--bg) 60%)}
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--panel)}::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:3px}
 a{color:var(--blu);text-decoration:none}
-button{font-family:inherit;cursor:pointer;outline:none;border:1px solid var(--bdr);background:transparent;color:var(--dim);border-radius:3px;padding:5px 12px;font-size:11px;font-weight:600;letter-spacing:.5px;transition:all .15s ease}
+button{font-family:inherit;cursor:pointer;outline:none;border:1px solid var(--bdr);background:transparent;color:var(--dim);border-radius:3px;padding:5px 13px;font-size:12px;font-weight:600;letter-spacing:.5px;transition:all .15s ease}
 button:hover{border-color:var(--bdr2);color:var(--txt);background:rgba(26,37,64,.35)}
 button.on{background:rgba(0,230,180,.14);color:var(--grn);border-color:rgba(0,230,180,.5);box-shadow:0 0 0 1px rgba(0,230,180,.08)}
 .shell{display:flex;flex-direction:column;min-height:100vh}
 .header{display:flex;align-items:center;justify-content:space-between;padding:13px 24px;border-bottom:1px solid var(--bdr);background:linear-gradient(180deg,var(--panel) 0%,#0b1220 100%);box-shadow:0 1px 0 rgba(255,255,255,.02) inset}
-.logo{font-size:18px;font-weight:800;letter-spacing:4.5px;color:var(--grn)}.logo b{color:var(--amb)}
+.logo{font-size:20px;font-weight:800;letter-spacing:4.5px;color:var(--grn)}.logo b{color:var(--amb)}
 .hdr-firm{font-size:9.5px;color:var(--mut);letter-spacing:2.2px;font-weight:600}
-.hdr-r{display:flex;gap:14px;align-items:center;font-size:10.5px;color:var(--dim)}
-.live{color:var(--grn);font-size:10px}.clock{color:var(--txt);font-variant-numeric:tabular-nums;font-size:11px;font-weight:500}
+.hdr-r{display:flex;gap:14px;align-items:center;font-size:11.5px;color:var(--dim)}
+.live{color:var(--grn);font-size:11px}.clock{color:var(--txt);font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:500}
 /* Refresh button states */
-.rbtn{border-radius:3px;padding:5px 14px;font-size:10.5px;font-weight:600;cursor:pointer;transition:all .2s;position:relative;letter-spacing:.3px}
+.rbtn{border-radius:3px;padding:5px 14px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .2s;position:relative;letter-spacing:.3px}
 .rbtn.avail{background:rgba(0,230,180,.15);color:#00e6b4;border:1px solid rgba(0,230,180,.5);animation:pulse 2s ease infinite}
 .rbtn.stale{background:transparent;color:var(--mut);border:1px solid var(--bdr);cursor:default}
 .rbtn .badge{position:absolute;top:-5px;right:-5px;background:#ff4d6a;color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:8px;line-height:1.3}
@@ -37,24 +37,24 @@ button.on{background:rgba(0,230,180,.14);color:var(--grn);border-color:rgba(0,23
 .rnew{color:var(--grn)}.rold{color:var(--mut)}
 .rnext{font-size:10px;color:var(--mut);margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr)}
 /* Ticker */
-.ticker{background:var(--news);border-bottom:1px solid var(--bdr);overflow:hidden;height:32px;position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,.03),inset 0 -1px 0 rgba(0,0,0,.4)}
+.ticker{background:var(--news);border-bottom:1px solid var(--bdr);overflow:hidden;height:37px;position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,.03),inset 0 -1px 0 rgba(0,0,0,.4)}
 .ticker-track{display:flex;position:absolute;top:0;height:30px;align-items:center;white-space:nowrap;animation:scroll 210s linear infinite}
 .ticker:hover .ticker-track{animation-play-state:paused}
 @keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.ticker a{display:inline-flex;align-items:center;gap:10px;padding:0 24px;height:32px;font-size:11px;border-right:1px solid rgba(38,51,79,.45);text-decoration:none;transition:background .15s}
+.ticker a{display:inline-flex;align-items:center;gap:10px;padding:0 24px;height:37px;font-size:12.5px;border-right:1px solid rgba(38,51,79,.45);text-decoration:none;transition:background .15s}
 .ticker a:hover{background:rgba(26,37,64,.4)}
-.ticker .td{color:var(--amb);font-weight:700;font-size:9.5px;letter-spacing:.5px}.ticker .ts{color:var(--mut);font-size:9.5px;letter-spacing:.3px}.ticker .tt{color:var(--txt);font-weight:500}.ticker .tl{color:var(--blu);font-size:10px}
+.ticker .td{color:var(--amb);font-weight:700;font-size:10.5px;letter-spacing:.5px}.ticker .ts{color:var(--mut);font-size:10.5px;letter-spacing:.3px}.ticker .tt{color:var(--txt);font-weight:500}.ticker .tl{color:var(--blu);font-size:11px}
 /* News list toggle + expanded panel */
-.news-toggle{position:absolute;right:0;top:0;height:32px;padding:0 16px;background:var(--news);border:none;border-left:1px solid var(--bdr);border-radius:0;color:var(--dim);font-size:9.5px;font-weight:700;letter-spacing:1.2px;z-index:5;box-shadow:-12px 0 12px -6px rgba(4,8,16,.9)}
+.news-toggle{position:absolute;right:0;top:0;height:37px;padding:0 16px;background:var(--news);border:none;border-left:1px solid var(--bdr);border-radius:0;color:var(--dim);font-size:10.5px;font-weight:700;letter-spacing:1.2px;z-index:5;box-shadow:-12px 0 12px -6px rgba(4,8,16,.9)}
 .news-toggle:hover{color:var(--txt);background:var(--hover);border-color:var(--bdr2)}
 .news-toggle.on{color:var(--amb);border-left-color:rgba(255,176,32,.5)}
 .news-panel{background:linear-gradient(180deg,var(--news) 0%,var(--panel) 100%);border-bottom:1px solid var(--bdr2);max-height:330px;overflow-y:auto;padding:6px 24px 12px;box-shadow:inset 0 8px 16px -10px rgba(0,0,0,.6),0 10px 24px -8px rgba(0,0,0,.5)}
 .news-panel-title{font-size:9px;color:var(--mut);letter-spacing:2.2px;font-weight:700;padding:8px 0 8px;border-bottom:1px solid var(--bdr);margin-bottom:2px}
-.news-row{display:flex;align-items:baseline;gap:14px;padding:6.5px 4px;border-bottom:1px solid rgba(38,51,79,.35);font-size:11px;text-decoration:none;transition:background .12s}
+.news-row{display:flex;align-items:baseline;gap:14px;padding:7.5px 4px;border-bottom:1px solid rgba(38,51,79,.35);font-size:12.5px;text-decoration:none;transition:background .12s}
 .news-row:last-child{border-bottom:none}
 .news-row:hover{background:rgba(26,37,64,.5)}
-.news-row .nd{color:var(--amb);font-weight:700;font-size:9.5px;min-width:48px;letter-spacing:.5px;flex-shrink:0}
-.news-row .ns{color:var(--mut);font-size:9.5px;min-width:96px;letter-spacing:.3px;flex-shrink:0}
+.news-row .nd{color:var(--amb);font-weight:700;font-size:10.5px;min-width:52px;letter-spacing:.5px;flex-shrink:0}
+.news-row .ns{color:var(--mut);font-size:10.5px;min-width:100px;letter-spacing:.3px;flex-shrink:0}
 .news-row .nt{color:var(--txt);flex:1;line-height:1.5}
 .news-row .tl{flex-shrink:0}
 /* KPI */
@@ -63,38 +63,38 @@ button.on{background:rgba(0,230,180,.14);color:var(--grn);border-color:rgba(0,23
 .kpi:hover{border-color:var(--bdr2);background:linear-gradient(180deg,var(--hover) 0%,var(--card2) 100%);transform:translateY(-1px)}
 .kpi.sel{background:linear-gradient(180deg,var(--hover) 0%,var(--card2) 100%);border-color:var(--bdr2)}.kpi .bar{position:absolute;top:0;left:0;right:0;height:3px}
 .kpi-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.kpi-sym{font-size:11.5px;font-weight:700;letter-spacing:1.6px}.kpi-unit{font-size:9px;color:var(--mut);font-weight:500}
-.kpi-price{font-size:23px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-0.3px;line-height:1.15;margin-bottom:2px}
-.kpi-chg{display:flex;gap:8px;margin-top:5px;font-size:10px;font-weight:600}.kpi-sep{color:var(--mut)}
-.kpi-trend{font-size:14px;margin-left:auto;opacity:.9}
+.kpi-sym{font-size:12.5px;font-weight:700;letter-spacing:1.6px}.kpi-unit{font-size:9.5px;color:var(--mut);font-weight:500}
+.kpi-price{font-size:27px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-0.3px;line-height:1.15;margin-bottom:2px}
+.kpi-chg{display:flex;gap:8px;margin-top:5px;font-size:11.5px;font-weight:600}.kpi-sep{color:var(--mut)}
+.kpi-trend{font-size:16px;margin-left:auto;opacity:.9}
 /* Layout */
 .controls{display:flex;justify-content:space-between;align-items:center;padding:8px 24px 9px;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--bdr);background:rgba(13,21,36,.35)}
 .ctrl-l{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.btn-grp{display:flex;gap:3px}
 .keys-hint{font-size:9.5px;color:var(--mut);letter-spacing:.5px}
 .main{display:flex;gap:12px;padding:12px 24px 12px}
 .chart-col{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0}
-.chart-title{padding:2px 4px;font-size:12.5px;font-weight:600;letter-spacing:.4px}
+.chart-title{padding:2px 4px;font-size:14px;font-weight:600;letter-spacing:.4px}
 .chart-box{background:linear-gradient(180deg,var(--card2) 0%,var(--card) 100%);border:1px solid var(--bdr);border-radius:4px;position:relative;overflow:hidden;height:368px;box-shadow:0 1px 0 rgba(255,255,255,.02) inset,0 4px 16px rgba(0,0,0,.25)}
 .chart-box canvas{display:block;position:absolute;top:0;left:0;width:100%;height:100%}
 .mini-chart{overflow:hidden;position:relative;height:148px}.mini-chart canvas{display:block;position:absolute;top:0;left:0;width:100%;height:100%}
 .side{width:220px;display:flex;flex-direction:column;gap:10px}
-.detail{background:linear-gradient(180deg,var(--card2) 0%,var(--card) 100%);border:1px solid var(--bdr);border-radius:4px;padding:14px 16px;font-size:11px;line-height:1.85;box-shadow:0 1px 0 rgba(255,255,255,.02) inset}
-.det-sym{font-size:12px;font-weight:700;margin-bottom:5px;letter-spacing:1.6px}
+.detail{background:linear-gradient(180deg,var(--card2) 0%,var(--card) 100%);border:1px solid var(--bdr);border-radius:4px;padding:14px 16px;font-size:12.5px;line-height:1.85;box-shadow:0 1px 0 rgba(255,255,255,.02) inset}
+.det-sym{font-size:13.5px;font-weight:700;margin-bottom:5px;letter-spacing:1.6px}
 .det-src{font-size:9px;color:var(--mut);margin-bottom:10px;letter-spacing:.6px;font-weight:500}
 .det-row{display:flex;justify-content:space-between;padding:2px 0}.det-lbl{color:var(--dim);font-weight:500}.det-val{font-variant-numeric:tabular-nums;font-weight:600;color:var(--txt)}
 .tbl-wrap{padding:0 24px 16px}
 .tbl-box{background:linear-gradient(180deg,var(--card2) 0%,var(--card) 100%);border:1px solid var(--bdr);border-radius:4px;padding:14px 16px;overflow-x:auto;box-shadow:0 1px 0 rgba(255,255,255,.02) inset}
-.tbl-title{font-size:10.5px;color:var(--dim);margin-bottom:10px;letter-spacing:2.2px;font-weight:700}
+.tbl-title{font-size:11.5px;color:var(--dim);margin-bottom:10px;letter-spacing:2.2px;font-weight:700}
 table{width:100%;border-collapse:collapse}
-th{padding:7px 9px;text-align:right;color:var(--dim);font-weight:600;font-size:9.5px;border-bottom:1px solid var(--bdr2);letter-spacing:.7px;text-transform:uppercase}
+th{padding:7px 9px;text-align:right;color:var(--dim);font-weight:600;font-size:10.5px;border-bottom:1px solid var(--bdr2);letter-spacing:.7px;text-transform:uppercase}
 th:first-child{text-align:left}
-td{padding:7px 9px;text-align:right;font-variant-numeric:tabular-nums;border-bottom:1px solid rgba(38,51,79,.35);font-size:11px}
+td{padding:7px 9px;text-align:right;font-variant-numeric:tabular-nums;border-bottom:1px solid rgba(38,51,79,.35);font-size:12.5px}
 td:first-child{text-align:left;font-weight:700;letter-spacing:.3px}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(26,37,64,.55)}
 .footer{display:flex;justify-content:space-between;align-items:center;padding:8px 24px;border-top:1px solid var(--bdr);background:var(--panel);font-size:9.5px;color:var(--mut);letter-spacing:.3px}
 .matrix{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.mini-hdr{font-size:10px;font-weight:700;letter-spacing:1.6px;padding:7px 11px;background:var(--card);display:flex;justify-content:space-between;align-items:center;border-top:3px solid}
+.mini-hdr{font-size:11px;font-weight:700;letter-spacing:1.6px;padding:7px 11px;background:var(--card);display:flex;justify-content:space-between;align-items:center;border-top:3px solid}
 .up{color:var(--grn)}.dn{color:var(--red)}.flat{color:var(--dim)}
 /* Help overlay */
 .help-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(4,8,16,.95);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -145,39 +145,44 @@ tr:hover td{background:rgba(26,37,64,.55)}
 <div class="shell" id="app"></div>
 <script>
 // ═══════════════════════════════════════════════════════════════
-// COMMODIQ TERMINAL v5.2 — 9 COMMODITIES · 2020 BACKFILL · VERIFIED NEWS + LIST VIEW · AUDITED 2026-06-06
+// COMMODIQ TERMINAL v5.3 — 9 COMMODITIES · 2020 BACKFILL · VERIFIED NEWS + LIST VIEW · AUDITED 2026-06-06 · REFRESHED + FIGURE-AUDITED 2026-06-17 (beef 100% vs USDA DataMart API; chicken vs ams_3649 PDFs; 9 beef points revised to API; potato unified to MI shipping-point FWA basis; market-impact news; black/vibrant UI)
 // ═══════════════════════════════════════════════════════════════
 
 var NEWS=[
-{t:"90CL Trim Sets Terminal Record $460.27/cwt May 29, Eases to $457.18 Jun 5 \u2014 Lean Supply Still Tight",d:"Jun 5",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
-{t:"USDA Suspends Mexican Cattle Imports Indefinitely \u2014 1st US Screwworm Case in 60 Years Hits Zavala Co, TX",d:"Jun 3",s:"USDA APHIS",u:"https://www.aphis.usda.gov/news/agency-announcements/usda-confirms-presence-new-world-screwworm-united-states"},
-{t:"Screwworm Fears Rally Aug Feeders +10.75\u00a2 to 353.375\u00a2, 2-Wk High \u2014 Up to $1.8B TX Livestock Risk",d:"Jun 4",s:"Reuters",u:"https://www.investing.com/news/commodities-news/us-screwworm-case-puts-ranchers-on-alert-rallies-cattle-prices-4727183"},
-{t:"65CL Trim Climbs to $247.94/cwt Jun 5, +2.4% WoW \u2014 Up 9% Since Mid-April on Grinder Demand",d:"Jun 5",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
-{t:"50CL Trim Steady at $185.18/cwt Jun 5 \u2014 67 Trades, 1.54M lbs; Fat Trim Range-Bound Since Early May",d:"Jun 5",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
-{t:"81CL Trim $390.36/cwt May 22 on 7 Trades \u2014 No National Trades Reported May 29 or Jun 5",d:"May 22",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
+{t:"90CL Trim $459.76/cwt Jun 12, +0.6% WoW \u2014 Holds Just Below May 29 Record $460.27 as Lean Supply Stays Tight (45 Trades, 1.41M lbs)",d:"Jun 12",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
+{t:"Role Reversal: Mexico Halts Most US Live-Animal Imports Jun 10 \u2014 Screwworm Now Confirmed in Texas & New Mexico",d:"Jun 10",s:"Drovers",u:"https://www.drovers.com/news/mexico-blocks-most-imports-live-animals-u-s-after-screwworm-cases"},
+{t:"USDA Confirms 5 New World Screwworm Cases in the US Since Jun 3 (TX & NM) \u2014 Sterile-Fly Response Scaled Up",d:"Jun 12",s:"USDA APHIS",u:"https://www.aphis.usda.gov/livestock-poultry-disease/stop-screwworm/current-status"},
+{t:"Drought Grips ~75% of US Beef Cow Herd vs ~20% Norm \u2014 Nebraska Pastures Only 4% Good/Excellent; Mid-June Rains Bring Patchy Relief as Herd Rebuild Stalls, Lean Trim Stays Tight",d:"Jun 16",s:"DTN/Drovers",u:"https://www.drovers.com/news/drought-stalls-expansion-75-u-s-beef-cows-dry-conditions"},
+{t:"65CL Trim Jumps to $253.90/cwt Jun 12, +2.4% WoW \u2014 Grinder Demand Keeps Lifting Lean-Blend Pricing",d:"Jun 12",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
+{t:"50CL Fat Trim Firms to $189.14/cwt Jun 12, +2.1% WoW \u2014 49 Trades, 1.03M lbs",d:"Jun 12",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
+{t:"CNN: What the Screwworm Outbreak Means for Your Beef Prices \u2014 Lean Ground Beef the Most Exposed Cut",d:"Jun 9",s:"CNN Business",u:"https://www.cnn.com/2026/06/09/business/what-consumers-should-know-about-screwworm"},
+{t:"Dallas Fed: Beef Prices at Record Highs, US Cattle Herd at Record Low \u2014 Screwworm Spread Threatens Texas Herd",d:"Jun 2026",s:"Dallas Fed",u:"https://www.dallasfed.org/research/swe/2026/swe2612"},
+{t:"81CL Trim Still Thin \u2014 No National Negotiated Trades Reported Jun 5 or Jun 12; Last Print $390.36/cwt May 22",d:"Jun 12",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
 {t:"USDA ERS Raises 2026 Beef & Veal Forecast to +12.1% (Range 6.6\u201318.1%); April Beef +14.8% YoY",d:"May 22",s:"USDA ERS",u:"https://www.ers.usda.gov/data-products/food-price-outlook/summary-findings"},
-{t:"Chicken Breast B/S Eases to 155.35\u00a2/lb May Avg After April Spike to 169.21\u00a2 (ams_3649, Jun 2)",d:"Jun 2",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_3649.pdf"},
-{t:"ERS Sees 2026 Poultry Prices Just +0.5% \u2014 HPAI Has Hit ~100 Commercial Flocks in 2026, Broilers Spared",d:"May 22",s:"USDA ERS/APHIS",u:"https://www.ers.usda.gov/data-products/food-price-outlook/summary-findings"},
-{t:"Chicken Livers 73.75\u00a2 / Gizzards 82.75\u00a2 May Avg \u2014 By-Product Pricing Holds Range-Bound",d:"Jun 2",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_3649.pdf"},
-{t:"Russet Norkotah $19.00/cwt at Idaho Falls Jun 5 \u2014 Market Cartons Higher; +19% Since Apr 9",d:"Jun 5",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/fvdidnop.pdf"},
+{t:"Chicken Breast B/S Eases to 155.35\u00a2/lb May Avg After April Spike to 169.21\u00a2 \u2014 June Report Due ~Jul 2",d:"Jun 2",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_3649.pdf"},
+{t:"ERS Sees 2026 Poultry Prices Just +0.5% \u2014 HPAI Has Hit ~100 Commercial Flocks in 2026, Broilers Largely Spared",d:"May 22",s:"USDA ERS/APHIS",u:"https://www.ers.usda.gov/data-products/food-price-outlook/summary-findings"},
+{t:"H5N1 Bird Flu Still Circulating in US Poultry & Dairy in 2026 \u2014 Egg Layers Bear the Brunt; Broiler/Breast Supply Largely Spared as USDA Backs $1B Containment Push",d:"Jun 2026",s:"USDA APHIS",u:"https://www.aphis.usda.gov/livestock-poultry-disease/avian/avian-influenza"},
+{t:"June WASDE: 2026/27 Corn Seen $4.40/bu, Soybean Meal $310/ton; New-Crop Corn -6% on Lower Acres & Yield \u2014 Broiler Feed Costs Hold Near 2025 Levels",d:"Jun 11",s:"USDA WASDE",u:"https://www.usda.gov/about-usda/general-information/staff-offices/office-chief-economist/commodity-markets/wasde-report"},
+{t:"Idaho Russet Norkotah Shipping-Point Avg $11.25/cwt Jun 17, Up From $10.69 \u2014 Normal Spring Storage-Season Climb",d:"Jun 17",s:"MI Potato Comm/NAPMN",u:"https://www.mipotatoindustry.com/news/market-report-june-17-2026"},
 {t:"US 2026 Potato Acreage Seen -3% to 878K ac; Idaho Russets -5% as Snowpack Sits at 72% of Median",d:"Apr 7",s:"Potato Country",u:"https://potatocountry.com/2026/04/07/how-many-potatoes-will-us-growers-plant-in-2026/"},
-{t:"FL Handpicked Green Beans Off-Market by June \u2014 Only Machine Picked $48-50 Quoted at NY Terminal",d:"Jun 5",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/nx_fv020.pdf"},
+{t:"Idaho Water Crisis Hits 2026 Spud Crop — Eastern Idaho Irrigation 'Dire'; Grower North of Idaho Falls Left ~2,000 Acres Unplanted, Some Fields Killed on Low Snowpack",d:"Apr 23",s:"Univ. of Idaho",u:"https://www.uidaho.edu/newsroom/mild-winter-crop-problems"},
+{t:"Green Bean Season Moves North \u2014 FL Handpicked Off-Market; GA Machine Picked Now Sets NY Round-Green Price at $34-35",d:"Jun 17",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/nx_fv020.pdf"},
 {t:"USDA ERS: 2026 Fresh Vegetable Prices Forecast +7.8% (Range 3.9\u201311.9%)",d:"May 22",s:"USDA ERS",u:"https://www.ers.usda.gov/data-products/food-price-outlook/summary-findings"},
 {t:"NOAA: El Ni\u00f1o Watch \u2014 82% Chance El Ni\u00f1o Emerges May\u2013Jul 2026; Currently Neutral, Strength Uncertain",d:"May 14",s:"NOAA CPC",u:"https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/enso_advisory/ensodisc.shtml"},
-{t:"U.S. Cattle Inventory Hits 75-Year Low at 86.2M Head",d:"Mar 28",s:"USDA NASS",u:"https://www.fb.org/market-intel/smaller-cattle-herd-creates-market-volatility"},
+{t:"U.S. Cattle Inventory Hits 75-Year Low at 86.2M Head \u2014 Structural Lean-Trim Tightness Persists",d:"Mar 28",s:"USDA NASS",u:"https://www.fb.org/market-intel/smaller-cattle-herd-creates-market-volatility"},
 ];
 
 // ═══ 9 COMMODITIES (4 beef trims + 2 chicken + 1 offal gizzard + potato + green bean) ═══
 var COMS=[
-{k:"BT50",nm:"Beef Trim 50CL",un:"$/cwt",cl:"#ff4d6a",sy:"BT50",sr:"USDA AMS ams_2462",hk:"BT50",rpt:"daily_cattle"},
-{k:"BT65",nm:"Beef Trim 65CL",un:"$/cwt",cl:"#ff6b81",sy:"BT65",sr:"USDA AMS ams_2462",hk:"BT65",rpt:"weekly_trim"},
-{k:"BT81",nm:"Beef Trim 81CL",un:"$/cwt",cl:"#e84363",sy:"BT81",sr:"USDA AMS ams_2462",hk:"BT81",rpt:"weekly_trim"},
-{k:"BT90",nm:"Beef Trim 90CL",un:"$/cwt",cl:"#d63051",sy:"BT90",sr:"USDA AMS ams_2462",hk:"BT90",rpt:"weekly_trim"},
-{k:"CB",nm:"Chicken Breast B/S",un:"\u00a2/lb",cl:"#00e6b4",sy:"CKBR",sr:"USDA AMS ams_3649",hk:"CB",rpt:"weekly_chicken"},
-{k:"CL",nm:"Chicken Liver",un:"\u00a2/lb",cl:"#ffb020",sy:"CKLV",sr:"USDA AMS ams_3649",hk:"CL",rpt:"weekly_poultry"},
-{k:"CG",nm:"Chicken Gizzard",un:"\u00a2/lb",cl:"#c97dff",sy:"CKGZ",sr:"USDA AMS ams_3649",hk:"CG",rpt:"weekly_poultry"},
-{k:"PT",nm:"Russet Potatoes #1",un:"$/cwt",cl:"#3b9eff",sy:"PTRS",sr:"USDA AMS fvdidnop",hk:"PT",rpt:"daily_potato"},
-{k:"GB",nm:"Snap Green Beans",un:"$/bu",cl:"#00deff",sy:"GNSB",sr:"USDA AMS NX_FV020",hk:"GB",rpt:"daily_veggie"},
+{k:"BT50",nm:"Beef Trim 50CL",un:"$/cwt",cl:"#ff5c7a",sy:"BT50",sr:"USDA AMS ams_2462",hk:"BT50",rpt:"daily_cattle"},
+{k:"BT65",nm:"Beef Trim 65CL",un:"$/cwt",cl:"#ff8fa3",sy:"BT65",sr:"USDA AMS ams_2462",hk:"BT65",rpt:"weekly_trim"},
+{k:"BT81",nm:"Beef Trim 81CL",un:"$/cwt",cl:"#ff6452",sy:"BT81",sr:"USDA AMS ams_2462",hk:"BT81",rpt:"weekly_trim"},
+{k:"BT90",nm:"Beef Trim 90CL",un:"$/cwt",cl:"#ff3b5e",sy:"BT90",sr:"USDA AMS ams_2462",hk:"BT90",rpt:"weekly_trim"},
+{k:"CB",nm:"Chicken Breast B/S",un:"\u00a2/lb",cl:"#00ffc2",sy:"CKBR",sr:"USDA AMS ams_3649",hk:"CB",rpt:"weekly_chicken"},
+{k:"CL",nm:"Chicken Liver",un:"\u00a2/lb",cl:"#ffc233",sy:"CKLV",sr:"USDA AMS ams_3649",hk:"CL",rpt:"weekly_poultry"},
+{k:"CG",nm:"Chicken Gizzard",un:"\u00a2/lb",cl:"#d28bff",sy:"CKGZ",sr:"USDA AMS ams_3649",hk:"CG",rpt:"weekly_poultry"},
+{k:"PT",nm:"Russet Potatoes #1",un:"$/cwt",cl:"#4fb0ff",sy:"PTRS",sr:"USDA AMS fvdidnop",hk:"PT",rpt:"daily_potato"},
+{k:"GB",nm:"Snap Green Beans",un:"$/bu",cl:"#24e9ff",sy:"GNSB",sr:"USDA AMS NX_FV020",hk:"GB",rpt:"daily_veggie"},
 ];
 var TRS={"1M":30,"3M":90,"6M":180,"1Y":365,"2Y":730,"ALL":100000};
 
@@ -235,7 +240,7 @@ var state={sel:0,tr:"6M",view:"SINGLE",fc:true,lbMode:false,data:{},metrics:{},f
 // ═══ ACTUAL PRICE DATA — all points from published reports, Jan 2020–Jun 2026 · NO synthetic/interpolated values ═══
 // Beef: USDA MPR DataMart API LM_XB460 — weekly Friday negotiated sales, National price_range_avg, $/cwt
 // Chicken: USDA AMS ams_3649 Monthly National Chicken Report PDFs (series launched Sep 2022) — domestic fresh FOB wtd avg, ¢/lb
-// Potatoes: MI Potato Industry Commission FWA + USDA fvdidnop/IF_FV130 carton-math + Capital Press, $/cwt
+// Potatoes: MI Potato Industry Commission (NAPMN) — Idaho Russet Norkotah weighted-avg shipping-point price, $/cwt — SINGLE consistent basis (audit 2026-06-17 removed 3 off-basis fvdidnop 50-lb-carton-x2 points that ran ~2x the FWA)
 // Green Beans: USDA NX_FV020 NY Terminal FL Handpicked (live/Wayback/ESMIS-Cornell) + Barchart Atlanta (1 pt), $/bu
 var HIST={
   // ── BT50: LM_XB460 Chemical Lean Fresh 50%, $/cwt — USDA MPR DataMart API weekly
@@ -502,7 +507,7 @@ var HIST={
     {date:"2025-01-17",price:114.06,vol:null},
     {date:"2025-01-24",price:114.44,vol:null},
     {date:"2025-01-31",price:115.31,vol:null},
-    {date:"2025-02-07",price:104.39,vol:null},
+    {date:"2025-02-07",price:104.19,vol:null},  // audit 2026-06-17: aligned to LM_XB460 API (was 104.39; minor USDA revision)
     {date:"2025-02-14",price:110.42,vol:null},
     {date:"2025-02-21",price:99.32,vol:null},
     {date:"2025-02-28",price:109.93,vol:null},
@@ -554,7 +559,7 @@ var HIST={
     {date:"2026-01-16",price:143.70,vol:null},
     {date:"2026-01-23",price:147.25,vol:null},
     {date:"2026-01-30",price:151.63,vol:null},
-    {date:"2026-02-06",price:147.82,vol:null},
+    {date:"2026-02-06",price:156.09,vol:null},  // audit 2026-06-17: CORRECTED from 147.82 (transcription error) to LM_XB460 API value (90 trades; fits 151.63/150.58 neighbors)
     {date:"2026-02-13",price:150.58,vol:null},
     {date:"2026-02-20",price:150.50,vol:null},
     {date:"2026-02-27",price:152.78,vol:null},
@@ -572,10 +577,11 @@ var HIST={
     {date:"2026-05-22",price:185.69,vol:null},  // USDA MPR LM_XB460 wk May 22 2026 (National, 62 trades, 1.53M lbs)
     {date:"2026-05-29",price:184.71,vol:null},  // USDA MPR LM_XB460 wk May 29 2026 (National, 64 trades, 1.45M lbs)
     {date:"2026-06-05",price:185.18,vol:null},  // USDA MPR LM_XB460 wk Jun 5 2026 (National, 67 trades, 1.54M lbs)
+    {date:"2026-06-12",price:189.14,vol:null},  // USDA MPR LM_XB460 wk Jun 12 2026 (National, 49 trades, 1.03M lbs) — refreshed 2026-06-17
   ],
   // ── BT65: LM_XB460 Chemical Lean Fresh 65%, $/cwt — USDA MPR DataMart API weekly
   BT65:[
-    {date:"2020-01-24",price:131.29,vol:null},
+    {date:"2020-01-24",price:130.68,vol:null},  // audit 2026-06-17: aligned to LM_XB460 API (was 131.29; minor USDA revision)
     {date:"2020-01-31",price:125.62,vol:null},
     {date:"2020-02-07",price:118.79,vol:null},
     {date:"2020-02-14",price:109.06,vol:null},
@@ -833,7 +839,7 @@ var HIST={
     {date:"2025-01-17",price:191.09,vol:null},
     {date:"2025-01-24",price:193.62,vol:null},
     {date:"2025-01-31",price:195.00,vol:null},
-    {date:"2025-02-07",price:197.90,vol:null},
+    {date:"2025-02-07",price:197.76,vol:null},  // audit 2026-06-17: aligned to LM_XB460 API (was 197.90; minor USDA revision)
     {date:"2025-02-14",price:202.55,vol:null},
     {date:"2025-02-21",price:202.31,vol:null},
     {date:"2025-02-28",price:200.49,vol:null},
@@ -885,7 +891,7 @@ var HIST={
     {date:"2026-01-16",price:193.23,vol:null},
     {date:"2026-01-23",price:191.43,vol:null},
     {date:"2026-01-30",price:200.13,vol:null},
-    {date:"2026-02-06",price:202.38,vol:null},
+    {date:"2026-02-06",price:203.40,vol:null},  // audit 2026-06-17: aligned to LM_XB460 API (was 202.38; minor USDA revision)
     {date:"2026-02-13",price:195.00,vol:null},
     {date:"2026-02-20",price:198.52,vol:null},
     {date:"2026-02-27",price:200.97,vol:null},
@@ -903,6 +909,7 @@ var HIST={
     {date:"2026-05-22",price:240.22,vol:null},  // USDA MPR LM_XB460 wk May 22 2026 (National, 37 trades, 999K lbs)
     {date:"2026-05-29",price:242.08,vol:null},  // USDA MPR LM_XB460 wk May 29 2026 (National, 25 trades, 726K lbs)
     {date:"2026-06-05",price:247.94,vol:null},  // USDA MPR LM_XB460 wk Jun 5 2026 (National, 31 trades, 783K lbs)
+    {date:"2026-06-12",price:253.90,vol:null},  // USDA MPR LM_XB460 wk Jun 12 2026 (National, 30 trades, 848K lbs) — refreshed 2026-06-17
   ],
   // ── BT81: LM_XB460 Chemical Lean Fresh 81%, $/cwt — USDA MPR DataMart API weekly (intermittent trades)
   BT81:[
@@ -925,7 +932,7 @@ var HIST={
     {date:"2020-06-12",price:214.26,vol:null},
     {date:"2020-06-19",price:177.00,vol:null},
     {date:"2020-06-26",price:170.65,vol:null},
-    {date:"2020-07-24",price:167.57,vol:null},
+    {date:"2020-07-24",price:168.94,vol:null},  // audit 2026-06-17: aligned to LM_XB460 API (was 167.57; thin mkt, 15 trades)
     {date:"2020-07-31",price:166.66,vol:null},
     {date:"2020-08-14",price:159.23,vol:null},
     {date:"2020-08-28",price:174.31,vol:null},
@@ -934,7 +941,7 @@ var HIST={
     {date:"2020-09-18",price:165.05,vol:null},
     {date:"2020-10-16",price:151.24,vol:null},
     {date:"2020-11-06",price:153.00,vol:null},
-    {date:"2020-11-13",price:158.00,vol:null},
+    {date:"2020-11-13",price:156.99,vol:null},  // audit 2026-06-17: aligned to LM_XB460 API (was 158.00; thin mkt, 7 trades)
     {date:"2020-12-04",price:163.51,vol:null},
     {date:"2021-01-15",price:173.76,vol:null},
     {date:"2021-02-05",price:181.92,vol:null},
@@ -1000,7 +1007,7 @@ var HIST={
     {date:"2023-06-02",price:251.57,vol:null},
     {date:"2023-06-09",price:244.77,vol:null},
     {date:"2023-06-16",price:248.91,vol:null},
-    {date:"2023-06-30",price:252.70,vol:null},
+    {date:"2023-06-30",price:251.16,vol:null},  // audit 2026-06-17: aligned to LM_XB460 API (was 252.70; thin mkt, 18 trades)
     {date:"2023-07-14",price:254.15,vol:null},
     {date:"2023-07-21",price:251.03,vol:null},
     {date:"2023-08-04",price:248.38,vol:null},
@@ -1017,7 +1024,7 @@ var HIST={
     {date:"2023-12-01",price:219.73,vol:null},
     {date:"2023-12-08",price:205.23,vol:null},
     {date:"2023-12-15",price:212.98,vol:null},
-    {date:"2023-12-22",price:210.93,vol:null},
+    {date:"2023-12-22",price:209.61,vol:null},  // audit 2026-06-17: aligned to LM_XB460 API (was 210.93; thin mkt, 11 trades)
     {date:"2024-01-05",price:210.40,vol:null},
     {date:"2024-01-12",price:212.88,vol:null},
     {date:"2024-01-19",price:219.88,vol:null},
@@ -1096,7 +1103,7 @@ var HIST={
     {date:"2026-05-01",price:365.93,vol:null},  // USDA MPR LM_XB460 wk May 1 2026 (National, 3 trades, 116K lbs — thin)
     {date:"2026-05-15",price:377.23,vol:null},  // USDA MPR LM_XB460 wk May 15 2026 (National, 4 trades, 113K lbs — thin)
     {date:"2026-05-22",price:390.36,vol:null},  // USDA MPR LM_XB460 wk May 22 2026 (National, 7 trades, 169K lbs — thin)
-    // wks Apr 24, May 8, May 29, Jun 5 2026: no National negotiated trades reported (genuine gap, not missing data)
+    // wks Apr 24, May 8, May 29, Jun 5, Jun 12 2026: no National negotiated trades reported (genuine gap, not missing data; verified via DataMart API 2026-06-17)
   ],
   // ── BT90: LM_XB460 Chemical Lean Fresh 90%, $/cwt — USDA MPR DataMart API weekly
   BT90:[
@@ -1433,6 +1440,7 @@ var HIST={
     {date:"2026-05-22",price:459.46,vol:null},  // USDA MPR LM_XB460 wk May 22 2026 (National, 31 trades, 593K lbs)
     {date:"2026-05-29",price:460.27,vol:null},  // USDA MPR LM_XB460 wk May 29 2026 (National, 45 trades, 1.17M lbs — new terminal high)
     {date:"2026-06-05",price:457.18,vol:null},  // USDA MPR LM_XB460 wk Jun 5 2026 (National, 33 trades, 927K lbs)
+    {date:"2026-06-12",price:459.76,vol:null},  // USDA MPR LM_XB460 wk Jun 12 2026 (National, 45 trades, 1.41M lbs) — refreshed 2026-06-17
   ],
   // ── CB: USDA AMS ams_3649 Monthly National Chicken Report — Breast B/S wtd avg ¢/lb
   CB:[
@@ -1644,9 +1652,10 @@ var HIST={
     {date:"2025-12-24",price:10.18,vol:null},   // MI Potato; unchanged
     {date:"2026-03-11",price:8.91,vol:null},    // MI Potato; unchanged
     {date:"2026-04-01",price:9.07,vol:null},    // MI Potato FWA; "first price improvement since last August" — CORRECTED 2026-06-06 from synthetic 10.00 (3-report triangulation)
-    {date:"2026-04-08",price:9.04,vol:null},    // MI Potato wtd avg; fvdidnop 50-lb cartons at $6 = $12/cwt
-    {date:"2026-04-09",price:16.00,vol:null},   // fvdidnop PDF Apr 9; 50s $8.00/carton = $16.00/cwt
-    {date:"2026-06-05",price:19.00,vol:null},   // fvdidnop PDF Jun 5; Upper Valley 50s $9.00-10.00 mid $9.50 x2 = $19.00/cwt; "MARKET CARTONS HIGHER"
+    {date:"2026-04-08",price:9.04,vol:null},    // MI Potato Comm (NAPMN) — Idaho Russet Norkotah shipping-point wtd avg $9.04/cwt (verified vs MI report Apr 8 2026)
+    {date:"2026-05-27",price:9.28,vol:null},    // MI Potato Comm (NAPMN) — Idaho Norkotah shipping-point wtd avg $9.28/cwt. AUDIT 2026-06-17: replaced off-basis carton point 2026-04-09 $16.00 (was fvdidnop 50-lb carton x2 = ~2x the FWA basis the rest of the series uses)
+    {date:"2026-06-10",price:10.69,vol:null},   // MI Potato Comm (NAPMN) — Idaho Norkotah shipping-point wtd avg $10.69/cwt. AUDIT 2026-06-17: replaced off-basis carton point 2026-06-05 $19.00
+    {date:"2026-06-17",price:11.25,vol:null},   // MI Potato Comm (NAPMN) Jun 17 2026 — Idaho Norkotah shipping-point wtd avg $11.25/cwt, up from $10.69. AUDIT 2026-06-17: replaced off-basis carton point 2026-06-16 $20.00 — series now uniformly on MI FWA $/cwt basis
   ],
   // ── GB: USDA AMS NX_FV020 NY Terminal Market — FL Handpicked round green type, $/bu
   // Sources: NX_FV020 (live + Wayback snapshots + ESMIS/Cornell mirror), Barchart UDNF2NGH.CS (Atlanta terminal)
@@ -1673,6 +1682,7 @@ var HIST={
     {date:"2025-12-09",price:32.00,vol:null},   // NX_FV020 wayback; FL Handpicked fine appearance 1 1/9-bu $30-34 mostly $32
     {date:"2026-04-08",price:40.00,vol:null},   // NX_FV020 Apr 8 (live fetch that day); FL Handpicked 1 1/9-bu crate $40.00; Market Lower — no archive exists to re-verify
     // Jun 5 2026: NO FL Handpicked quote on NX_FV020 — season ended; only FL Machine Picked $48-50 quoted (different grade, not recorded per data policy)
+    // Jun 17 2026: still NO FL Handpicked — round green type now GEORGIA Machine Picked $34-35/1 1/9-bu (different grade+origin, not recorded); FL crop quotes resume ~November
     // Excluded per strict spec: 2024-11-27 "FLORIDA 45.00-50.00" (no Handpicked qualifier); May 18 2026 ~$35 (index-cached title only, report body unretrievable)
   ],
 };
@@ -1742,7 +1752,7 @@ var INTEL_CONTEXT={
   BT90:[
     "USDA NASS Jan 2026: U.S. cattle inventory at 86.2M head \u2014 a 75-year low. Structural lean supply tightness expected to persist through 2026\u20132027 as herd rebuilding takes 3\u20135 years.",
     "BT90 is the primary lean base for 90/10 and 93/7 blends. Demand from major QSR and further-processing accounts is largely inelastic year-round.",
-    "The May 29 2026 price of $460.27/cwt is the highest level recorded in this terminal\u2019s history (Jan 2020\u2013present); Jun 5 eased slightly to $457.18. Lean premium (BT90 minus BT50 spread) is approximately $272/cwt \u2014 historically extreme."
+    "The May 29 2026 price of $460.27/cwt is the highest level recorded in this terminal\u2019s history (Jan 2020\u2013present); after easing to $457.18 Jun 5, BT90 firmed back to $459.76 Jun 12 (within $0.51 of the record). Lean premium (BT90 minus BT50 spread) is approximately $271/cwt \u2014 historically extreme."
   ],
   BT81:[
     "BT81 is the industry benchmark for 80/20 ground beef \u2014 the standard for retail packs and food service burger patties. It tracks the most common consumer grind.",
@@ -1757,7 +1767,7 @@ var INTEL_CONTEXT={
   BT50:[
     "50CL is the fat trim fraction. It moves partly inversely to lean trim when processors are fat-long. Very low prices can signal fat oversupply relative to rendering and processing demand.",
     "BT50 serves fat target requirements in sausage, hot dogs, and pet food formulations. Domestic demand is also supported by rendering and export channels.",
-    "BT50/BT90 spread reflects the \u2018lean premium.\u2019 Current spread ~$272/cwt is historically elevated, confirming extreme lean supply constraint vs. adequate fat trim supply."
+    "BT50/BT90 spread reflects the \u2018lean premium.\u2019 Current spread ~$271/cwt is historically elevated, confirming extreme lean supply constraint vs. adequate fat trim supply."
   ],
   CB:[
     "Chicken breast pricing via USDA AMS_3649 is reported monthly. W% and D% changes are approximate because data points may be spaced weeks apart rather than daily.",
@@ -1777,12 +1787,12 @@ var INTEL_CONTEXT={
   PT:[
     "Idaho Russet Norkotah U.S. #1 is the standard food service russet potato. New crop arrives August\u2013September each year and typically resets prices lower from summer storage-season peaks.",
     "Storage premiums build March\u2013June, reflecting shrinkage loss, handling, and financing costs from the prior fall\u2019s harvest. Spring prices are typically the seasonal peak before new crop arrival.",
-    "Jun 5 2026 price of $19.00/cwt sits near the top of the 2024\u20132026 range after spring lows near $9. Tracked extremes since 2020: $8.91 (Mar 2026) to $56.33 (Aug 2022 new-crop shortage spike). New crop arrives August\u2013September."
+    "Jun 17 2026 shipping-point weighted-avg of $11.25/cwt (up from $10.69 the prior week) reflects the normal spring storage-season climb from ~$9 winter lows. Tracked extremes since 2020: $8.91 (Mar 2026) to $56.33 (Aug 2022 new-crop shortage spike). All points use the MI Potato Commission Idaho Norkotah shipping-point basis. New crop arrives August\u2013September."
   ],
   GB:[
     "FL handpicked snap beans dominate the NY terminal market January\u2013June (Florida winter/spring production season). Prices typically drop sharply in July when domestic northern production ramps up.",
     "Green bean pricing is among the most volatile in this terminal \u2014 seasonal swings of 200\u2013300% between production-season peaks and off-season troughs are expected and normal.",
-    "FL Handpicked ended the 2025\u201326 season at $40/bu (Apr 8); mid-season prints ran the low-$30s (Dec 9: $32). As of June 2026 FL Handpicked is off-market \u2014 only Machine Picked trades at NY \u2014 and quotes resume with the new FL crop ~November. Series high: $62.50 (Jan 2024)."
+    "FL Handpicked ended the 2025\u201326 season at $40/bu (Apr 8); mid-season prints ran the low-$30s (Dec 9: $32). As of June 2026 FL Handpicked is off-market \u2014 only GA Machine Picked ($34-35) trades at NY \u2014 and quotes resume with the new FL crop ~November. Series high: $62.50 (Jan 2024)."
   ]
 };
 
@@ -2038,7 +2048,7 @@ function render(){
     html+='<tr><td style="color:'+c.cl+'">'+c.sy+'</td><td style="color:var(--txt)">'+fmt(mk.latest*tf,dp)+'</td><td style="color:var(--mut);font-size:9px">'+un+'</td><td style="color:'+pcCl(mk.daily)+'">'+fP(mk.daily)+'</td><td style="color:'+pcCl(mk.wow)+'">'+fP(mk.wow)+'</td><td style="color:'+pcCl(mk.mom)+'">'+fP(mk.mom)+'</td><td style="color:'+pcCl(mk.yoy)+'">'+fP(mk.yoy)+'</td><td style="color:var(--dim)">'+fmt(mk.a30*tf,dp)+'</td><td style="color:'+(f4?pcCl(f4.price-mk.latest):"var(--dim)")+'">'+(f4?fmt(f4.price*tf,dp):"\u2014")+'</td><td style="font-size:13px;color:'+tCl(mk.trend)+'">'+mk.trend+'</td></tr>';
   });html+='</tbody></table></div></div>';
 
-  html+='<div class="footer"><span>DATA: USDA AMS + verified industry sources (MI Potato Comm. \u00b7 Capital Press \u00b7 Barchart) \u00b7 Actual reported prices, no synthetic values \u00b7 History limited to available report dates</span><span style="color:var(--grn);font-weight:600;letter-spacing:1px">MAEV FINANCE</span><span>FORECAST: Holt-Winters \u00b7 v5.2 \u00b7 \u00a9 2026</span></div>';
+  html+='<div class="footer"><span>DATA: USDA AMS + verified industry sources (MI Potato Comm. \u00b7 Capital Press \u00b7 Barchart) \u00b7 Actual reported prices, no synthetic values \u00b7 History limited to available report dates</span><span style="color:var(--grn);font-weight:600;letter-spacing:1px">MAEV FINANCE</span><span>FORECAST: Holt-Winters \u00b7 v5.3 \u00b7 \u00a9 2026</span></div>';
 
   // ═══ HELP MODAL ═══
   if(s.showHelp){
