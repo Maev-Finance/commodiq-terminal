@@ -81,6 +81,8 @@ button.on{background:rgba(0,230,180,.14);color:var(--grn);border-color:rgba(0,23
 .detail{background:linear-gradient(180deg,var(--card2) 0%,var(--card) 100%);border:1px solid var(--bdr);border-radius:4px;padding:14px 16px;font-size:12.5px;line-height:1.85;box-shadow:0 1px 0 rgba(255,255,255,.02) inset}
 .det-sym{font-size:13.5px;font-weight:700;margin-bottom:5px;letter-spacing:1.6px}
 .det-src{font-size:9px;color:var(--mut);margin-bottom:10px;letter-spacing:.6px;font-weight:500}
+.det-srclink{cursor:pointer;color:var(--blu);transition:color .12s}.det-srclink:hover{color:var(--cyn);text-decoration:underline}
+.asof-cell:hover{color:var(--cyn)!important}
 .det-row{display:flex;justify-content:space-between;padding:2px 0}.det-lbl{color:var(--dim);font-weight:500}.det-val{font-variant-numeric:tabular-nums;font-weight:600;color:var(--txt)}
 .tbl-wrap{padding:0 24px 16px}
 .tbl-box{background:linear-gradient(180deg,var(--card2) 0%,var(--card) 100%);border:1px solid var(--bdr);border-radius:4px;padding:14px 16px;overflow-x:auto;box-shadow:0 1px 0 rgba(255,255,255,.02) inset}
@@ -96,6 +98,37 @@ tr:hover td{background:rgba(26,37,64,.55)}
 .matrix{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .mini-hdr{font-size:11px;font-weight:700;letter-spacing:1.6px;padding:7px 11px;background:var(--card);display:flex;justify-content:space-between;align-items:center;border-top:3px solid}
 .up{color:var(--grn)}.dn{color:var(--red)}.flat{color:var(--dim)}
+/* Overlay commodity selector */
+.ovbar{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;position:relative}
+.ovsel-wrap{position:relative;flex-shrink:0}
+.ovsel-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--bdr2);background:linear-gradient(180deg,var(--card2),var(--card));color:var(--txt);border-radius:4px;padding:6px 13px;font-size:11px;font-weight:600;letter-spacing:.5px}
+.ovsel-btn:hover{border-color:var(--blu);background:var(--hover);color:var(--txt)}
+.ovsel-btn.open{border-color:var(--blu);color:var(--blu);border-bottom-left-radius:0;border-bottom-right-radius:0;background:var(--hover)}
+.ovsel-btn .cnt{color:var(--blu);font-weight:700}
+.ovsel-btn .car{font-size:8px;transition:transform .18s ease;opacity:.8}
+.ovsel-btn.open .car{transform:rotate(180deg)}
+.ovsel-menu{position:absolute;top:100%;right:0;margin-top:-1px;width:300px;background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--blu);border-radius:4px 0 4px 4px;z-index:60;box-shadow:0 20px 48px rgba(0,0,0,.72),0 1px 0 rgba(255,255,255,.03) inset;padding:8px;transform-origin:top right;animation:ovMenuIn .17s cubic-bezier(.2,.85,.25,1)}
+@keyframes ovMenuIn{from{opacity:0;transform:translateY(-7px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+.ovsel-head{display:flex;justify-content:space-between;align-items:center;padding:1px 4px 8px;border-bottom:1px solid var(--bdr);margin-bottom:5px}
+.ovsel-head .oh-t{font-size:8.5px;letter-spacing:1.6px;color:var(--mut);font-weight:700}
+.ovsel-quick{display:flex;gap:5px}
+.ovsel-quick button{padding:3px 10px;font-size:9px;letter-spacing:.5px}
+.ovsel-row{display:flex;align-items:center;gap:10px;padding:7px 9px;border-radius:3px;cursor:pointer;transition:background .12s,opacity .12s;border:1px solid transparent}
+.ovsel-row:hover{background:var(--hover)}
+.ovsel-row.off{opacity:.45}
+.ovsel-row.on{background:rgba(90,176,255,.09);border-color:rgba(90,176,255,.28)}
+.ovsel-sw{width:11px;height:11px;border-radius:3px;flex-shrink:0;box-shadow:0 0 0 1px rgba(255,255,255,.14) inset}
+.ovsel-sym{font-weight:700;font-size:11px;letter-spacing:.6px;min-width:48px}
+.ovsel-nm{color:var(--mut);font-size:10px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ovsel-chk{width:15px;height:15px;border-radius:3px;border:1px solid var(--bdr2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#04121f;flex-shrink:0;transition:all .12s}
+.ovsel-row.on .ovsel-chk{background:var(--blu);border-color:var(--blu)}
+/* Overlay side legend (clickable) */
+.ov-leg{display:flex;align-items:center;gap:9px;padding:5px 7px;border-radius:3px;cursor:pointer;transition:background .12s,opacity .12s;font-size:11.5px}
+.ov-leg:hover{background:var(--hover)}
+.ov-leg.off{opacity:.4}
+.ov-leg .lsw{width:9px;height:9px;border-radius:2px;flex-shrink:0;box-shadow:0 0 0 1px rgba(255,255,255,.12) inset}
+.ov-leg .lsym{font-weight:700;flex:1;letter-spacing:.3px}
+.ov-leg.off .lsw{box-shadow:none;background:var(--mut)!important}
 /* Help overlay */
 .help-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(4,8,16,.95);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
 .help-box{background:var(--panel);border:1px solid var(--bdr2);border-radius:4px;width:100%;max-width:960px;max-height:calc(100vh - 40px);display:flex;flex-direction:column}
@@ -139,16 +172,21 @@ tr:hover td{background:rgba(26,37,64,.55)}
 .kpi-info{position:absolute;bottom:5px;right:7px;font-size:8.5px;color:var(--mut);background:transparent;border:1px solid var(--bdr);border-radius:2px;padding:1px 6px;cursor:pointer;transition:all .12s;font-family:inherit;font-weight:600;letter-spacing:.4px;line-height:1.5}
 .kpi-info:hover{color:var(--txt);border-color:var(--bdr2);background:rgba(38,51,79,.35)}
 .kpi-info.iac{color:var(--amb);border-color:rgba(255,176,32,.5);background:rgba(255,176,32,.1)}
+.kpi-asof{position:absolute;bottom:6px;left:14px;font-size:8.5px;color:var(--mut);letter-spacing:.3px;font-weight:600;font-variant-numeric:tabular-nums;cursor:pointer;transition:color .12s}
+.kpi-asof:hover{color:var(--cyn)}
 </style>
 </head>
 <body>
 <div class="shell" id="app"></div>
 <script>
 // ═══════════════════════════════════════════════════════════════
-// COMMODIQ TERMINAL v5.3 — 9 COMMODITIES · 2020 BACKFILL · VERIFIED NEWS + LIST VIEW · AUDITED 2026-06-06 · REFRESHED + FIGURE-AUDITED 2026-06-17 (beef 100% vs USDA DataMart API; chicken vs ams_3649 PDFs; 9 beef points revised to API; potato unified to MI shipping-point FWA basis; market-impact news; black/vibrant UI)
+// COMMODIQ TERMINAL v5.5 — 9 COMMODITIES · 2020 BACKFILL · VERIFIED NEWS · AUDITED 2026-06-06 · FIGURE-AUDITED 2026-06-17 · REFRESHED 2026-06-22 (beef +Jun 19 byte-exact vs DataMart API).
+// FORECAST ENGINE v5.5: damped-trend ETS (Gardner–McKenzie) + backtest-selected seasonal overlay; 80/95% fan bands calibrated by rolling-origin backtest; MASE skill score vs seasonal-naïve; cadence-aware (weekly beef → 12wk, monthly chicken+potato → 6mo; BT81 + green beans too sparse → no forecast). CLICK-TO-SOURCE: the chart's latest point + every AS-OF date open the exact USDA/source report. Historical data untouched & vetted.
 // ═══════════════════════════════════════════════════════════════
 
 var NEWS=[
+{t:"90CL Trim Holds at $459.46/cwt Jun 19, ~Flat WoW \u2014 Stays ~$0.80 Under the May 29 Record $460.27 as Lean Supply Remains Tight (34 Trades, 854K lbs)",d:"Jun 19",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
+{t:"50CL Fat Trim Eases to $182.59/cwt Jun 19, -3.5% WoW \u2014 Lean Premium (90CL minus 50CL) Widens to ~$277/cwt (54 Trades, 1.36M lbs)",d:"Jun 19",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
 {t:"90CL Trim $459.76/cwt Jun 12, +0.6% WoW \u2014 Holds Just Below May 29 Record $460.27 as Lean Supply Stays Tight (45 Trades, 1.41M lbs)",d:"Jun 12",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
 {t:"Role Reversal: Mexico Halts Most US Live-Animal Imports Jun 10 \u2014 Screwworm Now Confirmed in Texas & New Mexico",d:"Jun 10",s:"Drovers",u:"https://www.drovers.com/news/mexico-blocks-most-imports-live-animals-u-s-after-screwworm-cases"},
 {t:"USDA Confirms 5 New World Screwworm Cases in the US Since Jun 3 (TX & NM) \u2014 Sterile-Fly Response Scaled Up",d:"Jun 12",s:"USDA APHIS",u:"https://www.aphis.usda.gov/livestock-poultry-disease/stop-screwworm/current-status"},
@@ -157,7 +195,7 @@ var NEWS=[
 {t:"50CL Fat Trim Firms to $189.14/cwt Jun 12, +2.1% WoW \u2014 49 Trades, 1.03M lbs",d:"Jun 12",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
 {t:"CNN: What the Screwworm Outbreak Means for Your Beef Prices \u2014 Lean Ground Beef the Most Exposed Cut",d:"Jun 9",s:"CNN Business",u:"https://www.cnn.com/2026/06/09/business/what-consumers-should-know-about-screwworm"},
 {t:"Dallas Fed: Beef Prices at Record Highs, US Cattle Herd at Record Low \u2014 Screwworm Spread Threatens Texas Herd",d:"Jun 2026",s:"Dallas Fed",u:"https://www.dallasfed.org/research/swe/2026/swe2612"},
-{t:"81CL Trim Still Thin \u2014 No National Negotiated Trades Reported Jun 5 or Jun 12; Last Print $390.36/cwt May 22",d:"Jun 12",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
+{t:"81CL Trim Still Thin \u2014 No National Negotiated Trades Reported Jun 5, Jun 12 or Jun 19; Last Print $390.36/cwt May 22",d:"Jun 19",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
 {t:"USDA ERS Raises 2026 Beef & Veal Forecast to +12.1% (Range 6.6\u201318.1%); April Beef +14.8% YoY",d:"May 22",s:"USDA ERS",u:"https://www.ers.usda.gov/data-products/food-price-outlook/summary-findings"},
 {t:"Chicken Breast B/S Eases to 155.35\u00a2/lb May Avg After April Spike to 169.21\u00a2 \u2014 June Report Due ~Jul 2",d:"Jun 2",s:"USDA AMS",u:"https://www.ams.usda.gov/mnreports/ams_3649.pdf"},
 {t:"ERS Sees 2026 Poultry Prices Just +0.5% \u2014 HPAI Has Hit ~100 Commercial Flocks in 2026, Broilers Largely Spared",d:"May 22",s:"USDA ERS/APHIS",u:"https://www.ers.usda.gov/data-products/food-price-outlook/summary-findings"},
@@ -189,16 +227,19 @@ var NEWS=[
 })();
 
 // ═══ 9 COMMODITIES (4 beef trims + 2 chicken + 1 offal gizzard + potato + green bean) ═══
+// `src` = the actual report each commodity's latest value comes from (click-to-verify). Beef = weekly
+// LM_XB460 (ams_2462.pdf); chicken = MONTHLY ams_3649.pdf (NOT the weekly 3646/3645); potato = MI Potato
+// Commission market report (NOT fvdidnop \u2014 that's a different basis); green bean = NX_FV020.
 var COMS=[
-{k:"BT50",nm:"Beef Trim 50CL",un:"$/cwt",cl:"#ff5c7a",sy:"BT50",sr:"USDA AMS ams_2462",hk:"BT50",rpt:"daily_cattle"},
-{k:"BT65",nm:"Beef Trim 65CL",un:"$/cwt",cl:"#ff8fa3",sy:"BT65",sr:"USDA AMS ams_2462",hk:"BT65",rpt:"weekly_trim"},
-{k:"BT81",nm:"Beef Trim 81CL",un:"$/cwt",cl:"#ff6452",sy:"BT81",sr:"USDA AMS ams_2462",hk:"BT81",rpt:"weekly_trim"},
-{k:"BT90",nm:"Beef Trim 90CL",un:"$/cwt",cl:"#ff3b5e",sy:"BT90",sr:"USDA AMS ams_2462",hk:"BT90",rpt:"weekly_trim"},
-{k:"CB",nm:"Chicken Breast B/S",un:"\u00a2/lb",cl:"#00ffc2",sy:"CKBR",sr:"USDA AMS ams_3649",hk:"CB",rpt:"weekly_chicken"},
-{k:"CL",nm:"Chicken Liver",un:"\u00a2/lb",cl:"#ffc233",sy:"CKLV",sr:"USDA AMS ams_3649",hk:"CL",rpt:"weekly_poultry"},
-{k:"CG",nm:"Chicken Gizzard",un:"\u00a2/lb",cl:"#d28bff",sy:"CKGZ",sr:"USDA AMS ams_3649",hk:"CG",rpt:"weekly_poultry"},
-{k:"PT",nm:"Russet Potatoes #1",un:"$/cwt",cl:"#4fb0ff",sy:"PTRS",sr:"USDA AMS fvdidnop",hk:"PT",rpt:"daily_potato"},
-{k:"GB",nm:"Snap Green Beans",un:"$/bu",cl:"#24e9ff",sy:"GNSB",sr:"USDA AMS NX_FV020",hk:"GB",rpt:"daily_veggie"},
+{k:"BT50",nm:"Beef Trim 50CL",un:"$/cwt",cl:"#ff5c7a",sy:"BT50",sr:"USDA AMS LM_XB460",hk:"BT50",rpt:"weekly_trim",src:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
+{k:"BT65",nm:"Beef Trim 65CL",un:"$/cwt",cl:"#ff8fa3",sy:"BT65",sr:"USDA AMS LM_XB460",hk:"BT65",rpt:"weekly_trim",src:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
+{k:"BT81",nm:"Beef Trim 81CL",un:"$/cwt",cl:"#ff6452",sy:"BT81",sr:"USDA AMS LM_XB460",hk:"BT81",rpt:"weekly_trim",src:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
+{k:"BT90",nm:"Beef Trim 90CL",un:"$/cwt",cl:"#ff3b5e",sy:"BT90",sr:"USDA AMS LM_XB460",hk:"BT90",rpt:"weekly_trim",src:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
+{k:"CB",nm:"Chicken Breast B/S",un:"\u00a2/lb",cl:"#00ffc2",sy:"CKBR",sr:"USDA AMS ams_3649 (monthly)",hk:"CB",rpt:"monthly_chicken",src:"https://www.ams.usda.gov/mnreports/ams_3649.pdf"},
+{k:"CL",nm:"Chicken Liver",un:"\u00a2/lb",cl:"#ffc233",sy:"CKLV",sr:"USDA AMS ams_3649 (monthly)",hk:"CL",rpt:"monthly_chicken",src:"https://www.ams.usda.gov/mnreports/ams_3649.pdf"},
+{k:"CG",nm:"Chicken Gizzard",un:"\u00a2/lb",cl:"#d28bff",sy:"CKGZ",sr:"USDA AMS ams_3649 (monthly)",hk:"CG",rpt:"monthly_chicken",src:"https://www.ams.usda.gov/mnreports/ams_3649.pdf"},
+{k:"PT",nm:"Russet Potatoes #1",un:"$/cwt",cl:"#4fb0ff",sy:"PTRS",sr:"MI Potato Comm (NAPMN)",hk:"PT",rpt:"daily_potato",src:"https://www.mipotatoindustry.com/news/market-report-june-17-2026"},
+{k:"GB",nm:"Snap Green Beans",un:"$/bu",cl:"#24e9ff",sy:"GNSB",sr:"USDA AMS NX_FV020",hk:"GB",rpt:"daily_veggie",src:"https://www.ams.usda.gov/mnreports/nx_fv020.pdf"},
 ];
 var TRS={"1M":30,"3M":90,"6M":180,"1Y":365,"2Y":730,"ALL":100000};
 
@@ -206,8 +247,7 @@ var TRS={"1M":30,"3M":90,"6M":180,"1Y":365,"2Y":730,"ALL":100000};
 var REPORTS={
   daily_cattle:{name:"Daily Cattle & Beef Summary",freq:"Daily (M-F)",hour:15,days:[1,2,3,4,5],url:"https://www.ams.usda.gov/mnreports/lsddcbs.pdf"},
   weekly_trim:{name:"Wkly Boneless Processing Beef & Trimmings",freq:"Weekly (Fri)",hour:15,days:[5],url:"https://www.ams.usda.gov/mnreports/ams_2462.pdf"},
-  weekly_chicken:{name:"Weekly National Chicken Report",freq:"Weekly (Fri)",hour:14,days:[5],url:"https://www.ams.usda.gov/mnreports/ams_3646.pdf"},
-  weekly_poultry:{name:"Misc Poultry Report (Liver/Gizzard)",freq:"Weekly (Fri)",hour:14,days:[5],url:"https://www.ams.usda.gov/mnreports/ams_3645.pdf"},
+  monthly_chicken:{name:"Monthly National Chicken Report (breast/liver/gizzard)",freq:"Monthly (~1st biz day)",hour:14,days:[1],url:"https://www.ams.usda.gov/mnreports/ams_3649.pdf"},
   daily_potato:{name:"National Potato & Onion Report",freq:"Daily (M-F)",hour:17,days:[1,2,3,4,5],url:"https://www.ams.usda.gov/mnreports/fvdidnop.pdf"},
   daily_veggie:{name:"Terminal Market Vegetable Prices",freq:"Daily (M-F)",hour:12,days:[1,2,3,4,5],url:"https://www.ams.usda.gov/mnreports/nx_fv020.pdf"},
 };
@@ -251,7 +291,7 @@ function getReportStatus(){
   return{reports:results,newCount:newCount,next:nextStr};
 }
 
-var state={sel:0,tr:"6M",view:"SINGLE",fc:true,lbMode:false,data:{},metrics:{},forecasts:{},lastCheck:0,showPanel:false,showHelp:false,intel:null,newsOpen:false};
+var state={sel:0,tr:"6M",view:"SINGLE",fc:true,lbMode:false,data:{},metrics:{},forecasts:{},lastCheck:0,showPanel:false,showHelp:false,intel:null,newsOpen:false,ovSel:[0,1,2,3],ovMenu:false};
 
 // ═══ ACTUAL PRICE DATA — all points from published reports, Jan 2020–Jun 2026 · NO synthetic/interpolated values ═══
 // Beef: USDA MPR DataMart API LM_XB460 — weekly Friday negotiated sales, National price_range_avg, $/cwt
@@ -594,6 +634,7 @@ var HIST={
     {date:"2026-05-29",price:184.71,vol:null},  // USDA MPR LM_XB460 wk May 29 2026 (National, 64 trades, 1.45M lbs)
     {date:"2026-06-05",price:185.18,vol:null},  // USDA MPR LM_XB460 wk Jun 5 2026 (National, 67 trades, 1.54M lbs)
     {date:"2026-06-12",price:189.14,vol:null},  // USDA MPR LM_XB460 wk Jun 12 2026 (National, 49 trades, 1.03M lbs) — refreshed 2026-06-17
+    {date:"2026-06-19",price:182.59,vol:null},  // USDA MPR LM_XB460 wk Jun 19 2026 (National, 54 trades, 1.36M lbs) — refreshed 2026-06-22
   ],
   // ── BT65: LM_XB460 Chemical Lean Fresh 65%, $/cwt — USDA MPR DataMart API weekly
   BT65:[
@@ -926,6 +967,7 @@ var HIST={
     {date:"2026-05-29",price:242.08,vol:null},  // USDA MPR LM_XB460 wk May 29 2026 (National, 25 trades, 726K lbs)
     {date:"2026-06-05",price:247.94,vol:null},  // USDA MPR LM_XB460 wk Jun 5 2026 (National, 31 trades, 783K lbs)
     {date:"2026-06-12",price:253.90,vol:null},  // USDA MPR LM_XB460 wk Jun 12 2026 (National, 30 trades, 848K lbs) — refreshed 2026-06-17
+    {date:"2026-06-19",price:253.56,vol:null},  // USDA MPR LM_XB460 wk Jun 19 2026 (National, 25 trades, 747K lbs) — refreshed 2026-06-22
   ],
   // ── BT81: LM_XB460 Chemical Lean Fresh 81%, $/cwt — USDA MPR DataMart API weekly (intermittent trades)
   BT81:[
@@ -1119,7 +1161,7 @@ var HIST={
     {date:"2026-05-01",price:365.93,vol:null},  // USDA MPR LM_XB460 wk May 1 2026 (National, 3 trades, 116K lbs — thin)
     {date:"2026-05-15",price:377.23,vol:null},  // USDA MPR LM_XB460 wk May 15 2026 (National, 4 trades, 113K lbs — thin)
     {date:"2026-05-22",price:390.36,vol:null},  // USDA MPR LM_XB460 wk May 22 2026 (National, 7 trades, 169K lbs — thin)
-    // wks Apr 24, May 8, May 29, Jun 5, Jun 12 2026: no National negotiated trades reported (genuine gap, not missing data; verified via DataMart API 2026-06-17)
+    // wks Apr 24, May 8, May 29, Jun 5, Jun 12, Jun 19 2026: no National negotiated trades reported (genuine gap, not missing data; verified via DataMart API 2026-06-22)
   ],
   // ── BT90: LM_XB460 Chemical Lean Fresh 90%, $/cwt — USDA MPR DataMart API weekly
   BT90:[
@@ -1457,6 +1499,7 @@ var HIST={
     {date:"2026-05-29",price:460.27,vol:null},  // USDA MPR LM_XB460 wk May 29 2026 (National, 45 trades, 1.17M lbs — new terminal high)
     {date:"2026-06-05",price:457.18,vol:null},  // USDA MPR LM_XB460 wk Jun 5 2026 (National, 33 trades, 927K lbs)
     {date:"2026-06-12",price:459.76,vol:null},  // USDA MPR LM_XB460 wk Jun 12 2026 (National, 45 trades, 1.41M lbs) — refreshed 2026-06-17
+    {date:"2026-06-19",price:459.46,vol:null},  // USDA MPR LM_XB460 wk Jun 19 2026 (National, 34 trades, 854K lbs) — refreshed 2026-06-22
   ],
   // ── CB: USDA AMS ams_3649 Monthly National Chicken Report — Breast B/S wtd avg ¢/lb
   CB:[
@@ -1713,10 +1756,11 @@ function calcM(data){
   if(!data||data.length<1)return null;
   var last=data[data.length-1];if(!last)return null;
   var latest=last.price,lastDate=new Date(last.date);
-  function closestBefore(daysAgo){
+  function closestBefore(daysAgo,tolDays){
     var target=new Date(lastDate);target.setDate(target.getDate()-daysAgo);
     var best=null,bestDist=Infinity;
     for(var i=0;i<data.length-1;i++){var dist=Math.abs(new Date(data[i].date).getTime()-target.getTime());if(dist<bestDist){bestDist=dist;best=data[i].price;}}
+    if(tolDays!=null&&bestDist>tolDays*86400000)return null;// honest n/a — no genuine report near this window
     return best;
   }
   function maWindow(days){
@@ -1725,9 +1769,9 @@ function calcM(data){
     return pts.length?(pts.reduce(function(a,b){return a+b;})/pts.length):null;
   }
   var prev=data.length>=2?data[data.length-2].price:null;
-  var wk=data.length>=2?closestBefore(7):null;
-  var mo=data.length>=2?closestBefore(30):null;
-  var yr=data.length>=2?closestBefore(365):null;
+  var wk=data.length>=2?closestBefore(7,4):null;
+  var mo=data.length>=2?closestBefore(30,12):null;
+  var yr=data.length>=2?closestBefore(365,60):null;
   var a7=maWindow(7)||latest,a30=maWindow(30)||latest,a90=maWindow(90)||latest;
   var h52=-1e9,l52=1e9,cut52=new Date(lastDate);cut52.setDate(cut52.getDate()-365);
   for(var i=0;i<data.length;i++){if(new Date(data[i].date)>=cut52){if(data[i].price>h52)h52=data[i].price;if(data[i].price<l52)l52=data[i].price;}}
@@ -1750,16 +1794,80 @@ function calcM(data){
   else if(daily!=null){if(daily>0.8)tr="\u2191";else if(daily<-0.8)tr="\u2193";}
   return{latest:latest,wow:wow,mom:mom,yoy:yoy,daily:daily,trend:tr,a7:a7,a30:a30,a90:a90,vol:volAnn,h52:h52,l52:l52};
 }
+// ═══ FORECAST ENGINE (v5.5) — damped-trend ETS (Gardner–McKenzie) with optional seasonal
+//   adjustment; prediction bands calibrated by rolling-origin backtest; a MASE skill score vs the
+//   seasonal-naïve benchmark; cadence-aware horizon. Pure arithmetic — never alters historical data.
+//   Per-cadence design (research-backed: simple+damped+seasonal beats complex on sparse series):
+//     • regular weekly  → damped trend, 12-week horizon
+//     • regular monthly → damped trend, optional seasonal overlay if it lowers backtest error, 6-month horizon
+//     • intermittent / very sparse (BT81 thin weeks, off-season produce) → no forecast (honest)
+var FC_AL=0.3,FC_BE=0.1,FC_PHIS=[0.80,0.85,0.90,0.95];// level/trend smoothing; φ damping grid
+function fcFitDamped(y){// fit damped Holt; choose φ by one-step SSE
+  var best=null;
+  for(var pi=0;pi<FC_PHIS.length;pi++){
+    var phi=FC_PHIS[pi],n=y.length,lev=y[0],tr=(y[Math.min(3,n-1)]-y[0])/Math.min(3,n-1),sse=0;
+    for(var i=1;i<n;i++){var e=y[i]-(lev+phi*tr);sse+=e*e;var pl=lev;lev=FC_AL*y[i]+(1-FC_AL)*(lev+phi*tr);tr=FC_BE*(lev-pl)+(1-FC_BE)*phi*tr;}
+    if(!best||sse<best.sse)best={lev:lev,tr:tr,phi:phi,sse:sse};
+  }
+  return best;
+}
+function fcProject(fit,steps){var out=[],phi=fit.phi;for(var h=1;h<=steps;h++){var sum=phi*(1-Math.pow(phi,h))/(1-phi);out.push(fit.lev+sum*fit.tr);}return out;}// damped sum φ+…+φ^h
+function fcSeasonal(data,m){// multiplicative monthly index via ratio-to-MA, normalized + shrunk toward 1
+  if(m!==12)return null;var n=data.length;if(n<m*2+2)return null;
+  var y=data.map(function(d){return d.price;}),mo=data.map(function(d){return new Date(d.date).getUTCMonth();});
+  var R=[[],[],[],[],[],[],[],[],[],[],[],[]];
+  for(var t=6;t<n-6;t++){var s=0.5*y[t-6]+0.5*y[t+6];for(var k=-5;k<=5;k++)s+=y[t+k];var ma=s/12;if(ma>0)R[mo[t]].push(y[t]/ma);}
+  var idx=[],sum=0;
+  for(var mm=0;mm<12;mm++){if(!R[mm].length)return null;var a=0;for(var j=0;j<R[mm].length;j++)a+=R[mm][j];idx[mm]=a/R[mm].length;sum+=idx[mm];}
+  var mean=sum/12;for(var mm=0;mm<12;mm++)idx[mm]/=mean;
+  var cyc=n/m,shr=Math.max(0.3,Math.min(1,(cyc-1)/3)),s2=0;// fewer cycles → shrink harder toward neutral
+  for(var mm=0;mm<12;mm++){idx[mm]=1+shr*(idx[mm]-1);s2+=idx[mm];}
+  for(var mm=0;mm<12;mm++)idx[mm]*=12/s2;
+  var lo=Math.min.apply(null,idx),hi=Math.max.apply(null,idx);
+  return (hi-lo<0.06)?null:idx;// too flat to be worth it
+}
+function fcMethod(data,steps,seas){// point path for one method on the given history
+  var y=data.map(function(d){return d.price;}),n=y.length,win=Math.max(0,n-52);
+  if(seas){
+    var sub=data.slice(win),des=sub.map(function(d){return d.price/seas[new Date(d.date).getUTCMonth()];});
+    var fit=fcFitDamped(des),base=fcProject(fit,steps),lm=new Date(data[n-1].date).getUTCMonth();
+    return base.map(function(v,h){return v*seas[(lm+h+1)%12];});
+  }
+  return fcProject(fcFitDamped(y.slice(win)),steps);
+}
+function fcBacktest(data,steps,m,seas){// rolling-origin → MASE (vs seasonal-naïve) + per-horizon sigma
+  var y=data.map(function(d){return d.price;}),n=y.length,minT=Math.max(8,seas?m+4:6);
+  var sq=[],cnt=[];for(var h=0;h<steps;h++){sq[h]=0;cnt[h]=0;}
+  var absE=0,no=0,startO=Math.max(minT,n-40);
+  for(var o=startO;o<n;o++){var f=fcMethod(data.slice(0,o),Math.min(steps,n-o),seas);no++;for(var h=0;h<f.length;h++){var e=y[o+h]-f[h];sq[h]+=e*e;cnt[h]++;if(h===0)absE+=Math.abs(e);}}
+  var dn=0,dc=0;for(var t=m;t<n;t++){dn+=Math.abs(y[t]-y[t-m]);dc++;}
+  var denom=dc?dn/dc:1,mase=(absE/Math.max(1,no))/(denom||1);
+  var sig=[],ref=Math.sqrt(sq[0]/Math.max(1,cnt[0]))||1,prev=0;
+  for(var h=0;h<steps;h++){var s=cnt[h]>=3?Math.sqrt(sq[h]/cnt[h]):ref*Math.sqrt(h+1);if(s<prev)s=prev;prev=s;sig.push(s);}
+  return {mase:mase,sigma:sig};
+}
 function doFc(data){
-  if(!data||data.length<4)return[];
-  var pr=[];for(var i=Math.max(0,data.length-52);i<data.length;i++)pr.push(data[i].price);
-  var n=pr.length,al=0.3,be=0.1,lv=pr[0],tr=(pr[Math.min(3,n-1)]-pr[0])/Math.min(3,n-1);
-  for(var i=1;i<n;i++){var pl=lv;lv=al*pr[i]+(1-al)*(lv+tr);tr=be*(lv-pl)+(1-be)*tr;}
-  var sse=0,l2=pr[0],t2=tr;
-  for(var i=1;i<n;i++){sse+=(pr[i]-(l2+t2))*(pr[i]-(l2+t2));var pl2=l2;l2=al*pr[i]+(1-al)*(l2+t2);t2=be*(l2-pl2)+(1-be)*t2;}
-  var sig=Math.sqrt(sse/Math.max(1,n-2)),last=new Date(data[data.length-1].date),fc=[];
-  for(var i=1;i<=12;i++){var d=new Date(last);d.setDate(d.getDate()+i*7);var p=lv+tr*i,ci=1.96*sig*Math.sqrt(i);
-    fc.push({date:d.toISOString().split("T")[0],price:+(p.toFixed(2)),upper:+((p+ci).toFixed(2)),lower:+(Math.max(0,p-ci).toFixed(2))});}
+  if(!data||data.length<8)return[];
+  var gaps=[];for(var gi=Math.max(1,data.length-8);gi<data.length;gi++){gaps.push((new Date(data[gi].date)-new Date(data[gi-1].date))/86400000);}
+  gaps.sort(function(a,b){return a-b;});
+  var medGap=gaps.length?gaps[Math.floor(gaps.length/2)]:7,cad,m,steps,stepDays,unit,label;
+  if(medGap<=10){cad="weekly";m=52;steps=12;stepDays=7;unit="W";label="12 WEEKS";}
+  else if(medGap>=18&&medGap<=45&&data.length>=24){cad="monthly";m=12;steps=6;stepDays=Math.round(medGap);unit="M";label="6 MONTHS";}
+  else return[];// intermittent (BT81 thin weeks) or too sparse to project honestly (e.g. green beans, ~16 pts)
+  var cands=[{seas:null,name:"damped trend"}],seas=(cad==="monthly")?fcSeasonal(data,m):null;
+  if(seas)cands.push({seas:seas,name:"damped trend + seasonal"});
+  var best=null;
+  for(var ci=0;ci<cands.length;ci++){var bt=fcBacktest(data,steps,m,cands[ci].seas);if(!best||bt.mase<best.bt.mase)best={cand:cands[ci],bt:bt};}
+  var path=fcMethod(data,steps,best.cand.seas),last=new Date(data[data.length-1].date),fc=[];
+  for(var h=1;h<=steps;h++){
+    var d=new Date(last);d.setUTCDate(d.getUTCDate()+Math.round(h*stepDays));
+    var mid=path[h-1],sg=best.bt.sigma[h-1];
+    fc.push({date:d.toISOString().split("T")[0],price:+mid.toFixed(2),
+      lo80:+Math.max(0,mid-1.282*sg).toFixed(2),hi80:+(mid+1.282*sg).toFixed(2),
+      lo95:+Math.max(0,mid-1.96*sg).toFixed(2),hi95:+(mid+1.96*sg).toFixed(2)});
+  }
+  fc.method=best.cand.name;fc.mase=+best.bt.mase.toFixed(2);fc.beatsNaive=best.bt.mase<1;
+  fc.cadence=cad;fc.unit=unit;fc.horizonLabel=label;fc.steps=steps;fc.medGap=Math.round(medGap);
   return fc;
 }
 
@@ -1768,7 +1876,7 @@ var INTEL_CONTEXT={
   BT90:[
     "USDA NASS Jan 2026: U.S. cattle inventory at 86.2M head \u2014 a 75-year low. Structural lean supply tightness expected to persist through 2026\u20132027 as herd rebuilding takes 3\u20135 years.",
     "BT90 is the primary lean base for 90/10 and 93/7 blends. Demand from major QSR and further-processing accounts is largely inelastic year-round.",
-    "The May 29 2026 price of $460.27/cwt is the highest level recorded in this terminal\u2019s history (Jan 2020\u2013present); after easing to $457.18 Jun 5, BT90 firmed back to $459.76 Jun 12 (within $0.51 of the record). Lean premium (BT90 minus BT50 spread) is approximately $271/cwt \u2014 historically extreme."
+    "The May 29 2026 price of $460.27/cwt is the highest level recorded in this terminal\u2019s history (Jan 2020\u2013present); after easing to $457.18 Jun 5 it firmed to $459.76 Jun 12 and held at $459.46 Jun 19 \u2014 within ~$0.80 of the record. Lean premium (BT90 minus BT50 spread) is approximately $277/cwt \u2014 historically extreme."
   ],
   BT81:[
     "BT81 is the industry benchmark for 80/20 ground beef \u2014 the standard for retail packs and food service burger patties. It tracks the most common consumer grind.",
@@ -1783,7 +1891,7 @@ var INTEL_CONTEXT={
   BT50:[
     "50CL is the fat trim fraction. It moves partly inversely to lean trim when processors are fat-long. Very low prices can signal fat oversupply relative to rendering and processing demand.",
     "BT50 serves fat target requirements in sausage, hot dogs, and pet food formulations. Domestic demand is also supported by rendering and export channels.",
-    "BT50/BT90 spread reflects the \u2018lean premium.\u2019 Current spread ~$271/cwt is historically elevated, confirming extreme lean supply constraint vs. adequate fat trim supply."
+    "BT50/BT90 spread reflects the \u2018lean premium.\u2019 With BT50 easing to $182.59 and BT90 at $459.46 (Jun 19), the spread is ~$277/cwt \u2014 historically elevated, confirming extreme lean supply constraint vs. adequate fat trim supply."
   ],
   CB:[
     "Chicken breast pricing via USDA AMS_3649 is reported monthly. W% and D% changes are approximate because data points may be spaced weeks apart rather than daily.",
@@ -1846,7 +1954,7 @@ function genIntel(idx){
   if(m.vol>0){var vt,vd;if(m.vol>45){vt="warn";vd="Very high ("+m.vol.toFixed(0)+"% ann.) \u2014 wide budget variance required; consider price risk management tools";}else if(m.vol>25){vt="warn";vd="High ("+m.vol.toFixed(0)+"% ann.) \u2014 monitor weekly; use cost-plus or indexed contract structures";}else if(m.vol>12){vt="neutral";vd="Moderate ("+m.vol.toFixed(0)+"% ann.) \u2014 normal commodity range; monthly review cadence adequate";}else{vt="good";vd="Low ("+m.vol.toFixed(0)+"% ann.) \u2014 stable market; suitable for semi-annual fixed-price contracts";}bullets.push({type:vt,text:"Volatility: "+vd});}
   // Forecast signal
   var fcd=state.forecasts[idx];
-  if(fcd&&fcd.length>=4){var f4=fcd[3],f12=fcd[fcd.length-1],fp4=((f4.price-latest)/latest)*100,fp12=((f12.price-latest)/latest)*100,ft=fp12>8?"warn":fp12<-8?"good":"neutral";bullets.push({type:ft,text:"Holt-Winters forecast \u2014 4W: "+fmt(f4.price,2)+" "+(fp4>=0?"+":"")+fp4.toFixed(1)+"% \u00b7 12W: "+fmt(f12.price,2)+" "+(fp12>=0?"+":"")+fp12.toFixed(1)+"% \u2014 "+(fp12>5?"upward trajectory; consider locking in pricing if possible":fp12<-5?"downward trajectory; wait-and-see may yield savings":"relatively flat near-term forecast")});}
+  if(fcd&&fcd.length){var fe=fcd[fcd.length-1],fpe=((fe.price-latest)/latest)*100,ft=fpe>8?"warn":fpe<-8?"good":"neutral";bullets.push({type:ft,text:fcd.horizonLabel+" projection ("+fcd.method+") \u2014 midpoint "+fmt(fe.price,2)+" "+(fpe>=0?"+":"")+fpe.toFixed(1)+"%, 80% range "+fmt(fe.lo80,2)+"\u2013"+fmt(fe.hi80,2)+" \u00b7 skill MASE "+fcd.mase+(fcd.beatsNaive?" (beats seasonal-na\u00efve)":" (does not beat na\u00efve \u2014 low confidence)")+". "+(fpe>5?"Upward trajectory; consider locking in pricing if supply allows.":fpe<-5?"Downward trajectory; waiting may yield savings.":"Relatively flat near-term.")});}
   // Static commodity context
   var ctx=INTEL_CONTEXT[c.k];
   if(ctx)ctx.forEach(function(txt){bullets.push({type:"info",text:txt});});
@@ -1854,12 +1962,13 @@ function genIntel(idx){
 }
 
 function fmt(v,d){return v!=null&&!isNaN(v)?v.toFixed(d!=null?d:2):"\u2014";}
+function fdate(iso){var m=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],p=String(iso||"").split("-");return p.length===3?m[+p[1]-1]+" "+(+p[2]):"\u2014";}
 function fP(v){return v!=null&&!isNaN(v)?(v>=0?"+":"")+v.toFixed(2)+"%":"\u2014";}
 function pcCl(v){return v>0.1?"#00e6b4":v<-0.1?"#ff4d6a":"#7886a3";}
 function tCl(t){return t==="\u2191"?"#00e6b4":t==="\u2193"?"#ff4d6a":"#7886a3";}
 function lbFactor(c){if(c.un==="$/cwt")return 0.01;if(c.un==="\u00a2/lb")return 0.01;if(c.un==="$/bu")return 1/30;return 1;}
 function lbSer(ser,f){if(f===1)return ser;return ser.map(function(d){return{date:d.date,price:Math.round(d.price*f*10000)/10000,vol:d.vol};});}
-function lbFc(fc,f){if(!fc||f===1)return fc;return fc.map(function(d){return{date:d.date,price:Math.round(d.price*f*10000)/10000,upper:Math.round(d.upper*f*10000)/10000,lower:Math.round(d.lower*f*10000)/10000};});}
+function lbFc(fc,f){if(!fc||!fc.length||f===1)return fc;var g=fc.map(function(d){return{date:d.date,price:d.price*f,lo80:d.lo80*f,hi80:d.hi80*f,lo95:d.lo95*f,hi95:d.hi95*f};});g.method=fc.method;g.mase=fc.mase;g.beatsNaive=fc.beatsNaive;g.cadence=fc.cadence;g.unit=fc.unit;g.horizonLabel=fc.horizonLabel;g.steps=fc.steps;g.medGap=fc.medGap;return g;}
 
 // ═══ CANVAS ═══
 function sizeCanvas(cv){var p=cv.parentElement,w=p.clientWidth,h=p.clientHeight,dpr=window.devicePixelRatio||1;cv.style.width=w+"px";cv.style.height=h+"px";cv.width=w*dpr;cv.height=h*dpr;}
@@ -1877,7 +1986,7 @@ function drawChart(canvas,series,color,opts){
   var pad={t:12,r:12,b:28,l:62},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
   var prices=series.map(function(d){return d.price;});
   var mn=Math.min.apply(null,prices),mx=Math.max.apply(null,prices);
-  if(opts.fcData&&opts.fcData.length){for(var i=0;i<opts.fcData.length;i++){mn=Math.min(mn,opts.fcData[i].lower);mx=Math.max(mx,opts.fcData[i].upper);}}
+  if(opts.fcData&&opts.fcData.length){for(var i=0;i<opts.fcData.length;i++){mn=Math.min(mn,opts.fcData[i].lo95);mx=Math.max(mx,opts.fcData[i].hi95);}}
   var range=mx-mn||1;mn-=range*0.05;mx+=range*0.05;range=mx-mn;
   function xP(i,t){return pad.l+(i/(t-1))*cw;}function yP(v){return pad.t+(1-(v-mn)/range)*ch;}
   var total=series.length+(opts.fcData?opts.fcData.length:0);
@@ -1885,9 +1994,16 @@ function drawChart(canvas,series,color,opts){
   for(var i=0;i<5;i++){var gy=pad.t+(ch/4)*i;ctx.beginPath();ctx.moveTo(pad.l,gy);ctx.lineTo(w-pad.r,gy);ctx.stroke();ctx.fillStyle="#98a8c8";ctx.font="11px 'IBM Plex Mono',monospace";ctx.textAlign="right";ctx.fillText(fmt(mx-(range/4)*i),pad.l-6,gy+3);}
   ctx.fillStyle="#98a8c8";ctx.font="11px 'IBM Plex Mono',monospace";ctx.textAlign="center";
   var step=Math.max(1,Math.floor(total/6));for(var i=0;i<series.length;i+=step){var d=new Date(series[i].date);ctx.fillText(d.toLocaleDateString("en-US",{month:"short",day:"numeric"}),xP(i,total),h-pad.b+15);}
-  if(opts.fcData&&opts.fcData.length){var fs=series.length;ctx.fillStyle="rgba(0,222,255,0.13)";ctx.beginPath();ctx.moveTo(xP(fs,total),yP(opts.fcData[0].upper));for(var i=0;i<opts.fcData.length;i++)ctx.lineTo(xP(fs+i,total),yP(opts.fcData[i].upper));for(var i=opts.fcData.length-1;i>=0;i--)ctx.lineTo(xP(fs+i,total),yP(opts.fcData[i].lower));ctx.closePath();ctx.fill();ctx.strokeStyle="#00deff";ctx.lineWidth=1.5;ctx.setLineDash([6,4]);ctx.beginPath();ctx.moveTo(xP(fs-1,total),yP(series[series.length-1].price));for(var i=0;i<opts.fcData.length;i++)ctx.lineTo(xP(fs+i,total),yP(opts.fcData[i].price));ctx.stroke();ctx.setLineDash([]);}
+  if(opts.fcData&&opts.fcData.length){var fcd=opts.fcData,fs=series.length,ax=xP(fs-1,total),ay=yP(series[series.length-1].price);
+    var band=function(loK,hiK,fill){ctx.fillStyle=fill;ctx.beginPath();ctx.moveTo(ax,ay);for(var i=0;i<fcd.length;i++)ctx.lineTo(xP(fs+i,total),yP(fcd[i][hiK]));for(var i=fcd.length-1;i>=0;i--)ctx.lineTo(xP(fs+i,total),yP(fcd[i][loK]));ctx.closePath();ctx.fill();};
+    band("lo95","hi95","rgba(0,222,255,0.10)");band("lo80","hi80","rgba(0,222,255,0.20)");// 95% then 80% fan
+    ctx.strokeStyle="#00deff";ctx.lineWidth=1.5;ctx.setLineDash([6,4]);ctx.beginPath();ctx.moveTo(ax,ay);for(var i=0;i<fcd.length;i++)ctx.lineTo(xP(fs+i,total),yP(fcd[i].price));ctx.stroke();ctx.setLineDash([]);}
   var grad=ctx.createLinearGradient(0,pad.t,0,h-pad.b);grad.addColorStop(0,color+"33");grad.addColorStop(1,color+"03");ctx.fillStyle=grad;ctx.beginPath();ctx.moveTo(xP(0,total),yP(prices[0]));for(var i=1;i<prices.length;i++)ctx.lineTo(xP(i,total),yP(prices[i]));ctx.lineTo(xP(prices.length-1,total),h-pad.b);ctx.lineTo(xP(0,total),h-pad.b);ctx.closePath();ctx.fill();
   ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(xP(0,total),yP(prices[0]));for(var i=1;i<prices.length;i++)ctx.lineTo(xP(i,total),yP(prices[i]));ctx.stroke();
+  // Latest-report marker — filled dot + faint ring signals it is click-to-source (opens the USDA/source report)
+  var lpx=xP(prices.length-1,total),lpy=yP(prices[prices.length-1]);canvas.__lastPt={x:lpx,y:lpy};
+  ctx.fillStyle=color;ctx.beginPath();ctx.arc(lpx,lpy,3.4,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle=color;ctx.globalAlpha=0.45;ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(lpx,lpy,6.5,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
   if(opts.hoverX!=null){var idx=Math.round((opts.hoverX-pad.l)/cw*(total-1));if(idx>=0&&idx<series.length){var px=xP(idx,total),py=yP(series[idx].price);ctx.strokeStyle="#3a5582";ctx.lineWidth=0.5;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(px,pad.t);ctx.lineTo(px,h-pad.b);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=color;ctx.beginPath();ctx.arc(px,py,3.5,0,Math.PI*2);ctx.fill();var tip=fmt(series[idx].price)+" \u00b7 "+series[idx].date;ctx.font="bold 11px 'IBM Plex Mono',monospace";var tw=ctx.measureText(tip).width,tp=7,tx=px+12,ty=py-22;if(tx+tw+tp*2>w-pad.r)tx=px-tw-tp*2-12;if(ty<pad.t)ty=pad.t+4;ctx.fillStyle="rgba(10,15,25,0.96)";ctx.strokeStyle="rgba(58,85,130,0.85)";ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(tx-tp,ty,tw+tp*2,18,2);ctx.fill();ctx.stroke();ctx.fillStyle="#edf2fa";ctx.textAlign="left";ctx.fillText(tip,tx,ty+13);}}
 }
 function drawMini(cv,series,color,fcData){
@@ -1897,7 +2013,7 @@ function drawMini(cv,series,color,fcData){
   var pr=series.map(function(d){return d.price;});
   var fc4=fcData&&fcData.length?fcData.slice(0,4):null;
   var mn=Math.min.apply(null,pr),mx=Math.max.apply(null,pr);
-  if(fc4){for(var i=0;i<fc4.length;i++){mn=Math.min(mn,fc4[i].lower);mx=Math.max(mx,fc4[i].upper);}}
+  if(fc4){for(var i=0;i<fc4.length;i++){mn=Math.min(mn,fc4[i].lo95);mx=Math.max(mx,fc4[i].hi95);}}
   var rng=mx-mn||1;mn-=rng*0.05;mx+=rng*0.05;rng=mx-mn;
   var p=4,cw=w-2*p,ch=h-2*p;
   var fs=pr.length,total=fs+(fc4?fc4.length:0);
@@ -1915,8 +2031,8 @@ function drawMini(cv,series,color,fcData){
   if(fc4){
     ctx.fillStyle="rgba(0,222,255,0.18)";ctx.beginPath();
     ctx.moveTo(xP(fs-1),yP(pr[pr.length-1]));
-    for(var i=0;i<fc4.length;i++)ctx.lineTo(xP(fs+i),yP(fc4[i].upper));
-    for(var i=fc4.length-1;i>=0;i--)ctx.lineTo(xP(fs+i),yP(fc4[i].lower));
+    for(var i=0;i<fc4.length;i++)ctx.lineTo(xP(fs+i),yP(fc4[i].hi95));
+    for(var i=fc4.length-1;i>=0;i--)ctx.lineTo(xP(fs+i),yP(fc4[i].lo95));
     ctx.closePath();ctx.fill();
     ctx.strokeStyle="#00deff";ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.beginPath();
     ctx.moveTo(xP(fs-1),yP(pr[pr.length-1]));
@@ -1928,41 +2044,101 @@ function drawMini(cv,series,color,fcData){
   }
 }
 
+// Overlay reveal animation driver — uses rAF timestamps (no Date.now needed)
+var ovAnim={raf:0,key:""};
+function animateOverlay(draw){
+  if(ovAnim.raf)cancelAnimationFrame(ovAnim.raf);
+  var start=null,dur=440;
+  function frame(ts){
+    if(start===null)start=ts;
+    var p=Math.min(1,(ts-start)/dur);
+    var e=1-Math.pow(1-p,3); // easeOutCubic
+    draw(e,null);
+    if(p<1)ovAnim.raf=requestAnimationFrame(frame);else ovAnim.raf=0;
+  }
+  ovAnim.raf=requestAnimationFrame(frame);
+}
+
+// Date-aligned, multi-series, animated % -change overlay
 function drawOverlay(canvas,seriesArr,colors,labels,opts){
   opts=opts||{};var ctx=canvas.getContext("2d"),dpr=window.devicePixelRatio||1,w=canvas.width/dpr,h=canvas.height/dpr;
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
-  if(!seriesArr||!seriesArr.length)return;
   var pad={t:18,r:96,b:28,l:62},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+  // Empty state — nothing selected, or selection has no reportable data in range
+  var hasData=seriesArr&&seriesArr.some(function(ser){return ser&&ser.length>=1;});
+  if(!hasData){
+    var none=!seriesArr||!seriesArr.length;
+    ctx.fillStyle="#7886a3";ctx.font="600 11px 'IBM Plex Mono',monospace";ctx.textAlign="center";
+    ctx.fillText(none?"SELECT COMMODITIES TO OVERLAY":"NO REPORTS IN THIS TIME RANGE",w/2,h/2-6);
+    ctx.fillStyle="#5b6880";ctx.font="9.5px 'IBM Plex Mono',monospace";
+    ctx.fillText(none?"USE THE ◉ COMMODITIES MENU ABOVE THE CHART":"WIDEN THE RANGE (1Y / 2Y / ALL) TO VIEW HISTORY",w/2,h/2+12);
+    return;
+  }
+  // Normalize each series to % change from its first in-range point; carry real timestamps
   var normArr=seriesArr.map(function(ser){
-    if(!ser||ser.length<2)return[];
+    if(!ser||!ser.length)return[];
     var base=ser[0].price||1;
-    return ser.map(function(d){return{date:d.date,pct:((d.price-base)/base)*100};});
+    return ser.map(function(d){return{t:new Date(d.date).getTime(),pct:((d.price-base)/base)*100};});
   });
-  var mn=0,mx=0;
-  normArr.forEach(function(norm){norm.forEach(function(d){if(d.pct<mn)mn=d.pct;if(d.pct>mx)mx=d.pct;});});
+  // Shared time + value domain across the selected series (date-aligned x-axis)
+  var t0=Infinity,t1=-Infinity,mn=0,mx=0;
+  normArr.forEach(function(norm){norm.forEach(function(d){if(d.t<t0)t0=d.t;if(d.t>t1)t1=d.t;if(d.pct<mn)mn=d.pct;if(d.pct>mx)mx=d.pct;});});
+  if(!isFinite(t0))return;
+  var tspan=(t1-t0)||1;
   var range=(mx-mn)||1;mn-=range*0.08;mx+=range*0.08;range=mx-mn;
-  var total=seriesArr[0]?seriesArr[0].length:1;
-  function xP(i){return pad.l+(i/Math.max(1,total-1))*cw;}
+  function xP(t){return pad.l+((t-t0)/tspan)*cw;}
   function yP(v){return pad.t+(1-(v-mn)/range)*ch;}
+  // Gridlines + % labels
   ctx.strokeStyle="#26334f";ctx.lineWidth=0.6;
   for(var g=0;g<5;g++){var gv=mn+(range/4)*g,gy=yP(gv);ctx.beginPath();ctx.moveTo(pad.l,gy);ctx.lineTo(w-pad.r,gy);ctx.stroke();ctx.fillStyle="#98a8c8";ctx.font="11px 'IBM Plex Mono',monospace";ctx.textAlign="right";ctx.fillText((gv>=0?"+":"")+gv.toFixed(1)+"%",pad.l-5,gy+3);}
+  // Zero baseline
   if(mn<0&&mx>0){var zy=yP(0);ctx.strokeStyle="#3a5582";ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(pad.l,zy);ctx.lineTo(w-pad.r,zy);ctx.stroke();ctx.setLineDash([]);}
+  // X date axis (time-based, evenly spaced ticks)
   ctx.fillStyle="#98a8c8";ctx.font="11px 'IBM Plex Mono',monospace";ctx.textAlign="center";
-  var step=Math.max(1,Math.floor(total/6));var bs=seriesArr[0]||[];
-  for(var i=0;i<bs.length;i+=step){var dl=new Date(bs[i].date);ctx.fillText(dl.toLocaleDateString("en-US",{month:"short",day:"numeric"}),xP(i),h-pad.b+15);}
+  var ticks=6;
+  for(var i=0;i<=ticks;i++){var tt=t0+tspan*(i/ticks),lx=xP(tt);if(lx>=pad.l-2&&lx<=w-pad.r+2)ctx.fillText(new Date(tt).toLocaleDateString("en-US",{month:"short",day:"numeric"}),lx,h-pad.b+15);}
+  // Reveal wipe (animated draw-on)
+  var prog=opts.progress!=null?opts.progress:1;
+  ctx.save();ctx.beginPath();ctx.rect(0,0,Math.max(0,prog)*w,h);ctx.clip();
   normArr.forEach(function(norm,ci){
-    if(!norm||norm.length<2)return;
-    var col=colors[ci];
-    ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.globalAlpha=0.85;
-    ctx.beginPath();ctx.moveTo(xP(0),yP(norm[0].pct));
-    for(var i=1;i<norm.length;i++)ctx.lineTo(xP(i),yP(norm[i].pct));
+    var col=colors[ci];if(!norm||!norm.length)return;
+    if(norm.length===1){ // single in-range report: dot + label so sparse picks stay visible
+      var sx=xP(norm[0].t),sy=yP(norm[0].pct);
+      ctx.globalAlpha=1;ctx.fillStyle=col;ctx.beginPath();ctx.arc(sx,sy,3,0,Math.PI*2);ctx.fill();
+      ctx.font="bold 10px 'IBM Plex Mono',monospace";ctx.textAlign="left";ctx.fillText(labels[ci],sx+6,sy+3);return;
+    }
+    ctx.strokeStyle=col;ctx.lineWidth=1.6;ctx.globalAlpha=0.9;
+    ctx.beginPath();ctx.moveTo(xP(norm[0].t),yP(norm[0].pct));
+    for(var i=1;i<norm.length;i++)ctx.lineTo(xP(norm[i].t),yP(norm[i].pct));
     ctx.stroke();
-    var lv=norm[norm.length-1].pct;
+    var last=norm[norm.length-1];
     ctx.globalAlpha=1;ctx.fillStyle=col;ctx.font="bold 10px 'IBM Plex Mono',monospace";ctx.textAlign="left";
-    ctx.fillText(labels[ci],xP(norm.length-1)+5,yP(lv)+3);
+    ctx.fillText(labels[ci],xP(last.t)+5,yP(last.pct)+3);
   });
-  ctx.globalAlpha=1;
-  if(opts.hoverX!=null){var hIdx=Math.round((opts.hoverX-pad.l)/cw*(total-1));if(hIdx>=0&&hIdx<total){ctx.strokeStyle="#3a5582";ctx.lineWidth=0.5;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(xP(hIdx),pad.t);ctx.lineTo(xP(hIdx),h-pad.b);ctx.stroke();ctx.setLineDash([]);normArr.forEach(function(norm,ci){if(!norm||hIdx>=norm.length)return;ctx.fillStyle=colors[ci];ctx.beginPath();ctx.arc(xP(hIdx),yP(norm[hIdx].pct),3,0,Math.PI*2);ctx.fill();});}}
+  ctx.globalAlpha=1;ctx.restore();
+  // Date-aware hover — vertical guide, nearest dot per series, and a sorted readout (only once fully drawn)
+  if(opts.hoverX!=null&&prog>=1&&opts.hoverX>=pad.l&&opts.hoverX<=w-pad.r){
+    var hx=opts.hoverX,hT=t0+((hx-pad.l)/cw)*tspan;
+    ctx.strokeStyle="#3a5582";ctx.lineWidth=0.5;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(hx,pad.t);ctx.lineTo(hx,h-pad.b);ctx.stroke();ctx.setLineDash([]);
+    var read=[];
+    normArr.forEach(function(norm,ci){
+      if(!norm||!norm.length)return;
+      var best=norm[0],bd=Math.abs(norm[0].t-hT);
+      for(var i=1;i<norm.length;i++){var dd=Math.abs(norm[i].t-hT);if(dd<bd){bd=dd;best=norm[i];}}
+      ctx.fillStyle=colors[ci];ctx.beginPath();ctx.arc(xP(best.t),yP(best.pct),3,0,Math.PI*2);ctx.fill();
+      read.push({col:colors[ci],lbl:labels[ci],pct:best.pct});
+    });
+    read.sort(function(a,b){return b.pct-a.pct;});
+    var hdr=new Date(hT).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
+    ctx.font="bold 10px 'IBM Plex Mono',monospace";
+    var bw=ctx.measureText(hdr).width;
+    read.forEach(function(r){var rw=ctx.measureText(r.lbl+"   +"+Math.abs(r.pct).toFixed(1)+"%").width;if(rw>bw)bw=rw;});
+    var bpad=8,rowH=14,boxW=bw+bpad*2,bh=20+read.length*rowH+4,bx=hx+14,by=pad.t+4;
+    if(bx+boxW>w-4)bx=hx-boxW-14;if(bx<4)bx=4;if(by+bh>h-pad.b)by=h-pad.b-bh;
+    ctx.fillStyle="rgba(8,12,22,0.95)";ctx.strokeStyle="rgba(58,85,130,0.85)";ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(bx,by,boxW,bh,3);ctx.fill();ctx.stroke();
+    ctx.fillStyle="#c4d0e8";ctx.textAlign="left";ctx.fillText(hdr,bx+bpad,by+14);
+    read.forEach(function(r,ri){var ry=by+20+ri*rowH+8;ctx.textAlign="left";ctx.fillStyle=r.col;ctx.fillText(r.lbl,bx+bpad,ry);ctx.textAlign="right";ctx.fillStyle=pcCl(r.pct);ctx.fillText((r.pct>=0?"+":"")+r.pct.toFixed(1)+"%",bx+boxW-bpad,ry);});
+  }
 }
 
 // ═══ INIT ═══
@@ -1996,7 +2172,7 @@ function render(){
   }
   html+='</div>';
   html+='<button class="help-hbtn" onclick="toggleHelp()" style="border:1px solid '+(s.showHelp?'rgba(0,230,180,.4)':'var(--bdr)')+';color:'+(s.showHelp?'var(--grn)':'var(--dim)')+(s.showHelp?';background:rgba(0,230,180,.08)':'')+'" title="Open guide (press ?)">?</button>';
-  html+='<span class="live">\u25CF LIVE</span><span class="clock" id="clock"></span></div></div>';
+  html+='<span class="live" title="Terminal is live \u2014 prices are the latest published USDA reports; see each card\u2019s AS-OF date for recency.">\u25CF LIVE</span><span class="clock" id="clock"></span></div></div>';
 
   // Ticker + expandable news list
   html+='<div class="ticker"><div class="ticker-track">';NEWS.concat(NEWS).forEach(function(n){html+='<a href="'+n.u+'" target="_blank"><span class="td">'+n.d+'</span><span class="ts">'+n.s+'</span><span class="tt">'+n.t+'</span><span class="tl">\u2197</span></a>';});html+='</div>';
@@ -2011,11 +2187,13 @@ function render(){
   html+='<div class="kpi-strip">';
   COMS.forEach(function(c,i){var mk=s.metrics[i];if(!mk)return;
     var f=s.lbMode?lbFactor(c):1,un=s.lbMode?"$/lb":c.un;
+    var asof=(s.data[i]&&s.data[i].length)?s.data[i][s.data[i].length-1].date:null;
     html+='<div class="kpi'+(s.sel===i&&s.view==="SINGLE"?' sel':'')+'" onclick="pick('+i+')" style="border-color:'+(s.sel===i&&s.view==="SINGLE"?c.cl:'var(--bdr)')+'">';
     if(s.sel===i&&s.view==="SINGLE")html+='<div class="bar" style="background:'+c.cl+'"></div>';
     html+='<div class="kpi-top"><span class="kpi-sym" style="color:'+c.cl+'">'+c.sy+'</span><span class="kpi-unit">'+un+'</span></div>';
     html+='<div class="kpi-price">'+fmt(mk.latest*f,2)+'</div>';
     html+='<div class="kpi-chg"><span style="color:'+pcCl(mk.daily)+'">'+fP(mk.daily)+'</span><span class="kpi-sep">\u2502</span><span style="color:'+pcCl(mk.wow)+'">W'+fP(mk.wow)+'</span><span class="kpi-trend" style="color:'+tCl(mk.trend)+'">'+mk.trend+'</span></div>';
+    html+='<div class="kpi-asof" onclick="openSrc('+i+');event.stopPropagation()" title="Open the source report for this commodity (new tab)">AS OF '+fdate(asof)+' ↗</div>';
     html+='<button class="kpi-info'+(s.intel===i?' iac':'')+'" onclick="openIntel('+i+',event)">INTEL \u25b8</button>';
     html+='</div>';
   });html+='</div>';
@@ -2031,40 +2209,67 @@ function render(){
   // Main
   if(s.view==="MATRIX"){
     html+='<div class="main"><div class="matrix">';
-    COMS.forEach(function(c,i){var mk=s.metrics[i],f4m=s.fc&&s.forecasts[i]&&s.forecasts[i][3],mf=s.lbMode?lbFactor(c):1;html+='<div onclick="pick('+i+')" style="cursor:pointer"><div class="mini-hdr" style="color:'+c.cl+';border-color:'+c.cl+'"><span>'+c.sy+'</span><span style="color:var(--txt)">'+(mk?fmt(mk.latest*mf,2):"\u2014")+'</span><span style="color:'+pcCl(mk?mk.wow:0)+'">'+(mk?fP(mk.wow):"\u2014")+'</span>'+(f4m?'<span style="color:#00deff;font-size:8px;font-weight:600">\u2192'+fmt(f4m.price*mf,2)+'</span>':'')+'</div><div class="mini-chart"><canvas id="mini'+i+'"></canvas></div></div>';});
+    COMS.forEach(function(c,i){var mk=s.metrics[i],ffc=s.fc&&s.forecasts[i]&&s.forecasts[i].length?s.forecasts[i]:null,f4m=ffc?ffc[ffc.length-1]:null,mf=s.lbMode?lbFactor(c):1;html+='<div onclick="pick('+i+')" style="cursor:pointer"><div class="mini-hdr" style="color:'+c.cl+';border-color:'+c.cl+'"><span>'+c.sy+'</span><span style="color:var(--txt)">'+(mk?fmt(mk.latest*mf,2):"\u2014")+'</span><span style="color:'+pcCl(mk?mk.wow:0)+'">'+(mk?fP(mk.wow):"\u2014")+'</span>'+(f4m?'<span style="color:#00deff;font-size:8px;font-weight:600" title="'+ffc.horizonLabel+' midpoint projection">\u2192'+fmt(f4m.price*mf,2)+'</span>':'')+'</div><div class="mini-chart"><canvas id="mini'+i+'"></canvas></div></div>';});
     html+='</div></div>';
   } else if(s.view==="OVERLAY"){
-    html+='<div class="main"><div class="chart-col"><div class="chart-title"><span style="color:var(--dim)">OVERLAY \u2014 % CHANGE FROM PERIOD START \u00b7 '+s.tr+'</span></div>';
+    var ovSel=s.ovSel||[];
+    html+='<div class="main"><div class="chart-col">';
+    html+='<div class="ovbar"><div class="chart-title"><span style="color:var(--dim)">OVERLAY \u2014 % CHANGE FROM PERIOD START \u00b7 '+s.tr+'</span></div>';
+    html+='<div class="ovsel-wrap"><button class="ovsel-btn'+(s.ovMenu?' open':'')+'" onclick="toggleOvMenu(event)">\u25c9 COMMODITIES <span class="cnt">'+ovSel.length+'</span> / '+COMS.length+' <span class="car">\u25be</span></button>';
+    if(s.ovMenu){
+      html+='<div class="ovsel-menu" onclick="event.stopPropagation()">';
+      html+='<div class="ovsel-head"><span class="oh-t">SELECT TO OVERLAY</span><div class="ovsel-quick"><button onclick="ovAll()">ALL</button><button onclick="ovNone()">NONE</button></div></div>';
+      COMS.forEach(function(c,i){var on=ovSel.indexOf(i)>=0;
+        html+='<div class="ovsel-row '+(on?'on':'off')+'" onclick="toggleOv('+i+')"><span class="ovsel-sw" style="background:'+c.cl+'"></span><span class="ovsel-sym" style="color:'+c.cl+'">'+c.sy+'</span><span class="ovsel-nm">'+c.nm+'</span><span class="ovsel-chk">'+(on?'\u2713':'')+'</span></div>';
+      });
+      html+='</div>';
+    }
+    html+='</div></div>';
     html+='<div class="chart-box" style="height:390px"><canvas id="overlayChart"></canvas></div></div>';
-    html+='<div class="side"><div class="detail"><div class="det-sym" style="color:var(--dim)">ALL MKTS</div><div class="det-src">Sorted by WoW % change</div>';
-    var ovRows=COMS.map(function(c,i){return{c:c,mk:s.metrics[i]};}).filter(function(x){return x.mk;}).sort(function(a,b){var aw=a.mk.wow!=null?a.mk.wow:-Infinity;var bw=b.mk.wow!=null?b.mk.wow:-Infinity;return bw-aw;});
-    ovRows.forEach(function(x){html+='<div class="det-row"><span class="det-lbl" style="color:'+x.c.cl+'">'+x.c.sy+'</span><span class="det-val" style="color:'+pcCl(x.mk.wow)+'">'+fP(x.mk.wow)+'</span></div>';});
+    html+='<div class="side"><div class="detail"><div class="det-sym" style="color:var(--dim)">OVERLAY SET</div><div class="det-src">Click to toggle \u00b7 sorted by WoW %</div>';
+    var ovRows=COMS.map(function(c,i){return{c:c,i:i,mk:s.metrics[i]};}).filter(function(x){return x.mk;}).sort(function(a,b){var aw=a.mk.wow!=null?a.mk.wow:-Infinity;var bw=b.mk.wow!=null?b.mk.wow:-Infinity;return bw-aw;});
+    ovRows.forEach(function(x){var on=ovSel.indexOf(x.i)>=0;html+='<div class="ov-leg'+(on?'':' off')+'" onclick="toggleOv('+x.i+')" title="'+(on?'Hide':'Show')+' '+x.c.nm+'"><span class="lsw" style="background:'+x.c.cl+'"></span><span class="lsym" style="color:'+x.c.cl+'">'+x.c.sy+'</span><span class="det-val" style="color:'+pcCl(x.mk.wow)+'">'+fP(x.mk.wow)+'</span></div>';});
     html+='</div></div></div>';
   } else {
     var ptCount=filterDays(s.data[s.sel]||[],days).length;
-    html+='<div class="main"><div class="chart-col"><div class="chart-title"><span style="color:'+cm.cl+'">'+cm.sy+' \u2014 '+cm.nm+'<span style="color:var(--dim);font-weight:400"> \u00b7 '+(s.lbMode?"$/lb":cm.un)+'</span>'+(s.fc?'<span style="color:var(--cyn);font-weight:400;font-size:9.5px"> + 12W FORECAST</span>':'')+'<span style="color:var(--mut);font-weight:400;font-size:9px"> \u00b7 '+ptCount+' USDA REPORT'+(ptCount!==1?'S':'')+'</span></span></div>';
+    html+='<div class="main"><div class="chart-col"><div class="chart-title"><span style="color:'+cm.cl+'">'+cm.sy+' \u2014 '+cm.nm+'<span style="color:var(--dim);font-weight:400"> \u00b7 '+(s.lbMode?"$/lb":cm.un)+'</span>'+(s.fc&&s.forecasts[s.sel]&&s.forecasts[s.sel].length?'<span style="color:var(--cyn);font-weight:400;font-size:9.5px"> + '+s.forecasts[s.sel].horizonLabel+' PROJECTION</span>':'')+'<span style="color:var(--mut);font-weight:400;font-size:9px"> \u00b7 '+ptCount+' USDA REPORT'+(ptCount!==1?'S':'')+'</span></span></div>';
     html+='<div class="chart-box"><canvas id="mainChart"></canvas></div>';
     html+='</div>';
     if(m){
-      var fc=s.fc?s.forecasts[s.sel]:null,f4=fc&&fc[3],f8=fc&&fc[7],f12=fc&&fc[fc.length-1];
+      var fc=s.fc?s.forecasts[s.sel]:null;
       var lf=s.lbMode?lbFactor(cm):1,dp=s.lbMode?4:2;
-      html+='<div class="side"><div class="detail"><div class="det-sym" style="color:'+cm.cl+'">'+cm.sy+' \u2014 '+cm.nm+'</div><div class="det-src">'+cm.sr+(s.lbMode?' \u00b7 $/lb':'')+'</div>';
+      var asofD=s.data[s.sel][s.data[s.sel].length-1].date;
+      html+='<div class="side"><div class="detail"><div class="det-sym" style="color:'+cm.cl+'">'+cm.sy+' \u2014 '+cm.nm+'</div>';
+      html+='<div class="det-src det-srclink" onclick="openSrc('+s.sel+')" title="Open the source report this latest price came from (new tab)">\u2197 SOURCE: '+cm.sr+' \u00b7 as of '+fdate(asofD)+(s.lbMode?' \u00b7 $/lb':'')+'</div>';
       var rows=[["LAST",fmt(m.latest*lf,dp),"var(--txt)"],["D%",fP(m.daily),pcCl(m.daily)],["W%",fP(m.wow),pcCl(m.wow)],["M%",fP(m.mom),pcCl(m.mom)],["Y%",fP(m.yoy),pcCl(m.yoy)],["\u2500\u2500","\u2500\u2500","var(--bdr)"],["MA-7",fmt(m.a7*lf,dp),"var(--dim)"],["MA-30",fmt(m.a30*lf,dp),"var(--dim)"],["MA-90",fmt(m.a90*lf,dp),"var(--dim)"],["\u2500\u2500","\u2500\u2500","var(--bdr)"],["52W H",fmt(m.h52*lf,dp),"var(--grn)"],["52W L",fmt(m.l52*lf,dp),"var(--red)"]];
-      if(f4){rows.push(["\u2500\u2500","\u2500\u2500","var(--bdr)"],["\u25b8 FCST","","var(--cyn)"],["  +4W",fmt(f4.price*lf,dp),pcCl(f4.price-m.latest)]);if(f8)rows.push(["  +8W",fmt(f8.price*lf,dp),pcCl(f8.price-m.latest)]);if(f12)rows.push(["  +12W",fmt(f12.price*lf,dp),pcCl(f12.price-m.latest)]);}
       rows.forEach(function(r){html+='<div class="det-row"><span class="det-lbl">'+r[0]+'</span><span class="det-val" style="color:'+r[2]+'">'+r[1]+'</span></div>';});
+      if(fc&&fc.length){
+        var nIdx=Math.min(fc.length-1,fc.unit==="W"?3:1),eIdx=fc.length-1,nr=fc[nIdx],er=fc[eIdx];
+        var npct=((nr.price-m.latest)/m.latest)*100,epct=((er.price-m.latest)/m.latest)*100;
+        html+='<div class="det-row" style="border-top:1px solid var(--bdr);margin-top:5px;padding-top:6px"><span class="det-lbl" style="color:var(--cyn);font-weight:700">\u25b8 PROJECTION</span><span class="det-val" style="color:var(--cyn);font-size:10px">'+fc.horizonLabel+'</span></div>';
+        html+='<div class="det-row"><span class="det-lbl">+'+(nIdx+1)+fc.unit+' midpoint</span><span class="det-val" style="color:'+pcCl(npct)+'">'+fmt(nr.price*lf,dp)+' ('+(npct>=0?"+":"")+npct.toFixed(1)+'%)</span></div>';
+        html+='<div class="det-row"><span class="det-lbl">+'+(eIdx+1)+fc.unit+' midpoint</span><span class="det-val" style="color:'+pcCl(epct)+'">'+fmt(er.price*lf,dp)+' ('+(epct>=0?"+":"")+epct.toFixed(1)+'%)</span></div>';
+        html+='<div class="det-row" title="80% prediction band at end of horizon"><span class="det-lbl">80% range</span><span class="det-val" style="color:var(--dim);font-size:11px">'+fmt(er.lo80*lf,dp)+' \u2013 '+fmt(er.hi80*lf,dp)+'</span></div>';
+        html+='<div class="det-row" title="Mean Absolute Scaled Error from a rolling backtest. Below 1 beats the same-period-last-year benchmark."><span class="det-lbl">skill</span><span class="det-val" style="color:'+(fc.beatsNaive?"var(--grn)":"var(--amb)")+'">MASE '+fc.mase+(fc.beatsNaive?" \u2713":" \u26a0")+'</span></div>';
+        html+='<div class="det-src" style="margin-top:5px">'+fc.method+' \u00b7 backtest-calibrated fan</div>';
+      } else if(s.fc){
+        html+='<div class="det-row" style="border-top:1px solid var(--bdr);margin-top:5px;padding-top:6px"><span class="det-lbl" style="color:var(--mut);font-weight:700">\u25b8 PROJECTION</span><span class="det-val" style="color:var(--mut);font-size:9.5px">n/a</span></div>';
+        html+='<div class="det-src" style="margin-top:3px">Reports too '+(cm.k==="BT81"?"intermittent (thin-trade weeks)":"sparse")+' for a reliable projection.</div>';
+      }
       html+='</div></div>';
     }
     html+='</div>';
   }
 
   // Table
-  html+='<div class="tbl-wrap"><div class="tbl-box"><div class="tbl-title">MARKET OVERVIEW \u2014 9 COMMODITIES \u2014 SOURCE-VALIDATED'+(s.lbMode?' \u00b7 $/LB MODE':'')+' </div><table><thead><tr><th style="text-align:left">SYM</th><th>LAST</th><th>UNIT</th><th>D%</th><th>W%</th><th>M%</th><th>Y%</th><th>MA30</th><th>4W FC</th><th>TREND</th></tr></thead><tbody>';
-  COMS.forEach(function(c,i){var mk=s.metrics[i],f4=s.fc&&s.forecasts[i]&&s.forecasts[i][3];if(!mk)return;
+  html+='<div class="tbl-wrap"><div class="tbl-box"><div class="tbl-title">MARKET OVERVIEW \u2014 9 COMMODITIES \u2014 SOURCE-VALIDATED'+(s.lbMode?' \u00b7 $/LB MODE':'')+' </div><table><thead><tr><th style="text-align:left">SYM</th><th>LAST</th><th>UNIT</th><th>AS OF</th><th>D%</th><th>W%</th><th>M%</th><th>Y%</th><th title="Damped-trend projection at the end of the horizon">FCAST</th><th>MA30</th><th>TREND</th></tr></thead><tbody>';
+  COMS.forEach(function(c,i){var mk=s.metrics[i],ff=s.fc&&s.forecasts[i]&&s.forecasts[i].length?s.forecasts[i]:null,f4=ff?ff[ff.length-1]:null;if(!mk)return;
     var tf=s.lbMode?lbFactor(c):1,un=s.lbMode?"$/lb":c.un,dp=s.lbMode?4:2;
-    html+='<tr><td style="color:'+c.cl+'">'+c.sy+'</td><td style="color:var(--txt)">'+fmt(mk.latest*tf,dp)+'</td><td style="color:var(--mut);font-size:9px">'+un+'</td><td style="color:'+pcCl(mk.daily)+'">'+fP(mk.daily)+'</td><td style="color:'+pcCl(mk.wow)+'">'+fP(mk.wow)+'</td><td style="color:'+pcCl(mk.mom)+'">'+fP(mk.mom)+'</td><td style="color:'+pcCl(mk.yoy)+'">'+fP(mk.yoy)+'</td><td style="color:var(--dim)">'+fmt(mk.a30*tf,dp)+'</td><td style="color:'+(f4?pcCl(f4.price-mk.latest):"var(--dim)")+'">'+(f4?fmt(f4.price*tf,dp):"\u2014")+'</td><td style="font-size:13px;color:'+tCl(mk.trend)+'">'+mk.trend+'</td></tr>';
+    var asof=(s.data[i]&&s.data[i].length)?s.data[i][s.data[i].length-1].date:null;
+    html+='<tr><td style="color:'+c.cl+'">'+c.sy+'</td><td style="color:var(--txt)">'+fmt(mk.latest*tf,dp)+'</td><td style="color:var(--mut);font-size:9px">'+un+'</td><td class="asof-cell" onclick="openSrc('+i+')" title="Open '+c.sr+' (new tab)" style="color:var(--blu);font-size:9.5px;cursor:pointer">'+fdate(asof)+' \u2197</td><td style="color:'+pcCl(mk.daily)+'">'+fP(mk.daily)+'</td><td style="color:'+pcCl(mk.wow)+'">'+fP(mk.wow)+'</td><td style="color:'+pcCl(mk.mom)+'">'+fP(mk.mom)+'</td><td style="color:'+pcCl(mk.yoy)+'">'+fP(mk.yoy)+'</td><td style="color:'+(f4?pcCl(f4.price-mk.latest):"var(--dim)")+'" title="'+(ff?ff.horizonLabel+' midpoint':'')+'">'+(f4?fmt(f4.price*tf,dp):"\u2014")+'</td><td style="color:var(--dim)">'+fmt(mk.a30*tf,dp)+'</td><td style="font-size:13px;color:'+tCl(mk.trend)+'">'+mk.trend+'</td></tr>';
   });html+='</tbody></table></div></div>';
 
-  html+='<div class="footer"><span>DATA: USDA AMS + verified industry sources (MI Potato Comm. \u00b7 Capital Press \u00b7 Barchart) \u00b7 Actual reported prices, no synthetic values \u00b7 History limited to available report dates</span><span style="color:var(--grn);font-weight:600;letter-spacing:1px">MAEV FINANCE</span><span>FORECAST: Holt-Winters \u00b7 v5.3 \u00b7 \u00a9 2026</span></div>';
+  html+='<div class="footer"><span>DATA: USDA AMS + verified industry sources (MI Potato Comm. \u00b7 Capital Press \u00b7 Barchart) \u00b7 Actual reported prices, no synthetic values \u00b7 History limited to available report dates</span><span style="color:var(--grn);font-weight:600;letter-spacing:1px">MAEV FINANCE</span><span>FORECAST: damped-trend ETS + seasonal \u00b7 backtested \u00b7 v5.5 \u00b7 \u00a9 2026</span></div>';
 
   // ═══ HELP MODAL ═══
   if(s.showHelp){
@@ -2106,7 +2311,7 @@ function render(){
     html+='<div>';
     html+='<table class="help-grid"><thead><tr><th>METRIC</th><th>WHAT IT MEANS</th></tr></thead><tbody>';
     html+='<tr><td style="color:var(--txt);font-weight:700">LAST</td><td>Most recently reported market price</td></tr>';
-    html+='<tr><td style="color:var(--txt);font-weight:700">D%</td><td>Change vs. the prior day\u2019s price</td></tr>';
+    html+='<tr><td style="color:var(--txt);font-weight:700">D%</td><td>Change vs. the <b>previous report</b> (the prior data point) \u2014 weekly for beef, monthly for chicken/produce. <b>Not</b> a daily change; this terminal carries no intraday data.</td></tr>';
     html+='<tr><td style="color:var(--txt);font-weight:700">W%</td><td>Change vs. 7 days ago. <b>Primary trend signal.</b> Drives the TREND arrow.</td></tr>';
     html+='<tr><td style="color:var(--txt);font-weight:700">M%</td><td>Change vs. 30 days ago. Indicates medium-term momentum.</td></tr>';
     html+='<tr><td style="color:var(--txt);font-weight:700">Y%</td><td>Change vs. 365 days ago. Year-over-year context for cost benchmarking.</td></tr>';
@@ -2129,21 +2334,22 @@ function render(){
 
     // ── SECTION 3: Forecast ──
     html+='<div class="help-section">';
-    html+='<div class="help-stitle">03 \u2014 THE 12-WEEK FORECAST (FC)</div>';
+    html+='<div class="help-stitle">03 \u2014 THE PRICE PROJECTION (FC)</div>';
     html+='<div class="help-cols">';
     html+='<div class="help-note" style="font-size:10px">';
-    html+='The terminal uses <b>Holt-Winters double exponential smoothing</b> \u2014 an algorithm that separately tracks the <i>price level</i> and the <i>direction of trend</i>, then projects both forward 12 weeks.<br><br>';
-    html+='<span style="color:var(--cyn);font-weight:700">Dotted line</span> \u2014 forecast midpoint. The single most likely price at each future week.<br><br>';
-    html+='<span style="color:var(--cyn);font-weight:700">Shaded cone</span> \u2014 95% confidence interval. Under normal market conditions, prices should land within this band approximately 95% of the time.<br><br>';
-    html+='<span style="color:var(--dim)">The cone widens over time</span> because uncertainty compounds with each additional week projected.<br><br>';
-    html+='<b>+4W / +8W / +12W</b> values in the stats panel are the forecast midpoint prices at those future dates.';
+    html+='When <b>FC</b> is on, the chart adds a forward <b>projection</b> built only from this terminal\u2019s real USDA history \u2014 no outside feed. It is research-grade but deliberately simple (on sparse commodity series, simple + damped beats complex):<br><br>';
+    html+='<b>1. Damped-trend smoothing</b> (Gardner\u2013McKenzie ETS) tracks the price <i>level</i> and <i>trend</i>, but <b>damps</b> the trend so it bends toward flat instead of shooting off \u2014 commodities mean-revert, they don\u2019t ramp forever.<br><br>';
+    html+='<b>2. Seasonal adjustment</b> is layered onto the monthly series (chicken, potato) <i>only when a backtest shows it helps</i> \u2014 e.g. potato\u2019s spring storage premium.<br><br>';
+    html+='<b>3. The <span style="color:var(--cyn)">fan</span></b> \u2014 dotted line = midpoint; the cyan bands are the <b>80%</b> (inner) and <b>95%</b> (outer) ranges, their width <b>calibrated from a rolling backtest</b> of the model\u2019s own past errors \u2014 not a textbook formula.<br><br>';
+    html+='<b>4. <span style="color:var(--grn)">Skill (MASE)</span></b> in the stats panel grades the model vs the \u201csame period last year\u201d benchmark: <b>below 1.00 beats it</b> (\u2713); at/above 1 it doesn\u2019t (\u26a0).<br><br>';
+    html+='<b>Coverage:</b> weekly beef trims \u2192 12-week projection; chicken &amp; potato \u2192 6-month. <b>BT81</b> (thin-trade weeks) and <b>green beans</b> (~16 reports) are too sparse to project honestly \u2014 they show \u201cn/a.\u201d';
     html+='</div>';
     html+='<div class="help-note" style="font-size:10px">';
     html+='<b>How to use it in procurement:</b><br><br>';
-    html+='If +12W forecast is <span style="color:var(--grn)">significantly higher</span> than today\u2019s price and the cone is narrow (low volatility), this is a signal to <b>lock in current pricing</b> via forward contracts or purchase orders.<br><br>';
-    html+='If the cone is very wide, volatility is high and the forecast is less reliable \u2014 use wider pricing buffers in budgets.<br><br>';
-    html+='If +12W is <span style="color:var(--red)">below today\u2019s price</span>, the trend suggests waiting may yield better pricing \u2014 but weigh this against supply availability risk.<br><br>';
-    html+='<span class="help-warn">\u26a0 LIMITATION: This forecast is mathematical extrapolation only. It cannot predict supply shocks, disease outbreaks (HPAI), drought, trade policy changes, or other exogenous events. Use for directional guidance, not precision planning.</span>';
+    html+='Read the <b>midpoint</b> for direction and the <b>80% range</b> for a realistic planning band. If the midpoint sits <span style="color:var(--grn)">clearly above</span> today and the band is tight (high skill / low MASE), that supports <b>locking in</b> via forward contracts.<br><br>';
+    html+='If the band is very wide, the market is hard to call \u2014 use bigger budget buffers and shorter commitments. A <span style="color:var(--red)">downward</span> midpoint suggests waiting may pay, weighed against supply risk.<br><br>';
+    html+='<b>Verify the inputs:</b> click the <b>\u2197 latest point</b> on any chart (or a card\u2019s <b>AS OF</b> date) to open the exact USDA / source report the price came from.<br><br>';
+    html+='<span class="help-warn">\u26a0 LIMITATION: this is a statistical extrapolation of past prices. It cannot foresee supply shocks \u2014 HPAI, drought, screwworm, trade policy, weather \u2014 which is why the bands are wide and the news ticker matters. Use it for directional guidance, not precision planning.</span>';
     html+='</div>';
     html+='</div>';
     html+='</div>';
@@ -2156,7 +2362,7 @@ function render(){
     html+='<div style="color:var(--grn);font-weight:700;font-size:10px;margin-bottom:5px">SINGLE VIEW</div>';
     html+='<div class="help-note">Deep-dive on one commodity. Full price history chart with hover crosshair and a complete stats panel on the right showing all metrics plus forecast values. <b>Select a commodity</b> using the KPI cards at the top, or ↑↓ arrow keys.</div>';
     html+='<div style="color:var(--cyn);font-weight:700;font-size:10px;margin:14px 0 5px">OVERLAY VIEW</div>';
-    html+='<div class="help-note">All 9 commodities on one chart, normalized to <b>% change from the start of the selected time period</b>. Every line starts at 0% on the left edge. Lines above zero are up from period start; below zero are down.<br><br>Use OVERLAY to answer: <i>"Which commodity is rising fastest this quarter?"</i> or <i>"Is chicken tracking with beef this year?"</i> Switch time ranges (1M/3M/6M etc.) to change the comparison baseline.<br><br>The right panel shows all 9 sorted by WoW % change \u2014 a quick leaderboard.</div>';
+    html+='<div class="help-note">Compare selected commodities on one chart, normalized to <b>% change from the start of the selected time period</b>. Each line starts at 0% from its first report in range; above zero is up from period start, below zero is down. Lines are <b>date-aligned</b>, so a monthly series and a weekly series share the same time axis.<br><br>Pick which markets to plot with the <b>\u25c9 COMMODITIES</b> dropdown above the chart (or click any symbol in the right-hand legend to toggle it). Use <b>ALL</b>/<b>NONE</b> for a quick reset. The chart smoothly redraws as you change the selection.<br><br>Use OVERLAY to answer: <i>"Which commodity is rising fastest this quarter?"</i> or <i>"Is chicken tracking with beef this year?"</i> Switch time ranges (1M/3M/6M etc.) to change the comparison baseline. Hover for a dated readout of every plotted line.</div>';
     html+='</div>';
     html+='<div>';
     html+='<div style="color:var(--mag);font-weight:700;font-size:10px;margin-bottom:5px">MATRIX VIEW</div>';
@@ -2189,10 +2395,8 @@ function render(){
     html+='</div>';
     html+='<div>';
     html+='<table class="help-grid"><thead><tr><th>REPORT NAME</th><th>COVERS</th><th>DAY</th><th>TIME ET</th></tr></thead><tbody>';
-    html+='<tr><td>Daily Cattle &amp; Beef</td><td>BT50</td><td>Mon\u2013Fri</td><td>3:00 PM</td></tr>';
-    html+='<tr><td>Wkly Boneless Beef Trimmings</td><td>BT65, BT81, BT90</td><td>Friday</td><td>3:00 PM</td></tr>';
-    html+='<tr><td>Weekly National Chicken</td><td>CKBR</td><td>Friday</td><td>2:00 PM</td></tr>';
-    html+='<tr><td>Misc Poultry Report</td><td>CKLV, CKGZ</td><td>Friday</td><td>2:00 PM</td></tr>';
+    html+='<tr><td>Wkly Boneless Beef Trimmings (LM_XB460)</td><td>BT50, BT65, BT81, BT90</td><td>Friday</td><td>3:00 PM</td></tr>';
+    html+='<tr><td>Monthly National Chicken (ams_3649)</td><td>CKBR, CKLV, CKGZ</td><td>~1st biz day</td><td>2:00 PM</td></tr>';
     html+='<tr><td>National Potato &amp; Onion</td><td>PTRS</td><td>Mon\u2013Fri</td><td>5:00 PM</td></tr>';
     html+='<tr><td>Terminal Vegetable Prices</td><td>GNSB</td><td>Mon\u2013Fri</td><td>12:00 PM</td></tr>';
     html+='</tbody></table>';
@@ -2236,24 +2440,40 @@ function render(){
 
   document.getElementById("app").innerHTML=html;
   requestAnimationFrame(function(){requestAnimationFrame(function(){
-    if(s.view==="MATRIX"){COMS.forEach(function(c,i){var cv=document.getElementById("mini"+i);if(!cv)return;sizeCanvas(cv);var mf=s.lbMode?lbFactor(c):1;var d=lbSer(filterDays(s.data[i]||[],days),mf);var fc=s.fc?lbFc(s.forecasts[i]||null,mf):null;drawMini(cv,d,c.cl,fc);});}
-    else if(s.view==="OVERLAY"){var ov=document.getElementById("overlayChart");if(ov){sizeCanvas(ov);var ovSeries=COMS.map(function(c,i){return filterDays(s.data[i]||[],days);});var ovCols=COMS.map(function(c){return c.cl;});var ovLbls=COMS.map(function(c){return c.sy;});drawOverlay(ov,ovSeries,ovCols,ovLbls,{});ov.onmousemove=function(ev){var r=ov.getBoundingClientRect();drawOverlay(ov,ovSeries,ovCols,ovLbls,{hoverX:ev.clientX-r.left});};ov.onmouseleave=function(){drawOverlay(ov,ovSeries,ovCols,ovLbls,{});};}}
-    else{var cv=document.getElementById("mainChart");if(cv){sizeCanvas(cv);var sf=s.lbMode?lbFactor(COMS[s.sel]):1;var series=lbSer(filterDays(s.data[s.sel]||[],days),sf);var fcScaled=s.fc?lbFc(s.forecasts[s.sel],sf):null;drawChart(cv,series,COMS[s.sel].cl,{fcData:fcScaled});cv.onmousemove=function(ev){var r=cv.getBoundingClientRect();drawChart(cv,series,COMS[s.sel].cl,{fcData:fcScaled,hoverX:ev.clientX-r.left});};cv.onmouseleave=function(){drawChart(cv,series,COMS[s.sel].cl,{fcData:fcScaled});};}}
+    if(s.view==="MATRIX"){ovAnim.key="";COMS.forEach(function(c,i){var cv=document.getElementById("mini"+i);if(!cv)return;sizeCanvas(cv);var mf=s.lbMode?lbFactor(c):1;var d=lbSer(filterDays(s.data[i]||[],days),mf);var fc=s.fc?lbFc(s.forecasts[i]||null,mf):null;drawMini(cv,d,c.cl,fc);});}
+    else if(s.view==="OVERLAY"){var ov=document.getElementById("overlayChart");if(ov){sizeCanvas(ov);
+      var sel=(s.ovSel||[]).slice().sort(function(a,b){return a-b;});
+      var ovSeries=sel.map(function(i){return filterDays(s.data[i]||[],days);});
+      var ovCols=sel.map(function(i){return COMS[i].cl;});
+      var ovLbls=sel.map(function(i){return COMS[i].sy;});
+      var draw=function(prog,hoverX){drawOverlay(ov,ovSeries,ovCols,ovLbls,{progress:prog,hoverX:hoverX});};
+      var ovKey=s.tr+"|"+sel.join(",");
+      if(ovAnim.key!==ovKey){ovAnim.key=ovKey;animateOverlay(draw);}else draw(1,null);
+      ov.onmousemove=function(ev){if(ovAnim.raf){cancelAnimationFrame(ovAnim.raf);ovAnim.raf=0;}var r=ov.getBoundingClientRect();draw(1,ev.clientX-r.left);};
+      ov.onmouseleave=function(){draw(1,null);};
+    }}
+    else{ovAnim.key="";var cv=document.getElementById("mainChart");if(cv){sizeCanvas(cv);var sf=s.lbMode?lbFactor(COMS[s.sel]):1;var series=lbSer(filterDays(s.data[s.sel]||[],days),sf);var fcScaled=s.fc?lbFc(s.forecasts[s.sel],sf):null;drawChart(cv,series,COMS[s.sel].cl,{fcData:fcScaled});var nearLast=function(ev){var r=cv.getBoundingClientRect();return cv.__lastPt&&Math.hypot(ev.clientX-r.left-cv.__lastPt.x,ev.clientY-r.top-cv.__lastPt.y)<14;};cv.onmousemove=function(ev){var r=cv.getBoundingClientRect();cv.style.cursor=nearLast(ev)?"pointer":"default";drawChart(cv,series,COMS[s.sel].cl,{fcData:fcScaled,hoverX:ev.clientX-r.left});};cv.onmouseleave=function(){cv.style.cursor="default";drawChart(cv,series,COMS[s.sel].cl,{fcData:fcScaled});};cv.onclick=function(ev){if(nearLast(ev))openSrc(s.sel);};}}
   });});
 }
 
 // ═══ ACTIONS ═══
-window.pick=function(i){state.sel=i;state.view="SINGLE";state.showPanel=false;state.intel=null;render();};
+window.pick=function(i){state.sel=i;state.view="SINGLE";state.showPanel=false;state.intel=null;state.ovMenu=false;render();};
 window.setTR=function(r){state.tr=r;render();};
-window.setView=function(v){state.view=v;state.showPanel=false;state.intel=null;render();};
+window.setView=function(v){state.view=v;state.showPanel=false;state.intel=null;if(v!=="OVERLAY")state.ovMenu=false;render();};
 window.toggleFc=function(){state.fc=!state.fc;render();};
 window.togglePanel=function(){state.showPanel=!state.showPanel;render();};
 window.markChecked=function(ev){state.lastCheck=Date.now();};
 window.toggleHelp=function(){state.showHelp=!state.showHelp;if(state.showHelp)state.intel=null;render();};
 window.toggleLb=function(){state.lbMode=!state.lbMode;render();};
 window.toggleNews=function(){state.newsOpen=!state.newsOpen;render();};
+window.openSrc=function(i){var u=COMS[i]&&COMS[i].src;if(u)window.open(u,"_blank","noopener");};
 window.openIntel=function(i,ev){ev.stopPropagation();state.intel=(state.intel===i)?null:i;render();};
 window.closeIntel=function(){state.intel=null;render();};
+// ── Overlay commodity selector ──
+window.toggleOvMenu=function(ev){if(ev)ev.stopPropagation();state.ovMenu=!state.ovMenu;render();};
+window.toggleOv=function(i){var a=(state.ovSel||[]).slice(),k=a.indexOf(i);if(k>=0)a.splice(k,1);else a.push(i);state.ovSel=a;render();};
+window.ovAll=function(){state.ovSel=COMS.map(function(c,i){return i;});render();};
+window.ovNone=function(){state.ovSel=[];render();};
 
 document.addEventListener("keydown",function(ev){
   if(document.activeElement&&document.activeElement.tagName==="INPUT")return;
@@ -2266,10 +2486,11 @@ document.addEventListener("keydown",function(ev){
   if(ev.key==="s"){state.view="SINGLE";render();}
   if(ev.key==="l"){state.lbMode=!state.lbMode;render();}
   if(ev.key==="n"){state.newsOpen=!state.newsOpen;render();}
-  if(ev.key==="Escape"){state.showPanel=false;state.showHelp=false;state.intel=null;state.newsOpen=false;render();}
+  if(ev.key==="Escape"){state.showPanel=false;state.showHelp=false;state.intel=null;state.newsOpen=false;state.ovMenu=false;render();}
   if(ev.key==="?"){state.showHelp=!state.showHelp;render();}
 });
 document.addEventListener("click",function(ev){if(state.showPanel&&!ev.target.closest(".rbtn")&&!ev.target.closest(".rpanel")){state.showPanel=false;render();}});
+document.addEventListener("click",function(ev){if(state.ovMenu&&!ev.target.closest(".ovsel-wrap")){state.ovMenu=false;render();}});
 setInterval(function(){var el=document.getElementById("clock");if(el)el.textContent=new Date().toLocaleTimeString("en-US",{hour12:false})+" CT";},1000);
 // Re-check report status every 5 min
 setInterval(function(){render();},300000);
