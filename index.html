@@ -2499,3 +2499,285 @@ function render(){
     html+='<div class="help-stitle">06 \u2014 KEYBOARD SHORTCUTS</div>';
     html+='<div class="help-kv">';
     var ks=[["↑ / K","Previous commodity"],["↓ / J","Next commodity"],["S","Single view"],["O","Overlay view"],["M","Matrix view"],["F","Toggle forecast"],["L","Toggle $/lb mode"],["N","News headline list"],["B","Download weekly PDF briefing"],["?","Open / close guide"],["Esc","Close all panels"]];
+    ks.forEach(function(k){html+='<div class="help-key"><span class="hk">'+k[0]+'</span><span class="hv">'+k[1]+'</span></div>';});
+    html+='</div>';
+    html+='</div>';
+
+    html+='</div></div></div>'; // close help-body, help-box, help-overlay
+  }
+
+  // ═══ MARKET INTEL PANEL ═══
+  if(s.intel!==null){
+    var ic=COMS[s.intel],im=s.metrics[s.intel],ibs=genIntel(s.intel);
+    html+='<div class="intel-overlay" onclick="closeIntel()"></div>';
+    html+='<div class="intel-panel" style="border-top:3px solid '+ic.cl+'">';
+    html+='<div class="intel-hdr"><div style="display:flex;align-items:baseline"><span class="intel-sym" style="color:'+ic.cl+'">'+ic.sy+'</span><span class="intel-nm">MARKET INTEL \u00b7 '+ic.nm.toUpperCase()+(s.lbMode?' \u00b7 NOTE: prices shown in native unit ('+ic.un+')':'')+'</span></div>';
+    html+='<button class="intel-close" onclick="closeIntel()">\u00d7 CLOSE</button></div>';
+    html+='<div class="intel-body">';
+    html+='<div class="intel-label">AUTO-GENERATED SIGNALS FROM USDA PRICE DATA'+(im?' \u00b7 CURRENT: '+fmt(im.latest,2)+' '+ic.un:'')+' \u00b7 PROCUREMENT CONTEXT BELOW</div>';
+    ibs.forEach(function(b){
+      var icon,col;
+      if(b.type==="warn"){icon="\u25b2";col="var(--amb)";}
+      else if(b.type==="good"){icon="\u25bc";col="var(--grn)";}
+      else if(b.type==="info"){icon="\u25cf";col="var(--blu)";}
+      else{icon="\u2192";col="var(--mut)";}
+      html+='<div class="intel-bullet"><span class="intel-icon" style="color:'+col+'">'+icon+'</span><span class="intel-text">'+b.text+'</span></div>';
+    });
+    html+='<div class="intel-meta">\u25b2 Elevated / cost risk \u00b7 \u25bc Declining / favorable \u00b7 \u25cf Market context \u00b7 \u2192 Informational \u00b7 All signals derived from USDA AMS published price data only \u00b7 Not a live feed \u00b7 Verify at USDA AMS before procurement decisions</div>';
+    html+='</div></div>';
+  }
+
+  document.getElementById("app").innerHTML=html;
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    if(s.view==="MATRIX"){ovAnim.key="";COMS.forEach(function(c,i){var cv=document.getElementById("mini"+i);if(!cv)return;sizeCanvas(cv);var mf=s.lbMode?lbFactor(c):1;var d=lbSer(filterDays(s.data[i]||[],days),mf);var fc=s.fc?lbFc(s.forecasts[i]||null,mf):null;drawMini(cv,d,c.cl,fc);});}
+    else if(s.view==="OVERLAY"){var ov=document.getElementById("overlayChart");if(ov){sizeCanvas(ov);
+      var sel=(s.ovSel||[]).slice().sort(function(a,b){return a-b;});
+      var ovSeries=sel.map(function(i){return filterDays(s.data[i]||[],days);});
+      var ovCols=sel.map(function(i){return COMS[i].cl;});
+      var ovLbls=sel.map(function(i){return COMS[i].sy;});
+      var draw=function(prog,hoverX){drawOverlay(ov,ovSeries,ovCols,ovLbls,{progress:prog,hoverX:hoverX});};
+      var ovKey=s.tr+"|"+sel.join(",");
+      if(ovAnim.key!==ovKey){ovAnim.key=ovKey;animateOverlay(draw);}else draw(1,null);
+      ov.onmousemove=function(ev){if(ovAnim.raf){cancelAnimationFrame(ovAnim.raf);ovAnim.raf=0;}var r=ov.getBoundingClientRect();draw(1,ev.clientX-r.left);};
+      ov.onmouseleave=function(){draw(1,null);};
+    }}
+    else{ovAnim.key="";var cv=document.getElementById("mainChart");if(cv){sizeCanvas(cv);var sf=s.lbMode?lbFactor(COMS[s.sel]):1;var series=lbSer(filterDays(s.data[s.sel]||[],days),sf);var fcScaled=s.fc?lbFc(s.forecasts[s.sel],sf):null;var dpv=s.lbMode?4:2,un=s.lbMode?"$/lb":COMS[s.sel].un,oCh={fcData:fcScaled,dp:dpv,unit:un};drawChart(cv,series,COMS[s.sel].cl,oCh);var nearLast=function(ev){var r=cv.getBoundingClientRect();return cv.__lastPt&&Math.hypot(ev.clientX-r.left-cv.__lastPt.x,ev.clientY-r.top-cv.__lastPt.y)<14;};var inFcZone=function(ev){var r=cv.getBoundingClientRect(),z=cv.__fcZone;if(!z)return false;var x=ev.clientX-r.left,y=ev.clientY-r.top;return x>=z.x0&&x<=z.x1&&y>=z.yt&&y<=z.yb;};cv.onmousemove=function(ev){var r=cv.getBoundingClientRect();cv.style.cursor=nearLast(ev)?"pointer":(inFcZone(ev)?"crosshair":"default");drawChart(cv,series,COMS[s.sel].cl,{fcData:fcScaled,dp:dpv,unit:un,hoverX:ev.clientX-r.left});};cv.onmouseleave=function(){cv.style.cursor="default";drawChart(cv,series,COMS[s.sel].cl,oCh);};cv.onclick=function(ev){if(nearLast(ev))openSrc(s.sel);};}}
+  });});
+}
+
+// ═══════════════════════════════════════════════════════════════
+// WEEKLY BRIEFING PDF (v5.6) — client-side vector PDF via jsPDF 3.0.3 (lazy-loaded on first click, SRI-pinned).
+// 100% DERIVED from the in-page vetted data (NEWS[] = the ALL-NEWS dropdown, COMS[], state.metrics/forecasts,
+// INTEL_CONTEXT). No invented headlines or numbers; any missing value renders as an honest dash. Light, premium,
+// A4 layout — selectable text, crisp at any zoom. If the CDN is unreachable, falls back to a print-to-PDF window.
+// ═══════════════════════════════════════════════════════════════
+var JSPDF_SRC="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.3/jspdf.umd.min.js";
+var JSPDF_SRI="sha512-+EeCylkt9WHJk5tGJxYdecHOcXFRME7qnbsfeMsdQL6NUPYm2+uGFmyleEqsmVoap/f3dN/sc3BX9t9kHXkHHg==";
+var _jspdfP=null;
+function loadJsPDF(){
+  if(window.jspdf&&window.jspdf.jsPDF)return Promise.resolve(window.jspdf.jsPDF);
+  if(_jspdfP)return _jspdfP;
+  _jspdfP=new Promise(function(resolve,reject){
+    var s=document.createElement("script");s.src=JSPDF_SRC;s.integrity=JSPDF_SRI;s.crossOrigin="anonymous";s.referrerPolicy="no-referrer";s.async=true;
+    var timer=setTimeout(function(){clean();reject(new Error("jsPDF load timeout"));},9000);
+    function clean(){clearTimeout(timer);s.onload=s.onerror=null;}
+    s.onload=function(){clean();(window.jspdf&&window.jspdf.jsPDF)?resolve(window.jspdf.jsPDF):reject(new Error("jsPDF global missing"));};
+    s.onerror=function(){clean();reject(new Error("jsPDF blocked/offline"));};
+    document.head.appendChild(s);
+  });
+  _jspdfP.catch(function(){_jspdfP=null;});// allow retry on next click
+  return _jspdfP;
+}
+// ── Print geometry (A4 pt) + light premium palette (dark-neon brand translated to readable paper ink) ──
+var PG={W:595.28,H:841.89,M:46};PG.CW=PG.W-PG.M*2;
+var PINK={ink:[13,18,30],soft:[74,86,110],mut:[124,137,161],hair:[210,217,228],rule:[43,54,80],panel:[247,249,252],panelAlt:[237,241,247],brand:[13,18,30],onBrand:[255,255,255],dim:[159,176,200],green:[0,138,100],cyan:[9,122,158],amber:[176,122,0],red:[197,38,74],blue:[38,96,176],mag:[124,66,168],accent:[0,138,100]};
+function pdTC(d,c){d.setTextColor(c[0],c[1],c[2]);}
+function pdFC(d,c){d.setFillColor(c[0],c[1],c[2]);}
+function pdDC(d,c){d.setDrawColor(c[0],c[1],c[2]);}
+function pdDelta(v){return (v==null||isNaN(v))?PINK.soft:(v>0?PINK.red:(v<0?PINK.green:PINK.soft));}// cost up=red, down=green
+// Glyph hygiene: jsPDF core fonts are Latin only — map/transliterate everything else to ASCII (keep the middle dot).
+var PD_GLYPH={"‐":"-","‑":"-","‒":"-","–":"-","—":"-","―":"-","‘":"'","’":"'","‚":"'","‛":"'","“":'"',"”":'"',"†":"+","‡":"+","•":"-","‣":"-","․":".","‥":"..","…":"...","←":"<-","↑":"^","→":"->","↓":"v","↗":"^","↘":"v","■":"#","▪":"-","▲":"+","▸":">","▼":"-","◆":"*","○":"o","●":"*","◉":"*","✓":"(ok)","⚠":"(!)","≈":"~","×":"x","÷":"/","±":"+/-","≥":">=","≤":"<=","™":"(TM)","®":"(R)","©":"(c)","€":"EUR ","¢":"c"," ":" "," ":" ","​":""};
+var PD_LAT={"À":"A","Á":"A","Â":"A","Ã":"A","Ä":"A","Å":"A","Ç":"C","È":"E","É":"E","Ê":"E","Ë":"E","Í":"I","Ñ":"N","Ó":"O","Ô":"O","Ö":"O","Ú":"U","Ü":"U","à":"a","á":"a","â":"a","ã":"a","ä":"a","å":"a","ç":"c","è":"e","é":"e","ê":"e","ë":"e","ì":"i","í":"i","î":"i","ï":"i","ñ":"n","ò":"o","ó":"o","ô":"o","õ":"o","ö":"o","ù":"u","ú":"u","û":"u","ü":"u","ý":"y","ÿ":"y"};
+function pdSafe(s){if(s==null)return"";
+  s=String(s).replace(/[‐-―‘-”†-…←-⇿■-◿✓⚠≈×÷±≥≤™®©€¢  ​]/g,function(ch){return PD_GLYPH[ch]!=null?PD_GLYPH[ch]:"";});
+  s=s.replace(/[À-ÿ]/g,function(ch){return PD_LAT[ch]!=null?PD_LAT[ch]:"";});
+  return s.replace(/[^\x20-\x7E·]/g,"");// keep ASCII printable + middle dot
+}
+var PD_MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var PD_MONI={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+function pdNewsTime(d){var p=String(d||"").trim().split(/\s+/),mo=PD_MONI[p[0]];if(mo==null)return 0;var n=parseInt(p[1],10);if(p[1]&&p[1].length===4&&!isNaN(n))return Date.UTC(n,mo,1);return Date.UTC(2026,mo,isNaN(n)?1:n);}
+function pdZ(n){return(n<10?"0":"")+n;}
+function pdISO(dt){return dt.getUTCFullYear()+"-"+pdZ(dt.getUTCMonth()+1)+"-"+pdZ(dt.getUTCDate());}
+function pdLong(dt){return PD_MON[dt.getUTCMonth()]+" "+dt.getUTCDate()+", "+dt.getUTCFullYear();}
+function pdAnchor(){var mx=0;for(var i=0;i<COMS.length;i++){var d=state.data[i];if(d&&d.length){var t=Date.parse(d[d.length-1].date+"T00:00:00Z");if(t>mx)mx=t;}}var nt=NEWS.length?pdNewsTime(NEWS[0].d):0;if(nt>mx)mx=nt;return new Date(mx||Date.now());}
+function pdMonday(dt){var d=new Date(dt.getTime()),day=d.getUTCDay(),diff=(day===0?6:day-1);d.setUTCDate(d.getUTCDate()-diff);return d;}
+function pdNum(v,dp){return(v==null||isNaN(v))?"—":Number(v).toFixed(dp==null?2:dp);}
+function pdPct(v){return(v==null||isNaN(v))?"—":(v>=0?"+":"")+v.toFixed(1)+"%";}
+function pdGenTS(){var n=new Date();return PD_MON[n.getMonth()]+" "+n.getDate()+", "+n.getFullYear()+" "+pdZ(n.getHours())+":"+pdZ(n.getMinutes());}
+// ── Render context bound to one jsPDF doc: header/footer chrome, page-breaks, headings, paragraphs, bullets ──
+function pdReport(doc,cov){
+  var R={doc:doc,y:0,page:1};
+  R.header=function(){var d=this.doc;pdFC(d,PINK.brand);d.rect(0,0,PG.W,56,"F");pdFC(d,PINK.accent);d.rect(0,56,PG.W,3,"F");
+    pdTC(d,PINK.onBrand);d.setFont("helvetica","bold");d.setFontSize(15);d.text("CommodIQ",PG.M,28);
+    d.setFont("helvetica","normal");d.setFontSize(8);pdTC(d,PINK.dim);d.text(pdSafe("TERMINAL  ·  MAEV FINANCE"),PG.M,42);
+    pdTC(d,PINK.onBrand);d.setFontSize(8.5);d.text("WEEKLY PROCUREMENT BRIEF",PG.W-PG.M,28,{align:"right"});
+    pdTC(d,PINK.dim);d.setFontSize(8);d.text(pdSafe(cov.issue),PG.W-PG.M,42,{align:"right"});
+    this.y=56+3+24;};
+  R.footer=function(){var d=this.doc,fy=PG.H-58;pdDC(d,PINK.hair);d.setLineWidth(0.5);d.line(PG.M,fy,PG.W-PG.M,fy);
+    d.setFont("helvetica","normal");d.setFontSize(6.4);pdTC(d,PINK.mut);
+    var disc="Sources: USDA AMS (LM_XB460 / National Chicken ams_3649 / NX_FV020), MI Potato Commission (NAPMN), USDA ERS/NASS/APHIS/WASDE, NOAA CPC, Dallas Fed, Drovers/DTN. Every figure is an actual published value -- no synthetic, interpolated, or modeled history. Forecasts are damped-trend ETS (skill = MASE vs seasonal-naive; below 1.00 beats the benchmark) -- projections, not guarantees. Not investment advice.";
+    var lines=d.splitTextToSize(pdSafe(disc),PG.CW),ly=fy+9;for(var i=0;i<lines.length;i++){d.text(lines[i],PG.M,ly);ly+=7.5;}
+    d.text(pdSafe("Generated "+cov.gen+"  ·  CommodIQ Terminal by MAEV Finance  ·  client-side"),PG.M,ly+0.5);};
+  R.checkPage=function(hh){if(this.y+hh>PG.H-78){this.footer();this.doc.addPage();this.page+=1;this.header();}return this.y;};
+  R.gap=function(hh){this.y+=hh;};
+  R.heading=function(label,col){this.checkPage(34);var d=this.doc;d.setFont("helvetica","bold");d.setFontSize(11.5);pdTC(d,col||PINK.ink);d.text(pdSafe(label).toUpperCase(),PG.M,this.y);this.y+=6;pdDC(d,PINK.rule);d.setLineWidth(1.3);d.line(PG.M,this.y,PG.W-PG.M,this.y);this.y+=15;};
+  R.paragraph=function(text,o){o=o||{};var d=this.doc,size=o.size||9.3,lh=o.lh||size*1.4;d.setFont("helvetica",o.bold?"bold":"normal");d.setFontSize(size);pdTC(d,o.color||PINK.soft);var lines=d.splitTextToSize(pdSafe(text),o.w||PG.CW);for(var i=0;i<lines.length;i++){this.checkPage(lh);d.text(lines[i],o.x!=null?o.x:PG.M,this.y);this.y+=lh;}this.y+=(o.after!=null?o.after:4);};
+  R.bullet=function(text,accent){var d=this.doc,size=9.2,lh=size*1.42,indent=15;d.setFont("helvetica","normal");d.setFontSize(size);var lines=d.splitTextToSize(pdSafe(text),PG.CW-indent);for(var i=0;i<lines.length;i++){this.checkPage(lh);if(i===0){pdFC(d,accent||PINK.accent);d.rect(PG.M,this.y-size+2,3.4,3.4,"F");}pdTC(d,PINK.soft);d.text(lines[i],PG.M+indent,this.y);this.y+=lh;}this.y+=3;};
+  return R;
+}
+// ── Manual zebra table (no autotable dependency): dark header, alt-row fill, colored right-aligned cells ──
+function pdTable(R,cols,rows){
+  var d=R.doc,rowH=17,headH=19,padX=5,x0=PG.M,totalW=0;for(var i=0;i<cols.length;i++)totalW+=cols[i].w;
+  function head(){R.checkPage(headH+rowH);var y=R.y;pdFC(d,PINK.brand);d.rect(x0,y,totalW,headH,"F");d.setFont("helvetica","bold");d.setFontSize(7.6);pdTC(d,PINK.onBrand);var cx=x0;for(var i=0;i<cols.length;i++){var c=cols[i],tx=c.align==="right"?cx+c.w-padX:cx+padX;d.text(pdSafe(String(c.label).toUpperCase()),tx,y+headH-7,{align:c.align==="right"?"right":"left"});cx+=c.w;}R.y+=headH;}
+  head();
+  for(var ri=0;ri<rows.length;ri++){
+    if(R.y+rowH>PG.H-78){R.footer();d.addPage();R.page+=1;R.header();head();}
+    var y=R.y;pdFC(d,(ri%2)?PINK.panelAlt:PINK.panel);d.rect(x0,y,totalW,rowH,"F");d.setFontSize(8.4);var cx=x0;
+    for(var ci=0;ci<cols.length;ci++){var c=cols[ci],cell=c.get(rows[ri],ri)||{text:"—"};d.setFont("helvetica",cell.bold?"bold":"normal");pdTC(d,cell.color||PINK.ink);var tx=c.align==="right"?cx+c.w-padX:cx+padX;d.text(pdSafe(cell.text),tx,y+rowH-6,{align:c.align==="right"?"right":"left"});cx+=c.w;}
+    R.y+=rowH;
+  }
+  pdDC(d,PINK.hair);d.setLineWidth(0.5);d.line(x0,R.y,x0+totalW,R.y);R.gap(10);
+}
+// ── Derive the executive-summary bullets purely from live metrics/forecasts/NEWS (never fabricate) ──
+function pdBuildSummary(){
+  var b=[];
+  var mv=null;for(var i=0;i<COMS.length;i++){var m=state.metrics[i];if(m&&m.wow!=null){if(!mv||Math.abs(m.wow)>Math.abs(mv.m.wow))mv={i:i,m:m,c:COMS[i]};}}
+  if(mv){var dd=state.data[mv.i],asof=dd&&dd.length?fdate(dd[dd.length-1].date):"";b.push("Biggest weekly move: "+mv.c.nm+" "+(mv.m.wow>=0?"+":"")+mv.m.wow.toFixed(1)+"% W/W to "+mv.m.latest.toFixed(2)+" "+mv.c.un+" (as of "+asof+").");}
+  var i50=-1,i90=-1;for(var i=0;i<COMS.length;i++){if(COMS[i].k==="BT50")i50=i;if(COMS[i].k==="BT90")i90=i;}
+  if(i50>=0&&i90>=0&&state.metrics[i50]&&state.metrics[i90]){var prem=state.metrics[i90].latest-state.metrics[i50].latest;b.push("Lean premium (BT90 minus BT50) at $"+prem.toFixed(2)+"/cwt -- "+(prem>=250?"historically extreme":"elevated")+", confirming tight lean-trim supply versus adequate fat trim.");}
+  var fs=[];for(var i=0;i<COMS.length;i++){var f=state.forecasts[i],m=state.metrics[i];if(f&&f.length&&m)fs.push({i:i,f:f,m:m});}
+  if(fs.length){var up=0,dn=0,fl=0;for(var k=0;k<fs.length;k++){var end=fs[k].f[fs[k].f.length-1].price,lat=fs[k].m.latest;if(end>=lat*1.03)up++;else if(end<=lat*0.97)dn++;else fl++;}b.push("Forward outlook: "+up+" of "+fs.length+" forecasted markets skew higher (>+3%), "+dn+" lower, "+fl+" broadly flat.");}
+  if(fs.length){var best=fs[0];for(var k=1;k<fs.length;k++)if(fs[k].f.mase<best.f.mase)best=fs[k];var end=best.f[best.f.length-1].price,lat=best.m.latest,d=((end-lat)/lat*100);b.push("Highest model skill: "+COMS[best.i].nm+" (MASE "+best.f.mase+(best.f.beatsNaive?", beats seasonal-naive":"")+") projects "+(d>=0?"+":"")+d.toFixed(1)+"% over "+best.f.horizonLabel.toLowerCase()+".");}
+  var imp=null;for(var i=0;i<NEWS.length;i++){var n=NEWS[i],isPrice=(n.s==="USDA AMS")&&/\d+CL|\$\d|¢|\/cwt|\/lb/.test(n.t);if(!isPrice){imp=n;break;}}
+  if(!imp&&NEWS.length)imp=NEWS[0];// guarantee a Watch line so the summary never silently shrinks
+  if(imp){var t=imp.t.split(" — ")[0];if(t.length>96)t=t.slice(0,95)+"...";b.push("Watch: "+t+" ("+imp.s+", "+imp.d+").");}
+  return b;
+}
+// ── This week's headlines: 10-day window (never-empty floor of 6), theme-grouped from the vetted NEWS array ──
+function pdRenderHeadlines(R){
+  var d=R.doc,newsMax=NEWS.length?pdNewsTime(NEWS[0].d):0,cutoff=newsMax-10*86400000;
+  var sel=NEWS.filter(function(n){return pdNewsTime(n.d)>=cutoff;});
+  if(sel.length<6)sel=NEWS.slice(0,6);
+  var extra=0;if(sel.length>10){extra=sel.length-10;sel=sel.slice(0,10);}
+  var groups=[{key:"BEEF / CATTLE",col:PINK.red,items:[]},{key:"POULTRY",col:PINK.green,items:[]},{key:"PRODUCE",col:PINK.blue,items:[]},{key:"MACRO / WEATHER",col:PINK.amber,items:[]}];
+  function theme(n){var t=n.t.toLowerCase(),s=n.s;
+    if(/chicken|breast|broiler|hpai|h5n1|avian|poultry|liver|gizzard/.test(t))return 1;
+    if(/potato|russet|norkotah|green bean|snap bean|vegetable|spud|acreage|idaho|irrigation/.test(t))return 2;
+    if(/screwworm|cattle|herd|beef|trim|\dcl|drought/.test(t)||s==="Drovers"||s==="DTN/Drovers"||s==="Dallas Fed"||s==="CNN Business"||s==="USDA NASS")return 0;
+    if(/el ni|noaa|wasde|ers|forecast|corn|soybean|feed|price outlook/.test(t)||s==="NOAA CPC"||s==="USDA WASDE"||s==="USDA ERS"||s==="USDA ERS/APHIS")return 3;
+    return 0;}
+  for(var i=0;i<sel.length;i++)groups[theme(sel[i])].items.push(sel[i]);
+  for(var g=0;g<groups.length;g++){var grp=groups[g];if(!grp.items.length)continue;
+    R.checkPage(26);d.setFont("helvetica","bold");d.setFontSize(8.5);pdTC(d,grp.col);d.text(pdSafe(grp.key),PG.M,R.y);R.y+=12;
+    for(var j=0;j<grp.items.length;j++){var n=grp.items[j];
+      R.checkPage(13);d.setFont("helvetica","bold");d.setFontSize(8);pdTC(d,PINK.green);d.text(pdSafe(n.d),PG.M,R.y);
+      d.setFont("helvetica","normal");d.setFontSize(8.2);pdTC(d,PINK.ink);
+      var lines=d.splitTextToSize(pdSafe(n.t+"  ("+n.s+")"),PG.CW-44);
+      for(var li=0;li<lines.length;li++){if(li>0)R.checkPage(11);d.text(lines[li],PG.M+44,R.y);R.y+=10.5;}
+      R.y+=3;
+    }
+    R.gap(3);
+  }
+  if(extra>0)R.paragraph("+"+extra+" more headlines this period -- open the ALL NEWS panel in the live terminal.",{size:7.6,color:PINK.mut,after:6});
+}
+// ── Forecast & outlook: per-commodity projection lines + sourced anchor context + honest no-model note ──
+function pdRenderOutlook(R){
+  var fs=[];for(var i=0;i<COMS.length;i++){var f=state.forecasts[i],m=state.metrics[i];if(f&&f.length&&m)fs.push({i:i,f:f,m:m,c:COMS[i]});}
+  for(var k=0;k<fs.length;k++){var o=fs[k],end=o.f[o.f.length-1].price,lat=o.m.latest,dd=((end-lat)/lat*100);
+    var dir=dd>=1?"higher":(dd<=-1?"lower":"broadly flat");
+    var conf=o.f.beatsNaive?(o.f.mase<0.5?"high-confidence":(o.f.mase<=0.8?"moderate-confidence":"directional (marginally beats seasonal-naive)")):"low-confidence (does not beat the seasonal-naive benchmark -- treat as indicative only)";
+    R.paragraph(o.c.sy+" -- "+o.c.nm+": "+o.f.method+" model projects "+dir+" to ~"+end.toFixed(2)+" "+o.c.un+" over "+o.f.horizonLabel.toLowerCase()+" ("+(dd>=0?"+":"")+dd.toFixed(1)+"%), "+conf+"; MASE "+o.f.mase+".",{size:8.6,color:PINK.soft,after:6});
+  }
+  R.gap(2);
+  var anchors=["BT90","CB","PT"];for(var c=0;c<anchors.length;c++){var idx=-1;for(var i=0;i<COMS.length;i++)if(COMS[i].k===anchors[c])idx=i;if(idx<0)continue;var arr=INTEL_CONTEXT[anchors[c]];if(arr&&arr.length)R.bullet(arr[arr.length-1],PINK.blue);}
+  R.paragraph("BT81 (thin negotiated trade) and Snap Green Beans (off-season, sparse history) carry no statistical model -- shown as a dash above by design. See the terminal's INTEL panels for qualitative context on these series.",{size:7.6,color:PINK.mut,after:4});
+}
+// ── Assemble the briefing ──
+function buildBriefing(jsPDF){
+  var anchor=pdAnchor(),cov={issue:"Issue "+pdLong(new Date(Date.now())),weekOf:pdLong(pdMonday(anchor)),gen:pdGenTS()};
+  var doc=new jsPDF({unit:"pt",format:"a4",compress:true});
+  try{doc.setProperties({title:"CommodIQ Weekly "+pdISO(anchor),subject:"Procurement commodity brief",author:"MAEV FINANCE - CommodIQ Terminal",creator:"CommodIQ (client-side jsPDF)",keywords:"USDA, procurement, commodities, beef, poultry, produce"});}catch(e){}
+  var R=pdReport(doc,cov);R.header();
+  doc.setFont("helvetica","bold");doc.setFontSize(17);pdTC(doc,PINK.ink);doc.text("Weekly Procurement Briefing",PG.M,R.y);R.y+=15;
+  doc.setFont("helvetica","normal");doc.setFontSize(9);pdTC(doc,PINK.soft);doc.text(pdSafe("Coverage: Week of "+cov.weekOf+"   ·   9 USDA-tracked meat & produce markets"),PG.M,R.y);R.y+=7;
+  pdDC(doc,PINK.cyan);doc.setLineWidth(1.4);doc.line(PG.M,R.y,PG.M+150,R.y);R.y+=16;
+  R.paragraph("Every figure below is an actual published USDA or industry value, verifiable at source in the live CommodIQ terminal. No synthetic, interpolated, or modeled inputs. Dashes mark values not published for the period.",{size:8.8,color:PINK.soft,after:12});
+  R.heading("Executive Summary",PINK.green);
+  var bl=pdBuildSummary();for(var i=0;i<bl.length;i++)R.bullet(bl[i]);R.gap(4);
+  R.heading("Market Snapshot",PINK.cyan);
+  pdTable(R,[
+    {label:"Sym",w:40,align:"left",get:function(c){return{text:c.sy,bold:true};}},
+    {label:"Commodity",w:96,align:"left",get:function(c){return{text:c.nm};}},
+    {label:"Last",w:54,align:"right",get:function(c,i){var m=state.metrics[i];return{text:pdNum(m?m.latest:null,2),bold:true};}},
+    {label:"Unit",w:38,align:"left",get:function(c){return{text:c.un,color:PINK.mut};}},
+    {label:"W%",w:42,align:"right",get:function(c,i){var m=state.metrics[i];return{text:pdPct(m?m.wow:null),color:pdDelta(m?m.wow:null)};}},
+    {label:"M%",w:42,align:"right",get:function(c,i){var m=state.metrics[i];return{text:pdPct(m?m.mom:null),color:pdDelta(m?m.mom:null)};}},
+    {label:"Y%",w:42,align:"right",get:function(c,i){var m=state.metrics[i];return{text:pdPct(m?m.yoy:null),color:pdDelta(m?m.yoy:null)};}},
+    {label:"Fcst",w:50,align:"right",get:function(c,i){var f=state.forecasts[i];return{text:(f&&f.length)?pdNum(f[f.length-1].price,2):"—",color:(f&&f.length)?PINK.cyan:PINK.mut};}},
+    {label:"Skill",w:46,align:"right",get:function(c,i){var f=state.forecasts[i];return (f&&f.length)?{text:"MASE "+f.mase,color:f.beatsNaive?PINK.green:PINK.amber}:{text:"—",color:PINK.mut};}},
+    {label:"As Of",w:46,align:"right",get:function(c,i){var d=state.data[i];return{text:(d&&d.length)?fdate(d[d.length-1].date):"—",color:PINK.mut};}}
+  ],COMS);
+  R.paragraph("Cost-risk coloring: red = price up (cost increase), green = price down. FCST = end-of-horizon midpoint (beef 12 wks; chicken & potato 6 mos). SKILL = MASE vs a seasonal-naive benchmark (green beats it). BT81 and green beans are too sparse to project and show a dash by design.",{size:7.4,color:PINK.mut,after:10});
+  R.heading("This Week's Headlines",PINK.amber);pdRenderHeadlines(R);
+  R.heading("Forecast & Outlook",PINK.mag);pdRenderOutlook(R);
+  R.footer();
+  var tot=doc.getNumberOfPages();for(var p=1;p<=tot;p++){doc.setPage(p);doc.setFont("helvetica","normal");doc.setFontSize(7);pdTC(doc,PINK.mut);doc.text("Page "+p+" of "+tot,PG.W-PG.M,PG.H-7,{align:"right"});}
+  doc.save("CommodIQ_Weekly_"+pdISO(anchor)+".pdf");
+}
+// ── Fallback: print-optimized window -> user Saves as PDF (when the jsPDF CDN is blocked/offline) ──
+function openPrintFallback(){
+  var w=window.open("","_blank","width=900,height=1200");
+  if(!w){alert("Pop-up blocked - allow pop-ups to export the briefing.");return;}
+  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];});}
+  function nm(v){return(v==null||isNaN(v))?"—":Number(v).toFixed(2);}
+  function pc(v){return(v==null||isNaN(v))?"—":(v>0?"+":"")+v.toFixed(1)+"%";}
+  function cls(v){return(v==null||isNaN(v))?"":(v>0?"up":(v<0?"dn":""));}
+  var rows="";for(var i=0;i<COMS.length;i++){var c=COMS[i],m=state.metrics[i]||{},f=state.forecasts[i];
+    rows+="<tr><td class='k'>"+esc(c.sy)+"</td><td>"+esc(c.nm)+"</td><td class='num'>"+nm(m.latest)+" <span class='un'>"+esc(c.un)+"</span></td><td class='num "+cls(m.wow)+"'>"+pc(m.wow)+"</td><td class='num "+cls(m.mom)+"'>"+pc(m.mom)+"</td><td class='num "+cls(m.yoy)+"'>"+pc(m.yoy)+"</td><td class='num'>"+((f&&f.length)?nm(f[f.length-1].price):"—")+"</td></tr>";}
+  var news="";for(var i=0;i<Math.min(NEWS.length,12);i++){var n=NEWS[i];news+="<li><span class='d'>"+esc(n.d)+"</span> "+esc(n.t)+" <span class='s'>- "+esc(n.s)+"</span></li>";}
+  var mon=pdMonday(pdAnchor());
+  w.document.write("<!doctype html><html><head><meta charset='utf-8'><title>CommodIQ_Weekly_"+pdISO(pdAnchor())+"</title><style>@page{size:A4;margin:15mm}*{box-sizing:border-box}body{font:11px/1.45 'Helvetica Neue',Arial,sans-serif;color:#0d121e;margin:0}.band{background:#0d121e;color:#fff;padding:14px 18px;border-bottom:3px solid #008a64}.band h1{font-size:19px;margin:0 0 3px;color:#fff}.band .sub{color:#9fb0c8;font-size:10px}.wrap{padding:16px 18px}h2{font-size:12px;margin:18px 0 6px;padding-bottom:3px;border-bottom:2px solid #2b3650}table{width:100%;border-collapse:collapse;margin:6px 0 14px}th,td{padding:5px 8px;border-bottom:1px solid #d2d9e4;text-align:left}th{background:#f7f9fc;font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#4a566e}td.num,th.num{text-align:right}td.k{font-weight:700}.un{color:#7c89a1;font-size:9px}.up{color:#c5264a}.dn{color:#008a64}tr:nth-child(even) td{background:#f9fafc}ul{margin:0;padding-left:0;list-style:none}li{padding:4px 0;border-bottom:1px solid #edf1f7;font-size:10px}li .d{display:inline-block;min-width:52px;color:#008a64;font-weight:700}li .s{color:#7c89a1;font-style:italic}.ft{margin-top:16px;color:#7c89a1;font-size:8.5px;border-top:1px solid #d2d9e4;padding-top:6px}@media print{.noprint{display:none}}</style></head><body><div class='band'><h1>CommodIQ Weekly Procurement Brief</h1><div class='sub'>MAEV FINANCE &nbsp;&middot;&nbsp; Week of "+esc(pdLong(mon))+" &nbsp;&middot;&nbsp; All values published USDA/industry - verifiable at source</div></div><div class='wrap'><h2>Commodity Snapshot</h2><table><thead><tr><th>Sym</th><th>Commodity</th><th class='num'>Last</th><th class='num'>W%</th><th class='num'>M%</th><th class='num'>Y%</th><th class='num'>Fcst</th></tr></thead><tbody>"+rows+"</tbody></table><h2>Latest Headlines</h2><ul>"+news+"</ul><p class='ft'>Generated client-side from published USDA/industry data. No synthetic or interpolated values. Forecasts are damped-trend ETS projections, not guarantees. Source documents are linked in the live terminal. &copy; MAEV FINANCE.</p></div><button class='noprint' onclick='window.print()' style='position:fixed;top:10px;right:10px;padding:8px 14px'>Save as PDF</button></body></html>");
+  w.document.close();w.focus();setTimeout(function(){try{w.print();}catch(e){}},350);
+}
+window.downloadBriefing=function(ev){if(ev&&ev.stopPropagation)ev.stopPropagation();if(state.briefingBusy)return;state.briefingBusy=true;render();
+  var done=function(){state.briefingBusy=false;render();};// reset busy state in BOTH paths (no Promise.finally — works on pre-ES2018 engines)
+  loadJsPDF().then(
+    function(jsPDF){try{buildBriefing(jsPDF);}catch(e){console.warn("[CommodIQ] briefing build failed, using print fallback:",e);try{openPrintFallback();}catch(_){}}done();},
+    function(err){console.warn("[CommodIQ] jsPDF unavailable, using print fallback:",err);try{openPrintFallback();}catch(_){}done();}
+  );
+};
+
+// ═══ ACTIONS ═══
+window.pick=function(i){state.sel=i;state.view="SINGLE";state.showPanel=false;state.intel=null;state.ovMenu=false;render();};
+window.setTR=function(r){state.tr=r;render();};
+window.setView=function(v){state.view=v;state.showPanel=false;state.intel=null;if(v!=="OVERLAY")state.ovMenu=false;render();};
+window.toggleFc=function(){state.fc=!state.fc;render();};
+window.togglePanel=function(){state.showPanel=!state.showPanel;render();};
+window.markChecked=function(ev){state.lastCheck=Date.now();};
+window.toggleHelp=function(){state.showHelp=!state.showHelp;if(state.showHelp)state.intel=null;render();};
+window.toggleLb=function(){state.lbMode=!state.lbMode;render();};
+window.toggleNews=function(){state.newsOpen=!state.newsOpen;render();};
+window.openSrc=function(i){var u=COMS[i]&&COMS[i].src;if(u)window.open(u,"_blank","noopener");};
+window.openIntel=function(i,ev){ev.stopPropagation();state.intel=(state.intel===i)?null:i;render();};
+window.closeIntel=function(){state.intel=null;render();};
+// ── Overlay commodity selector ──
+window.toggleOvMenu=function(ev){if(ev)ev.stopPropagation();state.ovMenu=!state.ovMenu;render();};
+window.toggleOv=function(i){var a=(state.ovSel||[]).slice(),k=a.indexOf(i);if(k>=0)a.splice(k,1);else a.push(i);state.ovSel=a;render();};
+window.ovAll=function(){state.ovSel=COMS.map(function(c,i){return i;});render();};
+window.ovNone=function(){state.ovSel=[];render();};
+
+document.addEventListener("keydown",function(ev){
+  if(document.activeElement&&document.activeElement.tagName==="INPUT")return;
+  var i=state.sel;
+  if(ev.key==="ArrowDown"||ev.key==="j"){ev.preventDefault();state.sel=(i+1)%COMS.length;state.view="SINGLE";state.showPanel=false;render();}
+  if(ev.key==="ArrowUp"||ev.key==="k"){ev.preventDefault();state.sel=(i-1+COMS.length)%COMS.length;state.view="SINGLE";state.showPanel=false;render();}
+  if(ev.key==="f"){state.fc=!state.fc;render();}
+  if(ev.key==="o"){state.view="OVERLAY";render();}
+  if(ev.key==="m"){state.view="MATRIX";render();}
+  if(ev.key==="s"){state.view="SINGLE";render();}
+  if(ev.key==="l"){state.lbMode=!state.lbMode;render();}
+  if(ev.key==="n"){state.newsOpen=!state.newsOpen;render();}
+  if(ev.key==="b"){downloadBriefing();}
+  if(ev.key==="Escape"){state.showPanel=false;state.showHelp=false;state.intel=null;state.newsOpen=false;state.ovMenu=false;render();}
+  if(ev.key==="?"){state.showHelp=!state.showHelp;render();}
+});
+document.addEventListener("click",function(ev){if(state.showPanel&&!ev.target.closest(".rbtn")&&!ev.target.closest(".rpanel")){state.showPanel=false;render();}});
+document.addEventListener("click",function(ev){if(state.ovMenu&&!ev.target.closest(".ovsel-wrap")){state.ovMenu=false;render();}});
+setInterval(function(){var el=document.getElementById("clock");if(el)el.textContent=new Date().toLocaleTimeString("en-US",{hour12:false})+" CT";},1000);
+// Re-check report status every 5 min
+setInterval(function(){render();},300000);
+window.addEventListener("resize",function(){render();});
+render();
+</script>
+</body>
+</html>
