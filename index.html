@@ -45,9 +45,13 @@ button.on{background:rgba(0,230,180,.14);color:var(--grn);border-color:rgba(0,23
 .ticker a:hover{background:rgba(26,37,64,.4)}
 .ticker .td{color:var(--amb);font-weight:700;font-size:10.5px;letter-spacing:.5px}.ticker .ts{color:var(--mut);font-size:10.5px;letter-spacing:.3px}.ticker .tt{color:var(--txt);font-weight:500}.ticker .tl{color:var(--blu);font-size:11px}
 /* News list toggle + expanded panel */
-.news-toggle{position:absolute;right:0;top:0;height:37px;padding:0 16px;background:var(--news);border:none;border-left:1px solid var(--bdr);border-radius:0;color:var(--dim);font-size:10.5px;font-weight:700;letter-spacing:1.2px;z-index:5;box-shadow:-12px 0 12px -6px rgba(4,8,16,.9)}
+.ticker-actions{position:absolute;right:0;top:0;height:37px;display:flex;z-index:5;box-shadow:-12px 0 12px -6px rgba(4,8,16,.9)}
+.news-toggle{height:37px;padding:0 16px;background:var(--news);border:none;border-left:1px solid var(--bdr);border-radius:0;color:var(--dim);font-size:10.5px;font-weight:700;letter-spacing:1.2px;white-space:nowrap}
 .news-toggle:hover{color:var(--txt);background:var(--hover);border-color:var(--bdr2)}
 .news-toggle.on{color:var(--amb);border-left-color:rgba(255,176,32,.5)}
+.pdf-toggle{color:var(--cyn)}
+.pdf-toggle:hover{color:#8af0ff;background:var(--hover);border-color:var(--bdr2)}
+.pdf-toggle.busy{color:var(--amb);cursor:wait;opacity:.85}
 .news-panel{background:linear-gradient(180deg,var(--news) 0%,var(--panel) 100%);border-bottom:1px solid var(--bdr2);max-height:330px;overflow-y:auto;padding:6px 24px 12px;box-shadow:inset 0 8px 16px -10px rgba(0,0,0,.6),0 10px 24px -8px rgba(0,0,0,.5)}
 .news-panel-title{font-size:9px;color:var(--mut);letter-spacing:2.2px;font-weight:700;padding:8px 0 8px;border-bottom:1px solid var(--bdr);margin-bottom:2px}
 .news-row{display:flex;align-items:baseline;gap:14px;padding:7.5px 4px;border-bottom:1px solid rgba(38,51,79,.35);font-size:12.5px;text-decoration:none;transition:background .12s}
@@ -174,13 +178,18 @@ tr:hover td{background:rgba(26,37,64,.55)}
 .kpi-info.iac{color:var(--amb);border-color:rgba(255,176,32,.5);background:rgba(255,176,32,.1)}
 .kpi-asof{position:absolute;bottom:6px;left:14px;font-size:8.5px;color:var(--mut);letter-spacing:.3px;font-weight:600;font-variant-numeric:tabular-nums;cursor:pointer;transition:color .12s}
 .kpi-asof:hover{color:var(--cyn)}
+/* Mobile: keep the news-bar action buttons compact + on-screen on narrow phones */
+@media (max-width:560px){.news-toggle{padding:0 9px;font-size:9px;letter-spacing:.4px}.ticker-actions{box-shadow:-8px 0 10px -6px rgba(4,8,16,.92)}}
 </style>
 </head>
 <body>
 <div class="shell" id="app"></div>
 <script>
+// Polyfill: CanvasRenderingContext2D.roundRect (Safari <16.4 / Firefox <116) — chart tooltips & overlay readout depend on it.
+if(typeof CanvasRenderingContext2D!=="undefined"&&!CanvasRenderingContext2D.prototype.roundRect){CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){if(typeof r==="number")r=[r,r,r,r];else if(!r||!r.length)r=[0,0,0,0];if(r.length===1)r=[r[0],r[0],r[0],r[0]];if(r.length===2)r=[r[0],r[1],r[0],r[1]];var m=Math.min(Math.abs(w),Math.abs(h))/2,a=Math.min(r[0],m),b=Math.min(r[1],m),c=Math.min(r[2],m),d=Math.min(r[3],m);this.moveTo(x+a,y);this.lineTo(x+w-b,y);this.arcTo(x+w,y,x+w,y+b,b);this.lineTo(x+w,y+h-c);this.arcTo(x+w,y+h,x+w-c,y+h,c);this.lineTo(x+d,y+h);this.arcTo(x,y+h,x,y+h-d,d);this.lineTo(x,y+a);this.arcTo(x,y,x+a,y,a);return this;};}
 // ═══════════════════════════════════════════════════════════════
-// COMMODIQ TERMINAL v5.5 — 9 COMMODITIES · 2020 BACKFILL · VERIFIED NEWS · AUDITED 2026-06-06 · FIGURE-AUDITED 2026-06-17 · REFRESHED 2026-06-22 (beef +Jun 19 byte-exact vs DataMart API).
+// COMMODIQ TERMINAL v5.6 — 9 COMMODITIES · 2020 BACKFILL · VERIFIED NEWS · AUDITED 2026-06-06 · FIGURE-AUDITED 2026-06-17 · REFRESHED 2026-06-22 (beef +Jun 19 byte-exact vs DataMart API).
+// v5.6 (2026-06-23): WEEKLY BRIEFING PDF (↓ button on the news bar / key B) — client-side jsPDF, derived 100% from the in-page vetted NEWS + metrics/forecasts (no invented data; print-window fallback). FORECAST HOVER: hovering the fan now shows a projection tip (date, midpoint ±%, 80%/95% bands, MASE). CHART POLISH: refined fan palette + NOW divider, stronger gridline/axis/tooltip typography for legibility.
 // FORECAST ENGINE v5.5: damped-trend ETS (Gardner–McKenzie) + backtest-selected seasonal overlay; 80/95% fan bands calibrated by rolling-origin backtest; MASE skill score vs seasonal-naïve; cadence-aware (weekly beef → 12wk, monthly chicken+potato → 6mo; BT81 + green beans too sparse → no forecast). CLICK-TO-SOURCE: the chart's latest point + every AS-OF date open the exact USDA/source report. Historical data untouched & vetted.
 // ═══════════════════════════════════════════════════════════════
 
@@ -291,7 +300,7 @@ function getReportStatus(){
   return{reports:results,newCount:newCount,next:nextStr};
 }
 
-var state={sel:0,tr:"6M",view:"SINGLE",fc:true,lbMode:false,data:{},metrics:{},forecasts:{},lastCheck:0,showPanel:false,showHelp:false,intel:null,newsOpen:false,ovSel:[0,1,2,3],ovMenu:false};
+var state={sel:0,tr:"6M",view:"SINGLE",fc:true,lbMode:false,data:{},metrics:{},forecasts:{},lastCheck:0,showPanel:false,showHelp:false,intel:null,newsOpen:false,ovSel:[0,1,2,3],ovMenu:false,briefingBusy:false};
 
 // ═══ ACTUAL PRICE DATA — all points from published reports, Jan 2020–Jun 2026 · NO synthetic/interpolated values ═══
 // Beef: USDA MPR DataMart API LM_XB460 — weekly Friday negotiated sales, National price_range_avg, $/cwt
@@ -1975,6 +1984,8 @@ function sizeCanvas(cv){var p=cv.parentElement,w=p.clientWidth,h=p.clientHeight,
 
 function drawChart(canvas,series,color,opts){
   opts=opts||{};var ctx=canvas.getContext("2d"),dpr=window.devicePixelRatio||1,w=canvas.width/dpr,h=canvas.height/dpr;
+  var dp=opts.dp!=null?opts.dp:2,uSuf=opts.unit?(" "+opts.unit):"";
+  canvas.__fcZone=null;
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
   if(!series||series.length<2){
     ctx.fillStyle="#7886a3";ctx.font="600 11px 'IBM Plex Mono',monospace";ctx.textAlign="center";
@@ -1986,25 +1997,100 @@ function drawChart(canvas,series,color,opts){
   var pad={t:12,r:12,b:28,l:62},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
   var prices=series.map(function(d){return d.price;});
   var mn=Math.min.apply(null,prices),mx=Math.max.apply(null,prices);
-  if(opts.fcData&&opts.fcData.length){for(var i=0;i<opts.fcData.length;i++){mn=Math.min(mn,opts.fcData[i].lo95);mx=Math.max(mx,opts.fcData[i].hi95);}}
+  var fcd=opts.fcData&&opts.fcData.length?opts.fcData:null;
+  if(fcd){for(var i=0;i<fcd.length;i++){mn=Math.min(mn,fcd[i].lo95);mx=Math.max(mx,fcd[i].hi95);}}
   var range=mx-mn||1;mn-=range*0.05;mx+=range*0.05;range=mx-mn;
   function xP(i,t){return pad.l+(i/(t-1))*cw;}function yP(v){return pad.t+(1-(v-mn)/range)*ch;}
-  var total=series.length+(opts.fcData?opts.fcData.length:0);
-  ctx.strokeStyle="#26334f";ctx.lineWidth=0.6;
-  for(var i=0;i<5;i++){var gy=pad.t+(ch/4)*i;ctx.beginPath();ctx.moveTo(pad.l,gy);ctx.lineTo(w-pad.r,gy);ctx.stroke();ctx.fillStyle="#98a8c8";ctx.font="11px 'IBM Plex Mono',monospace";ctx.textAlign="right";ctx.fillText(fmt(mx-(range/4)*i),pad.l-6,gy+3);}
-  ctx.fillStyle="#98a8c8";ctx.font="11px 'IBM Plex Mono',monospace";ctx.textAlign="center";
+  var total=series.length+(fcd?fcd.length:0),latest=prices[prices.length-1];
+  // Gridlines + Y labels (legibility-tuned: receding interior grid, stronger baseline + semibold labels)
+  for(var i=0;i<5;i++){var gy=pad.t+(ch/4)*i;ctx.strokeStyle=(i===4)?"#34456b":"#1d2942";ctx.lineWidth=(i===4)?0.9:0.5;ctx.beginPath();ctx.moveTo(pad.l,gy);ctx.lineTo(w-pad.r,gy);ctx.stroke();ctx.fillStyle="#aebbd6";ctx.font="600 11px 'IBM Plex Mono',monospace";ctx.textAlign="right";ctx.fillText(fmt(mx-(range/4)*i,dp),pad.l-6,gy+3);}
+  ctx.fillStyle="#aebbd6";ctx.font="600 10.5px 'IBM Plex Mono',monospace";ctx.textAlign="center";
   var step=Math.max(1,Math.floor(total/6));for(var i=0;i<series.length;i+=step){var d=new Date(series[i].date);ctx.fillText(d.toLocaleDateString("en-US",{month:"short",day:"numeric"}),xP(i,total),h-pad.b+15);}
-  if(opts.fcData&&opts.fcData.length){var fcd=opts.fcData,fs=series.length,ax=xP(fs-1,total),ay=yP(series[series.length-1].price);
-    var band=function(loK,hiK,fill){ctx.fillStyle=fill;ctx.beginPath();ctx.moveTo(ax,ay);for(var i=0;i<fcd.length;i++)ctx.lineTo(xP(fs+i,total),yP(fcd[i][hiK]));for(var i=fcd.length-1;i>=0;i--)ctx.lineTo(xP(fs+i,total),yP(fcd[i][loK]));ctx.closePath();ctx.fill();};
-    band("lo95","hi95","rgba(0,222,255,0.10)");band("lo80","hi80","rgba(0,222,255,0.20)");// 95% then 80% fan
-    ctx.strokeStyle="#00deff";ctx.lineWidth=1.5;ctx.setLineDash([6,4]);ctx.beginPath();ctx.moveTo(ax,ay);for(var i=0;i<fcd.length;i++)ctx.lineTo(xP(fs+i,total),yP(fcd[i].price));ctx.stroke();ctx.setLineDash([]);}
-  var grad=ctx.createLinearGradient(0,pad.t,0,h-pad.b);grad.addColorStop(0,color+"33");grad.addColorStop(1,color+"03");ctx.fillStyle=grad;ctx.beginPath();ctx.moveTo(xP(0,total),yP(prices[0]));for(var i=1;i<prices.length;i++)ctx.lineTo(xP(i,total),yP(prices[i]));ctx.lineTo(xP(prices.length-1,total),h-pad.b);ctx.lineTo(xP(0,total),h-pad.b);ctx.closePath();ctx.fill();
-  ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(xP(0,total),yP(prices[0]));for(var i=1;i<prices.length;i++)ctx.lineTo(xP(i,total),yP(prices[i]));ctx.stroke();
-  // Latest-report marker — filled dot + faint ring signals it is click-to-source (opens the USDA/source report)
+  // Forecast fan + projection zone (only when this series carries a forecast)
+  if(fcd){var fs=series.length,ax=xP(fs-1,total),ay=yP(latest),fcX=[];for(var i=0;i<fcd.length;i++)fcX.push(xP(fs+i,total));
+    var stepW=fcd.length>1?(fcX[1]-fcX[0]):(fcX[0]-ax);
+    canvas.__fcZone={x0:ax-stepW*0.5,x1:fcX[fcd.length-1]+stepW*0.5,yt:pad.t,yb:h-pad.b};
+    ctx.fillStyle="rgba(36,233,255,0.035)";ctx.fillRect(ax,pad.t,(w-pad.r)-ax,ch);// faint projection-zone wash
+    var band=function(loK,hiK,fill){ctx.fillStyle=fill;ctx.beginPath();ctx.moveTo(ax,ay);for(var i=0;i<fcd.length;i++)ctx.lineTo(fcX[i],yP(fcd[i][hiK]));for(var i=fcd.length-1;i>=0;i--)ctx.lineTo(fcX[i],yP(fcd[i][loK]));ctx.closePath();ctx.fill();};
+    band("lo95","hi95","rgba(0,201,255,0.09)");band("lo80","hi80","rgba(0,222,255,0.22)");// 95% (outer) then 80% (inner) fan
+    ctx.strokeStyle="rgba(36,233,255,0.34)";ctx.lineWidth=1;// 80% shoulder strokes give the inner band a crisp edge
+    ctx.beginPath();ctx.moveTo(ax,ay);for(var i=0;i<fcd.length;i++)ctx.lineTo(fcX[i],yP(fcd[i].hi80));ctx.stroke();
+    ctx.beginPath();ctx.moveTo(ax,ay);for(var i=0;i<fcd.length;i++)ctx.lineTo(fcX[i],yP(fcd[i].lo80));ctx.stroke();
+    ctx.strokeStyle="rgba(0,222,255,0.25)";ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(ax,ay);for(var i=0;i<fcd.length;i++)ctx.lineTo(fcX[i],yP(fcd[i].price));ctx.stroke();// midpoint glow
+    ctx.strokeStyle="#3df0ff";ctx.lineWidth=1.6;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(ax,ay);for(var i=0;i<fcd.length;i++)ctx.lineTo(fcX[i],yP(fcd[i].price));ctx.stroke();ctx.setLineDash([]);// midpoint line
+    var ex=fcX[fcd.length-1],ey=yP(fcd[fcd.length-1].price);// horizon endpoint marker
+    ctx.strokeStyle="rgba(61,240,255,0.4)";ctx.lineWidth=1;ctx.beginPath();ctx.arc(ex,ey,5,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle="#3df0ff";ctx.beginPath();ctx.arc(ex,ey,2.6,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle="rgba(36,233,255,0.45)";ctx.lineWidth=1;ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(ax,pad.t);ctx.lineTo(ax,h-pad.b);ctx.stroke();ctx.setLineDash([]);// NOW divider
+    ctx.font="700 9px 'IBM Plex Mono',monospace";ctx.fillStyle="#24e9ff";ctx.textAlign="left";ctx.fillText("NOW",ax+4,pad.t+9);
+  }
+  // Area gradient + price line (under-glow for a stronger, premium line read)
+  var grad=ctx.createLinearGradient(0,pad.t,0,h-pad.b);grad.addColorStop(0,color+"3d");grad.addColorStop(1,color+"00");ctx.fillStyle=grad;ctx.beginPath();ctx.moveTo(xP(0,total),yP(prices[0]));for(var i=1;i<prices.length;i++)ctx.lineTo(xP(i,total),yP(prices[i]));ctx.lineTo(xP(prices.length-1,total),h-pad.b);ctx.lineTo(xP(0,total),h-pad.b);ctx.closePath();ctx.fill();
+  ctx.strokeStyle=color+"22";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(xP(0,total),yP(prices[0]));for(var i=1;i<prices.length;i++)ctx.lineTo(xP(i,total),yP(prices[i]));ctx.stroke();
+  ctx.strokeStyle=color;ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(xP(0,total),yP(prices[0]));for(var i=1;i<prices.length;i++)ctx.lineTo(xP(i,total),yP(prices[i]));ctx.stroke();
+  // Latest-report marker — dot + white pip + double ring signals it is click-to-source (opens the USDA/source report)
   var lpx=xP(prices.length-1,total),lpy=yP(prices[prices.length-1]);canvas.__lastPt={x:lpx,y:lpy};
-  ctx.fillStyle=color;ctx.beginPath();ctx.arc(lpx,lpy,3.4,0,Math.PI*2);ctx.fill();
-  ctx.strokeStyle=color;ctx.globalAlpha=0.45;ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(lpx,lpy,6.5,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
-  if(opts.hoverX!=null){var idx=Math.round((opts.hoverX-pad.l)/cw*(total-1));if(idx>=0&&idx<series.length){var px=xP(idx,total),py=yP(series[idx].price);ctx.strokeStyle="#3a5582";ctx.lineWidth=0.5;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(px,pad.t);ctx.lineTo(px,h-pad.b);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=color;ctx.beginPath();ctx.arc(px,py,3.5,0,Math.PI*2);ctx.fill();var tip=fmt(series[idx].price)+" \u00b7 "+series[idx].date;ctx.font="bold 11px 'IBM Plex Mono',monospace";var tw=ctx.measureText(tip).width,tp=7,tx=px+12,ty=py-22;if(tx+tw+tp*2>w-pad.r)tx=px-tw-tp*2-12;if(ty<pad.t)ty=pad.t+4;ctx.fillStyle="rgba(10,15,25,0.96)";ctx.strokeStyle="rgba(58,85,130,0.85)";ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(tx-tp,ty,tw+tp*2,18,2);ctx.fill();ctx.stroke();ctx.fillStyle="#edf2fa";ctx.textAlign="left";ctx.fillText(tip,tx,ty+13);}}
+  ctx.strokeStyle=color;ctx.globalAlpha=0.18;ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(lpx,lpy,9,0,Math.PI*2);ctx.stroke();
+  ctx.globalAlpha=0.5;ctx.beginPath();ctx.arc(lpx,lpy,6.5,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
+  ctx.fillStyle=color;ctx.beginPath();ctx.arc(lpx,lpy,3.6,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="#ffffff";ctx.beginPath();ctx.arc(lpx,lpy,1.2,0,Math.PI*2);ctx.fill();
+  // Hover (three-zone: forecast projection tip / historical tip / none)
+  if(opts.hoverX!=null){
+    var hx=opts.hoverX,inFc=false,fi=0,fcX2=null;
+    if(fcd){var ax2=xP(series.length-1,total);fcX2=[];for(var i=0;i<fcd.length;i++)fcX2.push(xP(series.length+i,total));var sW=fcd.length>1?(fcX2[1]-fcX2[0]):(fcX2[0]-ax2);if(hx>=ax2-sW*0.5&&hx<=fcX2[fcd.length-1]+sW*0.5){inFc=true;fi=Math.max(0,Math.min(fcd.length-1,Math.round((hx-fcX2[0])/sW)));}}
+    if(inFc){
+      var f=fcd[fi],gx=fcX2[fi],my=yP(f.price);
+      ctx.strokeStyle="rgba(0,233,255,0.55)";ctx.lineWidth=1;ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(gx,pad.t);ctx.lineTo(gx,h-pad.b);ctx.stroke();ctx.setLineDash([]);
+      ctx.strokeStyle="rgba(36,233,255,0.9)";ctx.lineWidth=1;["hi95","lo95"].forEach(function(k){var yy=yP(f[k]);ctx.beginPath();ctx.moveTo(gx-3.5,yy);ctx.lineTo(gx+3.5,yy);ctx.stroke();});
+      ctx.lineWidth=1.4;["hi80","lo80"].forEach(function(k){var yy=yP(f[k]);ctx.beginPath();ctx.moveTo(gx-4.5,yy);ctx.lineTo(gx+4.5,yy);ctx.stroke();});
+      ctx.strokeStyle="rgba(0,222,255,0.35)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(gx,yP(f.hi80));ctx.lineTo(gx,yP(f.lo80));ctx.stroke();
+      ctx.fillStyle="rgba(0,222,255,0.25)";ctx.beginPath();ctx.arc(gx,my,6,0,Math.PI*2);ctx.fill();ctx.fillStyle="#00deff";ctx.beginPath();ctx.arc(gx,my,3.4,0,Math.PI*2);ctx.fill();ctx.fillStyle="#eaffff";ctx.beginPath();ctx.arc(gx,my,1.3,0,Math.PI*2);ctx.fill();
+      var pct=((f.price-latest)/latest)*100,pctStr=(pct>=0?"+":"")+pct.toFixed(1)+"%",pctCol=pct>0.1?"#00ffc2":pct<-0.1?"#ff5e7d":"#94a2bf";
+      var midV=fmt(f.price,dp)+uSuf,r80=fmt(f.lo80,dp)+" \u2013 "+fmt(f.hi80,dp),r95=fmt(f.lo95,dp)+" \u2013 "+fmt(f.hi95,dp);
+      var stepLbl="+"+(fi+1)+(fcd.unit==="W"?"W":"M"),hdr=stepLbl+"  \u00b7  "+fdate(f.date);
+      var skillMk=fcd.beatsNaive?"\u2713":"\u26a0",skillCol=fcd.beatsNaive?"#00ffc2":"#ffc233",p1="PROJECTION \u00b7 "+(fcd.method||"projection")+" \u00b7 MASE "+fcd.mase+" ";
+      ctx.font="700 11.5px 'IBM Plex Mono',monospace";var wHdr=ctx.measureText(hdr).width,vW1=ctx.measureText(midV+"  "+pctStr).width;
+      ctx.font="500 10px 'IBM Plex Mono',monospace";var lW1=ctx.measureText("MIDPOINT").width,lW2=ctx.measureText("80% RANGE").width,lW3=ctx.measureText("95% RANGE").width;
+      ctx.font="600 11px 'IBM Plex Mono',monospace";var vW2=ctx.measureText(r80).width,vW3=ctx.measureText(r95).width;
+      ctx.font="500 9.5px 'IBM Plex Mono',monospace";var wFoot=ctx.measureText(p1+skillMk).width;
+      var gapLV=14,padX=9,padTop=8,padBot=8,headerH=18,rowH=15,ruleGap=6,footerH=13,cr=4;
+      var rowMax=Math.max(lW1+gapLV+vW1,lW2+gapLV+vW2,lW3+gapLV+vW3);
+      var boxW=padX*2+Math.max(wHdr,rowMax,wFoot),boxH=padTop+headerH+3*rowH+ruleGap+footerH+padBot;
+      var bx=gx+14;if(bx+boxW>w-pad.r)bx=gx-boxW-14;if(bx<pad.l)bx=pad.l+2;
+      var by=my-boxH-12;if(by<pad.t)by=my+14;if(by+boxH>h-pad.b)by=h-pad.b-boxH;if(by<pad.t)by=pad.t;
+      ctx.shadowColor="rgba(0,0,0,0.55)";ctx.shadowBlur=10;ctx.shadowOffsetY=2;
+      ctx.fillStyle="rgba(9,13,22,0.97)";ctx.beginPath();ctx.roundRect(bx,by,boxW,boxH,cr);ctx.fill();
+      ctx.shadowColor="transparent";ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+      ctx.strokeStyle="rgba(36,233,255,0.40)";ctx.lineWidth=1;ctx.stroke();
+      ctx.textAlign="left";ctx.font="700 11.5px 'IBM Plex Mono',monospace";ctx.fillStyle="#24e9ff";ctx.fillText(hdr,bx+padX,by+padTop+12);
+      var ry=by+padTop+headerH+11;
+      ctx.font="500 10px 'IBM Plex Mono',monospace";ctx.fillStyle="#8493b3";ctx.textAlign="left";ctx.fillText("MIDPOINT",bx+padX,ry);
+      ctx.textAlign="right";ctx.font="700 11.5px 'IBM Plex Mono',monospace";ctx.fillStyle=pctCol;ctx.fillText(pctStr,bx+boxW-padX,ry);var pctW=ctx.measureText(pctStr).width;ctx.fillStyle="#f5f8ff";ctx.fillText(midV+"  ",bx+boxW-padX-pctW,ry);
+      ry+=rowH;ctx.textAlign="left";ctx.font="500 10px 'IBM Plex Mono',monospace";ctx.fillStyle="#8493b3";ctx.fillText("80% RANGE",bx+padX,ry);ctx.textAlign="right";ctx.font="600 11px 'IBM Plex Mono',monospace";ctx.fillStyle="#c4d0e8";ctx.fillText(r80,bx+boxW-padX,ry);
+      ry+=rowH;ctx.textAlign="left";ctx.font="500 10px 'IBM Plex Mono',monospace";ctx.fillStyle="#8493b3";ctx.fillText("95% RANGE",bx+padX,ry);ctx.textAlign="right";ctx.font="600 11px 'IBM Plex Mono',monospace";ctx.fillStyle="#94a2bf";ctx.fillText(r95,bx+boxW-padX,ry);
+      var rly=ry+ruleGap;ctx.strokeStyle="rgba(70,89,127,0.6)";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(bx+padX,rly-3);ctx.lineTo(bx+boxW-padX,rly-3);ctx.stroke();
+      ctx.textAlign="left";ctx.font="500 9.5px 'IBM Plex Mono',monospace";ctx.fillStyle="#94a2bf";ctx.fillText(p1,bx+padX,rly+9);ctx.fillStyle=skillCol;ctx.fillText(skillMk,bx+padX+ctx.measureText(p1).width,rly+9);
+    } else {
+      var idx=Math.round((hx-pad.l)/cw*(total-1));
+      if(idx>=0&&idx<series.length){
+        var px=xP(idx,total),py=yP(series[idx].price);
+        ctx.strokeStyle="rgba(58,85,130,0.7)";ctx.lineWidth=0.6;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(px,pad.t);ctx.lineTo(px,h-pad.b);ctx.stroke();ctx.setLineDash([]);
+        ctx.fillStyle=color;ctx.beginPath();ctx.arc(px,py,3.5,0,Math.PI*2);ctx.fill();
+        var l1=fmt(series[idx].price,dp)+uSuf,l2=fdate(series[idx].date);
+        ctx.font="700 12px 'IBM Plex Mono',monospace";var w1=ctx.measureText(l1).width;
+        ctx.font="500 9.5px 'IBM Plex Mono',monospace";var w2=ctx.measureText(l2).width;
+        var pX=8,pT=7,pB=7,l1H=15,l2H=12,cr2=4,bw=pX*2+Math.max(w1,w2),bh=pT+l1H+l2H+pB;
+        var tx=px+12;if(tx+bw>w-pad.r)tx=px-bw-12;if(tx<pad.l)tx=pad.l+2;
+        var ty=py-bh-10;if(ty<pad.t)ty=py+12;if(ty+bh>h-pad.b)ty=h-pad.b-bh;if(ty<pad.t)ty=pad.t;
+        ctx.shadowColor="rgba(0,0,0,0.5)";ctx.shadowBlur=8;ctx.shadowOffsetY=2;
+        ctx.fillStyle="rgba(9,13,22,0.97)";ctx.beginPath();ctx.roundRect(tx,ty,bw,bh,cr2);ctx.fill();
+        ctx.shadowColor="transparent";ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+        ctx.strokeStyle="rgba(70,89,127,0.85)";ctx.lineWidth=1;ctx.stroke();
+        ctx.textAlign="left";ctx.font="700 12px 'IBM Plex Mono',monospace";ctx.fillStyle="#f5f8ff";ctx.fillText(l1,tx+pX,ty+pT+11);
+        ctx.font="500 9.5px 'IBM Plex Mono',monospace";ctx.fillStyle="#8493b3";ctx.fillText(l2,tx+pX,ty+pT+l1H+9);
+      }
+    }
+  }
 }
 function drawMini(cv,series,color,fcData){
   var ctx=cv.getContext("2d"),dpr=window.devicePixelRatio||1,w=cv.width/dpr,h=cv.height/dpr;
@@ -2029,17 +2115,17 @@ function drawMini(cv,series,color,fcData){
   for(var i=1;i<pr.length;i++)ctx.lineTo(xP(i),yP(pr[i]));ctx.stroke();
   // Forecast — cone + dotted midpoint line (4W only, unified coordinate system)
   if(fc4){
-    ctx.fillStyle="rgba(0,222,255,0.18)";ctx.beginPath();
+    ctx.fillStyle="rgba(0,222,255,0.22)";ctx.beginPath();
     ctx.moveTo(xP(fs-1),yP(pr[pr.length-1]));
     for(var i=0;i<fc4.length;i++)ctx.lineTo(xP(fs+i),yP(fc4[i].hi95));
     for(var i=fc4.length-1;i>=0;i--)ctx.lineTo(xP(fs+i),yP(fc4[i].lo95));
     ctx.closePath();ctx.fill();
-    ctx.strokeStyle="#00deff";ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.beginPath();
+    ctx.strokeStyle="#3df0ff";ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.beginPath();
     ctx.moveTo(xP(fs-1),yP(pr[pr.length-1]));
     for(var i=0;i<fc4.length;i++)ctx.lineTo(xP(fs+i),yP(fc4[i].price));
     ctx.stroke();ctx.setLineDash([]);
     var ep=fc4[fc4.length-1];
-    ctx.fillStyle="#00deff";ctx.beginPath();
+    ctx.fillStyle="#3df0ff";ctx.beginPath();
     ctx.arc(xP(total-1),yP(ep.price),2.5,0,Math.PI*2);ctx.fill();
   }
 }
@@ -2176,7 +2262,10 @@ function render(){
 
   // Ticker + expandable news list
   html+='<div class="ticker"><div class="ticker-track">';NEWS.concat(NEWS).forEach(function(n){html+='<a href="'+n.u+'" target="_blank"><span class="td">'+n.d+'</span><span class="ts">'+n.s+'</span><span class="tt">'+n.t+'</span><span class="tl">\u2197</span></a>';});html+='</div>';
-  html+='<button class="news-toggle'+(s.newsOpen?' on':'')+'" onclick="toggleNews()" title="Show all headlines as a list (N)">'+(s.newsOpen?'\u2715 CLOSE':'\u2630 ALL NEWS')+'</button></div>';
+  html+='<div class="ticker-actions">';
+  html+='<button class="news-toggle pdf-toggle'+(s.briefingBusy?' busy':'')+'" onclick="downloadBriefing(event)" title="Download the CommodIQ Weekly Briefing as a PDF (key: B)">'+(s.briefingBusy?'\u25cf GENERATING\u2026':'\u2193 WEEKLY PDF')+'</button>';
+  html+='<button class="news-toggle'+(s.newsOpen?' on':'')+'" onclick="toggleNews()" title="Show all headlines as a list (N)">'+(s.newsOpen?'\u2715 CLOSE':'\u2630 ALL NEWS')+'</button>';
+  html+='</div></div>';
   if(s.newsOpen){
     html+='<div class="news-panel"><div class="news-panel-title">ALL HEADLINES \u00b7 '+NEWS.length+' STORIES \u00b7 CLICK TO OPEN SOURCE \u00b7 ESC TO CLOSE</div>';
     NEWS.forEach(function(n){html+='<a class="news-row" href="'+n.u+'" target="_blank"><span class="nd">'+n.d+'</span><span class="ns">'+n.s+'</span><span class="nt">'+n.t+'</span><span class="tl">\u2197</span></a>';});
@@ -2204,7 +2293,7 @@ function render(){
   html+='</div><div class="btn-grp">';["SINGLE","OVERLAY","MATRIX"].forEach(function(v){html+='<button class="'+(s.view===v?"on":"")+'" onclick="setView(\''+v+'\')">'+v+'</button>';});
   html+='</div><button class="'+(s.fc?"on":"")+'" onclick="toggleFc()" style="'+(s.fc?"color:var(--cyn);border-color:rgba(0,222,255,.4);background:rgba(0,222,255,.12)":"")+'">FC '+(s.fc?"ON":"OFF")+'</button>';
   html+='<button class="'+(s.lbMode?"on":"")+'" onclick="toggleLb()" style="'+(s.lbMode?"color:var(--grn);border-color:rgba(0,230,180,.4);background:rgba(0,230,180,.12)":"")+'">$/LB '+(s.lbMode?"ON":"OFF")+'</button></div>';
-  html+='<div class="keys-hint">\u2191\u2193 nav \u00b7 F forecast \u00b7 O overlay \u00b7 M matrix \u00b7 L $/lb \u00b7 N news</div></div>';
+  html+='<div class="keys-hint">\u2191\u2193 nav \u00b7 F forecast \u00b7 O overlay \u00b7 M matrix \u00b7 L $/lb \u00b7 N news \u00b7 B briefing PDF</div></div>';
 
   // Main
   if(s.view==="MATRIX"){
@@ -2269,7 +2358,7 @@ function render(){
     html+='<tr><td style="color:'+c.cl+'">'+c.sy+'</td><td style="color:var(--txt)">'+fmt(mk.latest*tf,dp)+'</td><td style="color:var(--mut);font-size:9px">'+un+'</td><td class="asof-cell" onclick="openSrc('+i+')" title="Open '+c.sr+' (new tab)" style="color:var(--blu);font-size:9.5px;cursor:pointer">'+fdate(asof)+' \u2197</td><td style="color:'+pcCl(mk.daily)+'">'+fP(mk.daily)+'</td><td style="color:'+pcCl(mk.wow)+'">'+fP(mk.wow)+'</td><td style="color:'+pcCl(mk.mom)+'">'+fP(mk.mom)+'</td><td style="color:'+pcCl(mk.yoy)+'">'+fP(mk.yoy)+'</td><td style="color:'+(f4?pcCl(f4.price-mk.latest):"var(--dim)")+'" title="'+(ff?ff.horizonLabel+' midpoint':'')+'">'+(f4?fmt(f4.price*tf,dp):"\u2014")+'</td><td style="color:var(--dim)">'+fmt(mk.a30*tf,dp)+'</td><td style="font-size:13px;color:'+tCl(mk.trend)+'">'+mk.trend+'</td></tr>';
   });html+='</tbody></table></div></div>';
 
-  html+='<div class="footer"><span>DATA: USDA AMS + verified industry sources (MI Potato Comm. \u00b7 Capital Press \u00b7 Barchart) \u00b7 Actual reported prices, no synthetic values \u00b7 History limited to available report dates</span><span style="color:var(--grn);font-weight:600;letter-spacing:1px">MAEV FINANCE</span><span>FORECAST: damped-trend ETS + seasonal \u00b7 backtested \u00b7 v5.5 \u00b7 \u00a9 2026</span></div>';
+  html+='<div class="footer"><span>DATA: USDA AMS + verified industry sources (MI Potato Comm. \u00b7 Capital Press \u00b7 Barchart) \u00b7 Actual reported prices, no synthetic values \u00b7 History limited to available report dates</span><span style="color:var(--grn);font-weight:600;letter-spacing:1px">MAEV FINANCE</span><span>FORECAST: damped-trend ETS + seasonal \u00b7 backtested \u00b7 v5.6 \u00b7 \u00a9 2026</span></div>';
 
   // ═══ HELP MODAL ═══
   if(s.showHelp){
@@ -2409,93 +2498,4 @@ function render(){
     html+='<div class="help-section">';
     html+='<div class="help-stitle">06 \u2014 KEYBOARD SHORTCUTS</div>';
     html+='<div class="help-kv">';
-    var ks=[["↑ / K","Previous commodity"],["↓ / J","Next commodity"],["S","Single view"],["O","Overlay view"],["M","Matrix view"],["F","Toggle forecast"],["L","Toggle $/lb mode"],["N","News headline list"],["?","Open / close guide"],["Esc","Close all panels"]];
-    ks.forEach(function(k){html+='<div class="help-key"><span class="hk">'+k[0]+'</span><span class="hv">'+k[1]+'</span></div>';});
-    html+='</div>';
-    html+='</div>';
-
-    html+='</div></div></div>'; // close help-body, help-box, help-overlay
-  }
-
-  // ═══ MARKET INTEL PANEL ═══
-  if(s.intel!==null){
-    var ic=COMS[s.intel],im=s.metrics[s.intel],ibs=genIntel(s.intel);
-    html+='<div class="intel-overlay" onclick="closeIntel()"></div>';
-    html+='<div class="intel-panel" style="border-top:3px solid '+ic.cl+'">';
-    html+='<div class="intel-hdr"><div style="display:flex;align-items:baseline"><span class="intel-sym" style="color:'+ic.cl+'">'+ic.sy+'</span><span class="intel-nm">MARKET INTEL \u00b7 '+ic.nm.toUpperCase()+(s.lbMode?' \u00b7 NOTE: prices shown in native unit ('+ic.un+')':'')+'</span></div>';
-    html+='<button class="intel-close" onclick="closeIntel()">\u00d7 CLOSE</button></div>';
-    html+='<div class="intel-body">';
-    html+='<div class="intel-label">AUTO-GENERATED SIGNALS FROM USDA PRICE DATA'+(im?' \u00b7 CURRENT: '+fmt(im.latest,2)+' '+ic.un:'')+' \u00b7 PROCUREMENT CONTEXT BELOW</div>';
-    ibs.forEach(function(b){
-      var icon,col;
-      if(b.type==="warn"){icon="\u25b2";col="var(--amb)";}
-      else if(b.type==="good"){icon="\u25bc";col="var(--grn)";}
-      else if(b.type==="info"){icon="\u25cf";col="var(--blu)";}
-      else{icon="\u2192";col="var(--mut)";}
-      html+='<div class="intel-bullet"><span class="intel-icon" style="color:'+col+'">'+icon+'</span><span class="intel-text">'+b.text+'</span></div>';
-    });
-    html+='<div class="intel-meta">\u25b2 Elevated / cost risk \u00b7 \u25bc Declining / favorable \u00b7 \u25cf Market context \u00b7 \u2192 Informational \u00b7 All signals derived from USDA AMS published price data only \u00b7 Not a live feed \u00b7 Verify at USDA AMS before procurement decisions</div>';
-    html+='</div></div>';
-  }
-
-  document.getElementById("app").innerHTML=html;
-  requestAnimationFrame(function(){requestAnimationFrame(function(){
-    if(s.view==="MATRIX"){ovAnim.key="";COMS.forEach(function(c,i){var cv=document.getElementById("mini"+i);if(!cv)return;sizeCanvas(cv);var mf=s.lbMode?lbFactor(c):1;var d=lbSer(filterDays(s.data[i]||[],days),mf);var fc=s.fc?lbFc(s.forecasts[i]||null,mf):null;drawMini(cv,d,c.cl,fc);});}
-    else if(s.view==="OVERLAY"){var ov=document.getElementById("overlayChart");if(ov){sizeCanvas(ov);
-      var sel=(s.ovSel||[]).slice().sort(function(a,b){return a-b;});
-      var ovSeries=sel.map(function(i){return filterDays(s.data[i]||[],days);});
-      var ovCols=sel.map(function(i){return COMS[i].cl;});
-      var ovLbls=sel.map(function(i){return COMS[i].sy;});
-      var draw=function(prog,hoverX){drawOverlay(ov,ovSeries,ovCols,ovLbls,{progress:prog,hoverX:hoverX});};
-      var ovKey=s.tr+"|"+sel.join(",");
-      if(ovAnim.key!==ovKey){ovAnim.key=ovKey;animateOverlay(draw);}else draw(1,null);
-      ov.onmousemove=function(ev){if(ovAnim.raf){cancelAnimationFrame(ovAnim.raf);ovAnim.raf=0;}var r=ov.getBoundingClientRect();draw(1,ev.clientX-r.left);};
-      ov.onmouseleave=function(){draw(1,null);};
-    }}
-    else{ovAnim.key="";var cv=document.getElementById("mainChart");if(cv){sizeCanvas(cv);var sf=s.lbMode?lbFactor(COMS[s.sel]):1;var series=lbSer(filterDays(s.data[s.sel]||[],days),sf);var fcScaled=s.fc?lbFc(s.forecasts[s.sel],sf):null;drawChart(cv,series,COMS[s.sel].cl,{fcData:fcScaled});var nearLast=function(ev){var r=cv.getBoundingClientRect();return cv.__lastPt&&Math.hypot(ev.clientX-r.left-cv.__lastPt.x,ev.clientY-r.top-cv.__lastPt.y)<14;};cv.onmousemove=function(ev){var r=cv.getBoundingClientRect();cv.style.cursor=nearLast(ev)?"pointer":"default";drawChart(cv,series,COMS[s.sel].cl,{fcData:fcScaled,hoverX:ev.clientX-r.left});};cv.onmouseleave=function(){cv.style.cursor="default";drawChart(cv,series,COMS[s.sel].cl,{fcData:fcScaled});};cv.onclick=function(ev){if(nearLast(ev))openSrc(s.sel);};}}
-  });});
-}
-
-// ═══ ACTIONS ═══
-window.pick=function(i){state.sel=i;state.view="SINGLE";state.showPanel=false;state.intel=null;state.ovMenu=false;render();};
-window.setTR=function(r){state.tr=r;render();};
-window.setView=function(v){state.view=v;state.showPanel=false;state.intel=null;if(v!=="OVERLAY")state.ovMenu=false;render();};
-window.toggleFc=function(){state.fc=!state.fc;render();};
-window.togglePanel=function(){state.showPanel=!state.showPanel;render();};
-window.markChecked=function(ev){state.lastCheck=Date.now();};
-window.toggleHelp=function(){state.showHelp=!state.showHelp;if(state.showHelp)state.intel=null;render();};
-window.toggleLb=function(){state.lbMode=!state.lbMode;render();};
-window.toggleNews=function(){state.newsOpen=!state.newsOpen;render();};
-window.openSrc=function(i){var u=COMS[i]&&COMS[i].src;if(u)window.open(u,"_blank","noopener");};
-window.openIntel=function(i,ev){ev.stopPropagation();state.intel=(state.intel===i)?null:i;render();};
-window.closeIntel=function(){state.intel=null;render();};
-// ── Overlay commodity selector ──
-window.toggleOvMenu=function(ev){if(ev)ev.stopPropagation();state.ovMenu=!state.ovMenu;render();};
-window.toggleOv=function(i){var a=(state.ovSel||[]).slice(),k=a.indexOf(i);if(k>=0)a.splice(k,1);else a.push(i);state.ovSel=a;render();};
-window.ovAll=function(){state.ovSel=COMS.map(function(c,i){return i;});render();};
-window.ovNone=function(){state.ovSel=[];render();};
-
-document.addEventListener("keydown",function(ev){
-  if(document.activeElement&&document.activeElement.tagName==="INPUT")return;
-  var i=state.sel;
-  if(ev.key==="ArrowDown"||ev.key==="j"){ev.preventDefault();state.sel=(i+1)%COMS.length;state.view="SINGLE";state.showPanel=false;render();}
-  if(ev.key==="ArrowUp"||ev.key==="k"){ev.preventDefault();state.sel=(i-1+COMS.length)%COMS.length;state.view="SINGLE";state.showPanel=false;render();}
-  if(ev.key==="f"){state.fc=!state.fc;render();}
-  if(ev.key==="o"){state.view="OVERLAY";render();}
-  if(ev.key==="m"){state.view="MATRIX";render();}
-  if(ev.key==="s"){state.view="SINGLE";render();}
-  if(ev.key==="l"){state.lbMode=!state.lbMode;render();}
-  if(ev.key==="n"){state.newsOpen=!state.newsOpen;render();}
-  if(ev.key==="Escape"){state.showPanel=false;state.showHelp=false;state.intel=null;state.newsOpen=false;state.ovMenu=false;render();}
-  if(ev.key==="?"){state.showHelp=!state.showHelp;render();}
-});
-document.addEventListener("click",function(ev){if(state.showPanel&&!ev.target.closest(".rbtn")&&!ev.target.closest(".rpanel")){state.showPanel=false;render();}});
-document.addEventListener("click",function(ev){if(state.ovMenu&&!ev.target.closest(".ovsel-wrap")){state.ovMenu=false;render();}});
-setInterval(function(){var el=document.getElementById("clock");if(el)el.textContent=new Date().toLocaleTimeString("en-US",{hour12:false})+" CT";},1000);
-// Re-check report status every 5 min
-setInterval(function(){render();},300000);
-window.addEventListener("resize",function(){render();});
-render();
-</script>
-</body>
-</html>
+    var ks=[["↑ / K","Previous commodity"],["↓ / J","Next commodity"],["S","Single view"],["O","Overlay view"],["M","Matrix view"],["F","Toggle forecast"],["L","Toggle $/lb mode"],["N","News headline list"],["B","Download weekly PDF briefing"],["?","Open / close guide"],["Esc","Close all panels"]];
